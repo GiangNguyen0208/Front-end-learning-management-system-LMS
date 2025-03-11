@@ -1,4 +1,9 @@
 import PrivateRouter from "../components/PrivateRouter/PrivateRouter";
+import MentorLayout from "../view/admin/layout/mentorLayout";
+import CategorySection from "../view/admin/pages/categories/CategorySection";
+import Communication from "../view/admin/pages/communication/Communication";
+import CoursesSection from "../view/admin/pages/courses/CoursesSection";
+import Dashboard from "../view/admin/pages/dashboard/Dashboard";
 import HomeLayout from "../view/client/layout/default";
 import Categories from "../view/client/pages/categories/CourseList";
 import Checkout from "../view/client/pages/checkout/Checkout";
@@ -74,6 +79,7 @@ export const routes = [
                 title: "Thông tin người dùng",
                 element: <Infomation />,
             },
+            
             // {
             //     element: <PrivateRouter />,
             //     children: [
@@ -84,6 +90,42 @@ export const routes = [
             //         }
             //     ]
             // }
+        ]
+    },
+    {
+        path: "mentor",
+        title: "Giảng viên",
+        element: <MentorLayout />,
+        children: [
+            {
+                path: "dashboard",
+                title: "DashBoard",
+                element: <Dashboard />
+            },
+            // {
+            //     path: "users",
+            //     title: "Users",
+
+            // },
+            {
+                path: "communication",
+                title: "Communication",
+                element: <Communication />
+            },
+            {
+                path: "courses",
+                title: "Courses",
+                element: <CoursesSection />
+            },
+            // {
+            //     path: "categories",
+            //     title: "Categories",
+            //     element: <CategorySection />
+            // },
+            {
+                path: "settings",
+                title: "Settings",
+            }
         ]
     },
     {
