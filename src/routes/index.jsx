@@ -1,9 +1,9 @@
 import PrivateRouter from "../components/PrivateRouter/PrivateRouter";
-import MentorLayout from "../view/admin/layout/mentorLayout";
-import CategorySection from "../view/admin/pages/categories/CategorySection";
-import Communication from "../view/admin/pages/communication/Communication";
-import CoursesSection from "../view/admin/pages/courses/CoursesSection";
-import Dashboard from "../view/admin/pages/dashboard/Dashboard";
+import MentorLayout from "../view/mentor/layout/mentorLayout";
+import CategorySection from "../view/mentor/pages/categories/CategorySection";
+import Communication from "../view/mentor/pages/communication/Communication";
+import CoursesSection from "../view/mentor/pages/courses/CoursesSection";
+import Dashboard from "../view/mentor/pages/dashboard/Dashboard";
 import HomeLayout from "../view/client/layout/default";
 import Categories from "../view/client/pages/categories/CourseList";
 import Checkout from "../view/client/pages/checkout/Checkout";
@@ -17,6 +17,7 @@ import OrderComplete from "../view/client/pages/order-complete/OrderComplete";
 import Infomation from "../view/client/pages/profile";
 import Signup from "../view/client/pages/register/SignUp";
 import ShoppingCart from "../view/client/pages/shopping-cart/ShoppingCart";
+import CommissionDashboard from "../view/mentor/pages/courses/Commission/CommissionDashboard";
 
 
 export const routes = [
@@ -112,10 +113,14 @@ export const routes = [
                 title: "Communication",
                 element: <Communication />
             },
+           
             {
-                path: "courses",
                 title: "Courses",
-                element: <CoursesSection />
+                path: "courses",
+                element: <CoursesSection />,
+                children: [
+                    { title: "Commission", path: "commission/:id", element: <CommissionDashboard /> },
+                ],
             },
             // {
             //     path: "categories",

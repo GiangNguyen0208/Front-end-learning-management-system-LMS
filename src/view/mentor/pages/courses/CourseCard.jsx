@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Typography, Divider, Row, Col } from "antd";
 import "./css/CourseCard.css";
+import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -13,6 +14,7 @@ const StatItem = ({ value, label }) => (
 
 const CourseCard = ({ course }) => {
   const {
+    id,
     title,
     price,
     certificates,
@@ -24,7 +26,11 @@ const CourseCard = ({ course }) => {
   } = course;
 
   return (
-    <Card className="course-card" bordered={true}>
+    <Card 
+      className="course-card" 
+      variant="outlined"
+      extra={<Link to={`/mentor/courses/commission/${id}`}>Go to Commission</Link>}
+    >
       {isFree && <div className="free-label">Free</div>}
 
       <Title level={5} className="course-title">
