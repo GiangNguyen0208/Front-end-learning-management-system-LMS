@@ -12,17 +12,16 @@ const CommissionDashboard = () => {
   const [courseData, setCourseData] = useState(null);
 
   useEffect(() => {
-    // Tìm khóa học theo id từ dữ liệu mẫu
-    const foundCourse = data.find(course => course.id === parseInt(id)); // Tìm khóa học theo id
+    const foundCourse = data.find(course => course.id === parseInt(id));
     setCourseData(foundCourse);
   }, [id]);
 
   if (!courseData) {
-    return <div>Course not found</div>; // Hiển thị khi không tìm thấy khóa học
+    return <div>Course not found</div>;
   }
 
   return (
-    <div className="dashboard-container">
+    <div className="commision-dashboard-container">
       {/* Header Component */}
       <Header title={`Commission Dashboard for ${courseData.orderId}`} />
 

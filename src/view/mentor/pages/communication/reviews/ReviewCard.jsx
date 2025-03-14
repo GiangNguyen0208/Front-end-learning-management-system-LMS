@@ -9,7 +9,7 @@ const ReviewCard = ({ review }) => {
   const { rating, courseName, userName, timeAgo, content } = review;
 
   return (
-    <Card className="review-card" bordered={false}>
+    <Card className="review-card" variant={false}>
       <Row justify="space-between" align="middle" className="review-header">
         <Col>
           <Space className="rating-display">

@@ -1,7 +1,6 @@
-import React from "react";
-import { Card, Typography, Divider, Row, Col } from "antd";
-import "./css/CourseCard.css";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Card, Typography, Divider } from "antd";
+import { useNavigate } from "react-router-dom";  // Dùng useNavigate thay vì Navigate
 
 const { Title, Text } = Typography;
 
@@ -13,24 +12,16 @@ const StatItem = ({ value, label }) => (
 );
 
 const CourseCard = ({ course }) => {
-  const {
-    id,
-    title,
-    price,
-    certificates,
-    chapters,
-    reviews,
-    orders,
-    shelfAdds,
-    isFree,
-  } = course;
+  const { id, title, price, certificates, chapters, reviews, orders, shelfAdds, isFree } = course;
+  const navigate = useNavigate();  // Sử dụng useNavigate hook
+
+  const handleNavigate = () => {
+    // Dùng navigate để điều hướng
+    navigate(`/mentor/courses/commission/${id}`);
+  };
 
   return (
-    <Card 
-      className="course-card" 
-      variant="outlined"
-      extra={<Link to={`/mentor/courses/commission/${id}`}>Go to Commission</Link>}
-    >
+    <Card className="course-card" variant="outlined">
       {isFree && <div className="free-label">Free</div>}
 
       <Title level={5} className="course-title">
@@ -55,6 +46,8 @@ const CourseCard = ({ course }) => {
           <StatItem value={shelfAdds} label="Added to Shelf" />
         </div>
       </div>
+
+      <button onClick={handleNavigate}>Go to Commission</button>
     </Card>
   );
 };

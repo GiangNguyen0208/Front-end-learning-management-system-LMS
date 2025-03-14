@@ -12,8 +12,8 @@ import {
   Col,
 } from "antd";
 import { MoreOutlined, DownOutlined } from "@ant-design/icons";
-import ReviewCard from "./ReviewCard";
 import "./css/reviews.css";
+import ReviewCard from "../../../../client/pages/profile/Reviews/ReviewCard";
 
 const { Title } = Typography;
 const { TabPane } = Tabs;
@@ -53,7 +53,7 @@ const ReviewsPage = () => {
       courseName: "Beginners Guide to Design",
       userName: "Chris Walter",
       timeAgo: "3 days ago",
-      content:
+      text:
         "I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.",
     },
     {
@@ -62,7 +62,7 @@ const ReviewsPage = () => {
       courseName: "Data Warehouse - The Ultimate Guide",
       userName: "Michel Evans",
       timeAgo: "3 days ago",
-      content:
+      text:
         "I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.",
     },
     {
@@ -71,7 +71,7 @@ const ReviewsPage = () => {
       courseName: "Beginners Guide to Design",
       userName: "Chris Walter",
       timeAgo: "3 days ago",
-      content:
+      text:
         "I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.",
     },
     {
@@ -80,7 +80,7 @@ const ReviewsPage = () => {
       courseName: "Beginners Guide to Design",
       userName: "Chris Walter",
       timeAgo: "3 days ago",
-      content:
+      text:
         "I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.",
     },
   ];
@@ -174,7 +174,7 @@ const ReviewsPage = () => {
           <Row gutter={[0, 20]}>
             {reviews.map((review) => (
               <Col span={24} key={review.id}>
-                <ReviewCard review={review} />
+                <ReviewCard key={review.id} review={review} />
               </Col>
             ))}
           </Row>

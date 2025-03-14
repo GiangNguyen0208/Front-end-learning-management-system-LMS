@@ -24,7 +24,7 @@ const CategoryCard = ({ course }) => {
   } = course;
 
   return (
-    <Card className="course-card" bordered={true}>
+    <Card className="course-card" variant={true}>
       {isFree && <div className="free-label">Free</div>}
 
       <Title level={5} className="course-title">
