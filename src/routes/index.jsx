@@ -19,25 +19,36 @@ import OrderComplete from "../view/client/pages/order-complete/OrderComplete";
 import Infomation from "../view/client/pages/profile";
 import Signup from "../view/client/pages/register/SignUp";
 import ShoppingCart from "../view/client/pages/shopping-cart/ShoppingCart";
+import VerifyEmail from "../view/client/pages/register/VerifyEmail ";
+import ResendEmail from "../view/client/pages/register/ResendEmail";
+import Success from "../components/Success";
+import PublicRoute from "../components/PublicRouter/PublicRoute";
 
 const AppRoutes = () => (
   <Routes>
     {/* Routes cho Client */}
     <Route path="/" element={<HomeLayout />}>
-      <Route index element={<HomeScreen />} />
-      <Route path="login" element={<Login />} />
-      <Route path="sign-up" element={<Signup />} />
+
+      <Route element={<PublicRoute />}>
+        <Route path="login" element={<Login />} />
+        <Route path="sign-up" element={<Signup />} />
+        <Route path="verify-email" element={<VerifyEmail />} />
+        <Route path="resend-confirmation" element={<ResendEmail />} />
+        <Route path="success" element={<Success />} />
+      </Route>
+      
+      <Route path="home" element={<HomeScreen />} />
       <Route path="categories" element={<Categories />} />
       <Route path="course" element={<CourseHeader />} />
-      <Route path="shopping-cart" element={<ShoppingCart />} />
-      <Route path="order-complete" element={<OrderComplete />} />
       <Route path="course-viewer" element={<CourseViewer />} />
-      <Route path="instructor-info" element={<InstructorInfo />} />
 
       {/* Bảo vệ các route yêu cầu đăng nhập */}
-      <Route path="private" element={<PrivateRouter />}>
-        <Route path="check-out" element={<Checkout />} />
+      <Route element={<PrivateRouter />}>
         <Route path="info-user" element={<Infomation />} />
+        <Route path="instructor-info" element={<InstructorInfo />} />
+        <Route path="shopping-cart" element={<ShoppingCart />} />
+        <Route path="check-out" element={<Checkout />} />
+        <Route path="order-complete" element={<OrderComplete />} />
       </Route>
     </Route>
 

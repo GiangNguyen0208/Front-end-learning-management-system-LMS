@@ -3,10 +3,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
 import Message from './Message';
-import { AppContext, AuthContext } from '../../../../context/AppProvider';
+import { AppContext } from '../../../../context/AppProvider';
 import useFirestore from '../../../../hooks/useFirestore';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../../../../firebase/config';
+import { AuthContext } from '../../../../context/AuthProvider';
 
 const HeaderStyled = styled.div`
   display: flex;

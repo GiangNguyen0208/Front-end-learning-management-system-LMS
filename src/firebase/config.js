@@ -7,13 +7,13 @@ import { connectAuthEmulator } from "firebase/auth";
 import { connectFirestoreEmulator } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD2pnETrHml1WzoZGvvYJaqPfzc-yGr3ws",
-  authDomain: "app-chat-reactjs-9b0e1.firebaseapp.com",
-  projectId: "app-chat-reactjs-9b0e1",
-  storageBucket: "app-chat-reactjs-9b0e1.firebasestorage.app",
-  messagingSenderId: "636364354904",
-  appId: "1:636364354904:web:05742789e417b75b23212d",
-  measurementId: "G-B1584H6K4Y"
+  apiKey: "AIzaSyA80j04C2sPCDfiN6cZfwUq_EYJLy_w0CY",
+  authDomain: "lms-learningmanagementsyte.firebaseapp.com",
+  projectId: "lms-learningmanagementsyte",
+  storageBucket: "lms-learningmanagementsyte.firebasestorage.app",
+  messagingSenderId: "360800483688",
+  appId: "1:360800483688:web:81b6d1fedbf928a398fedd",
+  measurementId: "G-HKWVMWN5CH"
 };
 
 // Khởi tạo Firebase
@@ -25,7 +25,7 @@ export const db = getFirestore(app);
 // Nếu chạy local, bật emulator
 if (window.location.hostname === "localhost") {
   connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
-  connectFirestoreEmulator(db, "localhost", 8080);
+  connectFirestoreEmulator(db, "localhost", 8082);
 }
 
 

@@ -3,7 +3,8 @@ import { Button, Avatar, Typography } from 'antd';
 import styled from 'styled-components';
 
 import { auth } from '../../../../firebase/config';
-import { AuthContext,AppContext } from '../../../../context/AuthProvider';
+import { AuthContext } from '../../../../context/AuthProvider';
+import { AppContext } from '../../../../context/AppProvider';
 import { signOut } from 'firebase/auth';
 
 const WrapperStyled = styled.div`
