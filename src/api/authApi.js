@@ -22,7 +22,6 @@ const authApi = {
         emailId: data.email,
         firebase_uid: firebaseUser.uid,
         password: data.password,
-        role: "Student",
       });
       return response.data;
     } catch (error) {
@@ -31,6 +30,27 @@ const authApi = {
     }
   },
   
+  registerMentor: async (data) => {
+    try {
+      // 🛠 Kiểm tra user đã tồn tại chưa
+      if (await checkUserExists(data.email)) {
+        // Update Role BE and Fire-base
+      }
+      // Generate Code...
+    } catch (error) {
+      if (error.response) {
+        console.error("❌ Lỗi từ backend:", error.response.data);
+        console.error("🔴 Status Code:", error.response.status);
+        console.error("🔴 Headers:", error.response.headers);
+      } else if (error.request) {
+        console.error("❌ Không nhận phản hồi từ server:", error.request);
+      } else {
+        console.error("❌ Lỗi không xác định:", error.message);
+      }
+      throw error;
+    }
+  }, 
+
   register: async (data) => {
     try {
       // 🛠 Kiểm tra user đã tồn tại chưa
@@ -44,7 +64,7 @@ const authApi = {
       // 🟢 Lưu user vào Firestore
       const userRef = doc(db, "users", firebaseUser.uid);
       await setDoc(userRef, {
-        displayName: data.firstName + " " + data.lastName,
+        displayName: data.username,
         emailId: data.email,
         firebase_uid: firebaseUser.uid, // 🔥 Lưu Firebase UID vào Firestore
         role: data.role || "Student",

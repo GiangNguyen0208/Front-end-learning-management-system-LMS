@@ -26,7 +26,7 @@ const Header = () => {
   return (
     <Layout.Header className="site-header">
       <Row className="header-container" align="middle" justify="center">
-        <Col className="logo-section" onClick={() => navigate("/")}>
+        <Col className="logo-section" onClick={() => navigate("/home")}>
           <Space size={16} className="logo-clickable">
             <img
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/e02fb6c9a7eecac5c023060dfa3e98a94c7cbb6ce9c3a4b435fa8f0383a8586d"
@@ -45,7 +45,7 @@ const Header = () => {
           <HeaderSearch />
         </Col>
 
-        <Col className="nav-item">
+        <Col className="nav-item" onClick={() => navigate("register-mentor")}>
           <span>Tham gia giảng dạy</span>
         </Col>
 

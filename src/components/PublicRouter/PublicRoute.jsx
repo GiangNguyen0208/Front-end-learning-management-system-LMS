@@ -3,9 +3,13 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/AuthProvider";
 
 const PublicRoute = () => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, user } = useContext(AuthContext);
 
-  return isLoggedIn ? <Navigate to="/home" /> : <Outlet />;
+  if (user?.role === "Student") return <Navigate to="/home" />;
+  if (user?.role === "Mentor") return <Navigate to="/mentor/dashboard" />;
+  
+  return <Outlet />;
+  // return isLoggedIn ? <Navigate to="/home" /> : <Outlet />;
 };
 
 export default PublicRoute;

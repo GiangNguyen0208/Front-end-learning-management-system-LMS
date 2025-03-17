@@ -19,7 +19,7 @@ const VerifyEmail = () => {
         try {
           const res = await authApi.verifyEmail(token);
           console.log("API Response:", res); // 👉 Kiểm tra response trong console
-          if (res.success) {
+          if (res.success === true || res.success === "true") {
             setStatus("success");
           } else {
             setStatus("error");

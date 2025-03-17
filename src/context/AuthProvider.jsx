@@ -17,7 +17,18 @@ export default function AuthProvider({ children }) {
     localStorage.setItem("user", JSON.stringify(userData));
     setIsLoggedIn(true);
     setUser(userData); // ✅ Cập nhật state user
-    navigate("/home");
+    
+    // Điều hướng dựa trên role
+    if (userData?.role === "Student") {
+      navigate("/home");
+    } else if (userData?.role === "Mentor") {
+      navigate("/mentor/dashboard");
+    } else if (userData?.role === "Admin") {
+      navigate("/admin/dashboard");
+    } 
+    else {
+      navigate("/home");
+    }
   };
 
   const logout = () => {
