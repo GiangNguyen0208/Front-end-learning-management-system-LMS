@@ -45,12 +45,9 @@ const Header = () => {
           <HeaderSearch />
         </Col>
 
-        <Col className="nav-item" onClick={() => navigate("register-mentor")}>
-          <span>Tham gia giảng dạy</span>
-        </Col>
-
         <Col>
-          {isLoggedIn ? <UserHeaderAuth /> : <HeaderAuth />}
+          {/* {isLoggedIn ? <UserHeaderAuth /> : <HeaderAuth />} */}
+          <UserHeaderAuth /> 
         </Col>
       </Row>
       <div className="header-divider" />

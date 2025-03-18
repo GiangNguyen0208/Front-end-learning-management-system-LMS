@@ -41,15 +41,16 @@ export default function AuthProvider({ children }) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("jwtToken");
-    if (storedToken) {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = localStorage.getItem("user");
+  
+    if (storedToken && storedUser) {
       setIsLoggedIn(true);
-      setUser(storedUser);
+      setUser(JSON.parse(storedUser)); // ✅ Gán user từ localStorage
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, setUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

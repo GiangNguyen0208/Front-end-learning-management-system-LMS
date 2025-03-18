@@ -23,6 +23,7 @@ import VerifyEmail from "../view/client/pages/register/VerifyEmail ";
 import ResendEmail from "../view/client/pages/register/ResendEmail";
 import Success from "../components/Success";
 import PublicRoute from "../components/PublicRouter/PublicRoute";
+import SignUpMentor from "../view/client/pages/register/SignUpMentor";
 
 const AppRoutes = () => (
   <Routes>
@@ -37,6 +38,7 @@ const AppRoutes = () => (
         <Route path="success" element={<Success />} />
       </Route>
       
+      <Route path="sign-up-mentor"element={<SignUpMentor />} />
       <Route path="home" element={<HomeScreen />} />
       <Route path="categories" element={<Categories />} />
       <Route path="course" element={<CourseHeader />} />
@@ -58,7 +60,6 @@ const AppRoutes = () => (
       <Route path="communication" element={<Communication />} />
       <Route path="courses" element={<CoursesSection />}>
         <Route path="commission/:id" element={<CommissionDashboard />} />
-        
       </Route>
       <Route path="settings" element={<div>Settings</div>} />
     </Route>

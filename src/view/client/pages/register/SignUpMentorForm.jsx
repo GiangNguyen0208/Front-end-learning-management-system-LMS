@@ -1,32 +1,50 @@
-import React, { useEffect } from "react";
-import { Form, Input, Button, Row, Col, message } from "antd";
-import { ArrowRightOutlined } from "@ant-design/icons";
-import SocialLogin from "./SocialLogin";
+import React, { useContext, useState } from "react";
+import { Form, Input, Button, Row, Col, Upload, message, InputNumber, Select } from "antd";
+import { UploadOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import authApi from "../../../../api/authApi";
+import { AuthContext } from "../../../../context/AuthProvider";
 
-const SignupForm = () => {
+const { Option } = Select;
+
+const SignUpMentorForm = () => {
   const navigate = useNavigate();
+  const { user, setUser } = useContext(AuthContext);
   const [form] = Form.useForm();
+
+  const [selectedProfile, setSelectedProfile] = useState(null);
+
+  console.log("📌 user.id:", user.id, " | Kiểu dữ liệu:", typeof user.id);
+  if (!user) {
+    message.error("User chưa đăng nhập hoặc chưa được khởi tạo.");
+    return;
+  }
 
   const onFinish = async (values) => {
     try {
-      // 🟢 1. Gửi request đăng ký đến backend
-      const userData = {
-        email: values.email,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        username: values.username,
-        role: "Mentor",
-        password: values.password, // Tạm thời gửi password cho BE xử lý
+      // 🟢 Chuẩn bị mentorData
+      const mentorData = {
+        age: values.age,
+        bio: values.bio,
+        highestQualification: values.highestQualification,
+        profession: values.profession,
+        experience: values.experience,
+        mentorId: Number(user.id),
+        profilePic : selectedProfile
       };
   
-      const response = await authApi.registerMentor(userData);
-      
+      // // 🟢 Kiểm tra ảnh và thêm vào mentorData (để BE xử lý)
+      // if (values.profilePic && values.profilePic.file) {
+      //   mentorData.profilePic = values.profilePic.file.originFileObj;
+      // }
+  
+      // 🟢 Gửi request đăng ký Mentor
+      const response = await authApi.registerMentor(mentorData,user, setUser);
+  
       if (response.success) {
         message.success("Đăng ký thành công! Hãy đăng nhập.");
         setTimeout(() => navigate("/login"), 1000);
-        setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500)
+        setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500);
       } else {
         message.error(response.responseMessage || "Đăng ký thất bại. Kiểm tra thông tin!");
       }
@@ -36,10 +54,9 @@ const SignupForm = () => {
     }
   };
   
-
   return (
     <div className="signup-form-container">
-      <h1 className="signup-title">Create Your Account</h1>
+      <h1 className="signup-title">Đăng Ký Mentor</h1>
 
       <Form
         form={form}
@@ -51,102 +68,71 @@ const SignupForm = () => {
         <Row gutter={30}>
           <Col xs={24} sm={12}>
             <Form.Item
-              label="First Name"
-              name="firstName"
-              rules={[
-                { required: true, message: "Please input your first name!" },
-              ]}
+              label="Tuổi"
+              name="age"
+              rules={[{ required: true, message: "Hãy nhập tuổi!" }]}
             >
-              <Input placeholder="First Name" />
+              <InputNumber min={18} max={100} placeholder="Tuổi" style={{ width: "100%" }} />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item
-              label="Last Name"
-              name="lastName"
-              rules={[
-                { required: true, message: "Please input your last name!" },
-              ]}
+              label="Kinh nghiệm (năm)"
+              name="experience"
+              rules={[{ required: true, message: "Hãy nhập số năm kinh nghiệm!" }]}
             >
-              <Input placeholder="Last Name" />
+              <InputNumber min={0} max={50} placeholder="Số năm kinh nghiệm" style={{ width: "100%" }} />
             </Form.Item>
           </Col>
         </Row>
 
         <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: "Please input your username!" }]}
+          label="Bằng cấp cao nhất"
+          name="highestQualification"
+          rules={[{ required: true, message: "Hãy chọn bằng cấp!" }]}
         >
-          <Input placeholder="Username" />
+          <Select placeholder="Chọn bằng cấp">
+            <Option value="B Tech">B Tech</Option>
+            <Option value="B Pharm">B Pharm</Option>
+            <Option value="M Tech">M Tech</Option>
+            <Option value="PhD">PhD</Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            { required: true, message: "Please input your email!" },
-            { type: "email", message: "Please enter a valid email!" },
-          ]}
+          label="Nghề nghiệp"
+          name="profession"
+          rules={[{ required: true, message: "Hãy nhập nghề nghiệp!" }]}
         >
-          <Input placeholder="Email ID" />
+          <Input placeholder="Nghề nghiệp" />
         </Form.Item>
 
-        <Row gutter={30}>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                { required: true, message: "Please input your password!" },
-              ]}
-            >
-              <Input.Password placeholder="Enter Password" />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label="Confirm Password"
-              name="confirmPassword"
-              dependencies={["password"]}
-              rules={[
-                { required: true, message: "Please confirm your password!" },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("Passwords do not match!");
-                  },
-                }),
-              ]}
-            >
-              <Input.Password placeholder="Confirm Password" />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item
+          label="Tiểu sử"
+          name="bio"
+          rules={[{ required: true, message: "Hãy nhập tiểu sử!" }]}
+        >
+          <Input.TextArea rows={4} placeholder="Viết đôi lời giới thiệu về bản thân..." />
+        </Form.Item>
+
+        <Form.Item label="Ảnh đại diện">
+          <Upload 
+            beforeUpload={(file) => { setSelectedProfile(file); return false; }} 
+            maxCount={1}
+          >
+            <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
+          </Upload>
+        </Form.Item>
 
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="create-account-btn"
-          >
-            Create Account
+          <Button type="primary" htmlType="submit" className="create-account-btn">
+            Tạo tài khoản
             <ArrowRightOutlined />
           </Button>
         </Form.Item>
       </Form>
-
-      <div className="signup-divider">
-        <span className="divider-line"></span>
-        <span className="divider-text">Sign up with</span>
-        <span className="divider-line"></span>
-      </div>
-
-      <SocialLogin />
     </div>
   );
 };
 
-export default SignupForm;
+export default SignUpMentorForm;

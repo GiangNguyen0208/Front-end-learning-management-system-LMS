@@ -1,11 +1,16 @@
 import axiosClient from "./axiosClient";
-import { auth, db } from "../firebase/config";
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { auth, db, storage } from "../firebase/config";
+import { browserLocalPersistence, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, setPersistence, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
+// import firebase from "firebase/compat/app";
 
+// 🔍 Hàm kiểm tra user đã tồn tại chưa
 async function checkUserExists(email) {
   const methods = await fetchSignInMethodsForEmail(auth, email);
-  return methods.length > 0; // Nếu có phương thức đăng nhập, user đã tồn tại
+  return methods.length > 0;
 }
 
 const authApi = {
@@ -30,29 +35,87 @@ const authApi = {
     }
   },
   
-  registerMentor: async (data) => {
+  /// Đăng ký làm Mentor
+  registerMentor: async (mentorData, user, setUser) => {
     try {
-      // 🛠 Kiểm tra user đã tồn tại chưa
-      if (await checkUserExists(data.email)) {
-        // Update Role BE and Fire-base
+      const user = auth.currentUser;
+      if (!user) throw new Error("Bạn phải đăng nhập trước khi đăng ký Mentor.");
+  
+      let profilePicUrl = "";
+      let profilePicFile = null;
+  
+      // 🟢 Kiểm tra nếu `profilePic` là File thì upload lên Firebase Storage
+      if (mentorData.profilePic && mentorData.profilePic instanceof File) {
+        try {
+          const file = mentorData.profilePic;
+          profilePicFile = file;
+  
+          // 🟢 Tạo đường dẫn lưu ảnh: `/profile_pictures/{user.uid}/profile.jpg`
+          const storageRef = ref(storage, `profile_pictures/${user.uid}/profile.jpg`);
+  
+          // 🟢 Upload ảnh lên Firebase Storage
+          const snapshot = await uploadBytes(storageRef, file);
+          profilePicUrl = await getDownloadURL(snapshot.ref);
+  
+          console.log("✅ Ảnh đại diện đã được tải lên Firebase:", profilePicUrl);
+        } catch (error) {
+          console.error("❌ Lỗi khi upload ảnh:", error);
+          throw new Error("Không thể tải ảnh lên. Vui lòng thử lại.");
+        }
       }
-      // Generate Code...
+  
+      // 🟢 Cập nhật thông tin vào Firestore (giữ thông tin cũ)
+      const userRef = doc(db, "users", user.uid);
+      const userSnapshot = await getDoc(userRef);
+      const oldData = userSnapshot.exists() ? userSnapshot.data() : {};
+  
+      await setDoc(userRef, {
+        ...oldData,
+        role: "Mentor",
+        profilePic: profilePicUrl || oldData.profilePic || null,
+        age: mentorData.age,
+        bio: mentorData.bio,
+        highestQualification: mentorData.highestQualification,
+        profession: mentorData.profession,
+        experience: mentorData.experience,
+      }, { merge: true });
+  
+      // 🟢 Gửi dữ liệu lên Backend
+      const formData = new FormData();
+      if (profilePicFile) formData.append("profilePic", profilePicFile);
+      formData.append("profilePicUrl", profilePicUrl);
+      formData.append("age", mentorData.age);
+      formData.append("bio", mentorData.bio);
+      formData.append("highestQualification", mentorData.highestQualification);
+      formData.append("profession", mentorData.profession);
+      formData.append("experience", mentorData.experience);
+      formData.append("mentorId", mentorData.mentorId);
+  
+      try {
+        const response = await axiosClient.put("/user/mentor/detail/update", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        // ✅ Cập nhật localStorage và Context
+        const updatedUser = { ...user, role: "Mentor" };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser); // ✅ Cập nhật Context để giao diện re-render
+
+        return response.data;
+      } catch (error) {
+        console.error("❌ Lỗi khi gửi dữ liệu lên backend:", error);
+        throw new Error("Đăng ký mentor thất bại. Vui lòng thử lại.");
+      }
     } catch (error) {
-      if (error.response) {
-        console.error("❌ Lỗi từ backend:", error.response.data);
-        console.error("🔴 Status Code:", error.response.status);
-        console.error("🔴 Headers:", error.response.headers);
-      } else if (error.request) {
-        console.error("❌ Không nhận phản hồi từ server:", error.request);
-      } else {
-        console.error("❌ Lỗi không xác định:", error.message);
-      }
+      console.error("❌ Lỗi khi đăng ký Mentor:", error);
       throw error;
     }
-  }, 
+  },
+  
 
   register: async (data) => {
     try {
+      await setPersistence(auth, browserLocalPersistence); // Lưu đăng nhập lâu dài
       // 🛠 Kiểm tra user đã tồn tại chưa
       if (await checkUserExists(data.email)) {
         throw new Error("User already exists! Hãy đăng nhập.");
@@ -68,7 +131,6 @@ const authApi = {
         emailId: data.email,
         firebase_uid: firebaseUser.uid, // 🔥 Lưu Firebase UID vào Firestore
         role: data.role || "Student",
-        status: "Active",
         createdAt: new Date(),
       });
 
@@ -79,7 +141,7 @@ const authApi = {
         emailId: data.email, // 🔥 Đổi từ `emailId` -> `email` (để đồng nhất với backend)
         username: data.username,
         password: data.password, // 🔥 Gửi password để backend mã hóa
-        role: data.role,
+        role: data.role || "Student",
       });
 
       return response.data;
