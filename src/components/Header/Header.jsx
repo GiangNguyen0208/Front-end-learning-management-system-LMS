@@ -3,7 +3,6 @@ import { Layout, Row, Col, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { HeaderSearch } from "./HeaderSearch";
 import { UserHeaderAuth } from "./UserHeaderAuth";
-import { HeaderAuth } from "./HeaderAuth";
 import "./styles.css";
 
 const Header = () => {

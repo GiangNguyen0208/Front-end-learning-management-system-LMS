@@ -14,7 +14,6 @@ const SignUpMentorForm = () => {
 
   const [selectedProfile, setSelectedProfile] = useState(null);
 
-  console.log("📌 user.id:", user.id, " | Kiểu dữ liệu:", typeof user.id);
   if (!user) {
     message.error("User chưa đăng nhập hoặc chưa được khởi tạo.");
     return;
@@ -32,11 +31,6 @@ const SignUpMentorForm = () => {
         mentorId: Number(user.id),
         profilePic : selectedProfile
       };
-  
-      // // 🟢 Kiểm tra ảnh và thêm vào mentorData (để BE xử lý)
-      // if (values.profilePic && values.profilePic.file) {
-      //   mentorData.profilePic = values.profilePic.file.originFileObj;
-      // }
   
       // 🟢 Gửi request đăng ký Mentor
       const response = await authApi.registerMentor(mentorData,user, setUser);
