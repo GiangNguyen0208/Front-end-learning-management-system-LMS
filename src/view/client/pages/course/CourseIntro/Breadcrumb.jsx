@@ -3,17 +3,18 @@ import { Breadcrumb as AntBreadcrumb } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 
 const Breadcrumb = () => {
+  const breadcrumbItems = [
+    { title: "Home" },
+    { title: "Categories" },
+    { title: "Introduction to User Experience Design", className: "current" },
+  ];
+
   return (
     <AntBreadcrumb
       separator={<RightOutlined className="breadcrumb-separator" />}
       className="course-breadcrumb"
-    >
-      <AntBreadcrumb.Item>Home</AntBreadcrumb.Item>
-      <AntBreadcrumb.Item>Categories</AntBreadcrumb.Item>
-      <AntBreadcrumb.Item className="current">
-        Introduction to User Experience Design
-      </AntBreadcrumb.Item>
-    </AntBreadcrumb>
+      items={breadcrumbItems}
+    />
   );
 };
 

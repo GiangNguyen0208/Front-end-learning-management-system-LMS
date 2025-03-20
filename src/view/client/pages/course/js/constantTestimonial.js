@@ -32,6 +32,17 @@ export const testimonials = [
       quoteImage:
         "https://cdn.builder.io/api/v1/image/assets/TEMP/c108a377b552cd98100589b94b3fb1df741e015b87402d73897af685c8ead7a3",
     },
+    {
+      id: 4,
+      quote:
+        "Byway's tech courses are top-notch! As someone who's always looking to stay ahead in the rapidly evolving tech world, I appreciate the up-to-date content and engaging multimedia.",
+      authorName: "Jane Doe",
+      authorRole: "Designer",
+      authorImage:
+        "https://cdn.builder.io/api/v1/image/assets/TEMP/ce6ce80c7c18bf687bd420c6b22d43c44dc415d3552d1bb5de8e9a3c665ad636",
+      quoteImage:
+        "https://cdn.builder.io/api/v1/image/assets/TEMP/c108a377b552cd98100589b94b3fb1df741e015b87402d73897af685c8ead7a3",
+    },
   ];
   
   export const SCROLL_AMOUNT = 432; // Width of one card

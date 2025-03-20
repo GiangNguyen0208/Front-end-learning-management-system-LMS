@@ -7,8 +7,8 @@ import AddToCart from "./AddToCart/AddToCart";
 import CourseDetails from "./CourseDetail/CourseDetails";
 import TestimonialsSection from "./TestimonialSession/index";
 import "./css/styles.css";
-import CourseSection from "../../components/Courses/CourseSection";
 import CheckoutHeader from "../checkout/CheckoutHeader";
+import SimilarCourses from "./SimilarCourses/SimilarCourses";
 
 const CourseHeader = () => {
   return (
@@ -26,8 +26,8 @@ const CourseHeader = () => {
         </Col>
       </Row>
       <Row justify="center" gutter={[16, 16]}>
-        <TestimonialsSection />
-        <CourseSection />
+        <TestimonialsSection title="What Our Customer Say About Us"/>
+        <SimilarCourses />
       </Row>
     </Layout.Content>
   );

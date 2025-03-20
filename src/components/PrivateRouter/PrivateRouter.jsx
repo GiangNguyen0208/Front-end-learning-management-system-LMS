@@ -1,16 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../context/AuthProvider";
 
 export default function PrivateRouter() {
-    const isLogin = true; // Replace this with your actual login check logic
-    const navigate = useNavigate();
+    const { login } = useContext(AuthContext); // Lấy user từ context
 
-    useEffect(() => {
-        if (!isLogin) {
-            navigate("/login");
-        }
-    }, [isLogin, navigate]);
-
-    return isLogin ? <Outlet /> : (alert("Người dùng cần đăng nhập để xem"));
+    return login ? <Outlet /> : <Navigate to="/login" replace />;
 }

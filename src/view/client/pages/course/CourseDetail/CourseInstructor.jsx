@@ -5,7 +5,6 @@ import {
   InstructorSection,
   InstructorName,
   InstructorTitle,
-  InstructorStats,
   StatItem,
   InstructorBio,
   StatsWrapper,

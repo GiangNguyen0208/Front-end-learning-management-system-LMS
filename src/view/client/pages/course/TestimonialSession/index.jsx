@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
 import { Row, Col, Typography } from "antd";
-import TestimonialCard from "./TestimonialCard";
 import NavigationButtons from "./NavigationButtons";
 import { testimonials } from "../js/constantTestimonial";
 import { scrollContainer } from "../../../../../utils/helper/scrollContainerHelper";
 import "./../css/testimonial.css";
+import TestimonialCard from "./TestimonialCard";
 
 const { Title } = Typography;
 
-const TestimonialsSection = () => {
+const TestimonialsSection = ({title}) => {
   const containerRef = useRef(null);
 
   const handleNavigation = (direction) => {
@@ -27,7 +27,7 @@ const TestimonialsSection = () => {
             level={2}
             style={{ margin: 0, fontSize: 24, lineHeight: "34px" }}
           >
-            What Our Customer Say About Us
+            {title}
           </Title>
         </Col>
         <Col>
@@ -39,7 +39,7 @@ const TestimonialsSection = () => {
         <Row gutter={16} wrap={false}>
           {testimonials.map((testimonial) => (
             <Col key={testimonial.id}>
-              <TestimonialCard {...testimonial} />
+              <TestimonialCard title={title} {...testimonial} />
             </Col>
           ))}
         </Row>

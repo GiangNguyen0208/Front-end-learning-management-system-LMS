@@ -1,14 +1,41 @@
-import React from "react";
-import { Form, Input, Button, Row, Col } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button, Row, Col, message } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import SocialLogin from "./SocialLogin";
+import { useNavigate } from "react-router-dom";
+import authApi from "../../../../api/authApi";
 
 const SignupForm = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const onFinish = async (values) => {
+    try {
+      // 🟢 1. Gửi request đăng ký đến backend
+      const userData = {
+        email: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        username: values.username,
+        role: "Student",
+        password: values.password, // Tạm thời gửi password cho BE xử lý
+      };
+  
+      const response = await authApi.register(userData);
+      
+      if (response.success) {
+        message.success("Đăng ký thành công! Hãy đăng nhập.");
+        setTimeout(() => navigate("/login"), 1000);
+        setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500)
+      } else {
+        message.error(response.responseMessage || "Đăng ký thất bại. Kiểm tra thông tin!");
+      }
+    } catch (error) {
+      message.error(`Lỗi đăng ký: ${error.response?.data?.message || error.message}`);
+      console.error("❌ Lỗi đăng ký:", error);
+    }
   };
+  
 
   return (
     <div className="signup-form-container">

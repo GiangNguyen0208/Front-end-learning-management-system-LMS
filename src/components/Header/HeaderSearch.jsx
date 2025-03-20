@@ -8,7 +8,7 @@ export const HeaderSearch = () => {
       prefix={<SearchOutlined className="search-icon" />}
       placeholder="Tìm kiếm khóa học"
       className="header-search"
-      bordered={true}
+      variant={true}
     />
   );
 };

@@ -23,6 +23,19 @@ const ShoppingCart = () => {
       image:
         "https://cdn.builder.io/api/v1/image/assets/TEMP/533c73d6c597c1f523f70edd6b453b45a83dc5f75a4b1a9d7d962829dda91c96",
     },
+    {
+        id: 1,
+        title: "Introduction to User Experience Design",
+        instructor: "John Doe",
+        rating: 4.6,
+        totalRatings: 250,
+        duration: "22 Total Hours",
+        lectures: "155 Lectures",
+        level: "All levels",
+        price: "$45.00",
+        image:
+          "https://cdn.builder.io/api/v1/image/assets/TEMP/533c73d6c597c1f523f70edd6b453b45a83dc5f75a4b1a9d7d962829dda91c96",
+      },
   ];
 
   const orderSummary = {

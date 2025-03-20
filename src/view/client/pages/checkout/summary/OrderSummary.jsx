@@ -3,10 +3,12 @@ import { Card, Typography, Button } from "antd";
 import CourseItem from "./CourseItem";
 import CouponSection from "./CouponSection";
 import PriceBreakdown from "./PriceBreakdown";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const OrderSummary = () => {
+  const navigate = useNavigate();
   const courseData = {
     image:
       "https://cdn.builder.io/api/v1/image/assets/TEMP/44107296341a91f9d2a9595375b06ac0912d6ef5ce64b48a9d22abacf56a5dde",
@@ -23,6 +25,10 @@ const OrderSummary = () => {
     total: "290.00",
   };
 
+  const handleCheckout = () => {
+    navigate("/order-complete");
+  }
+
   return (
     <Card className="order-summary-card">
       <Title level={4}>Order Details</Title>
@@ -34,7 +40,7 @@ const OrderSummary = () => {
       <CouponSection />
       <PriceBreakdown prices={prices} />
 
-      <Button type="primary" block size="large">
+      <Button type="primary" block size="large" onClick={handleCheckout}>
         Proceed to Checkout
       </Button>
     </Card>

@@ -1,11 +1,18 @@
+import { useEffect } from 'react';
 import './App.css'
-// import {Route, Routes, BrowserRouter} from 'react-router-dom';
-import AllRouter from './components/AllRouter/AllRouter';
+import AuthProvider from './context/AuthProvider';
+import AppRoutes from './routes/index';
+import { initializeAdmin } from './api/authApi';
 
 function App() {
+  useEffect(() => {
+    initializeAdmin(); // 🔥 Kiểm tra & tạo admin khi ứng dụng chạy
+  }, []);
   return (
     <>
-      <AllRouter/>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </>
   )
 }

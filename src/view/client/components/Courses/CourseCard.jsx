@@ -5,7 +5,7 @@ import { Card, Typography, Rate, Space } from "antd";
 
 const { Title, Text } = Typography;
 
-const CourseCard = ({ image, title, instructor, rating, ratingCount, details, price }) => {
+const CourseCard = ({ imageUrl, title, instructor, rating, ratingCount, details, price }) => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
@@ -16,7 +16,7 @@ const CourseCard = ({ image, title, instructor, rating, ratingCount, details, pr
     <Card
       hoverable
       onClick={handleNavigate}
-      cover={<img alt={title} src={image} style={{ borderRadius: "8px 8px 0 0" }} />}
+      cover={<img alt={title} src={imageUrl} style={{ borderRadius: "8px 8px 0 0" }} />}
       className="course-card"
     >
       <Space direction="vertical" size={8} style={{ width: "100%" }}>
@@ -37,7 +37,7 @@ const CourseCard = ({ image, title, instructor, rating, ratingCount, details, pr
 
 // Định nghĩa kiểu dữ liệu của props bằng PropTypes
 CourseCard.propTypes = {
-  image: PropTypes.string.isRequired,
+  imageUrl: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   instructor: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,

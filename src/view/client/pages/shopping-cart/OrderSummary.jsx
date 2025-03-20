@@ -1,10 +1,16 @@
 import React from "react";
 import { Typography, Card, Button, Divider } from "antd";
 import styles from "./ShoppingCart.module.css";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const OrderSummary = ({ orderSummary }) => {
+    const navigate = useNavigate();
+    const handleCheckout = () => {
+        navigate("/check-out")
+    }
+
   return (
     <Card className={styles.orderSummary}>
       <Title level={3}>Order Details</Title>
@@ -34,6 +40,7 @@ const OrderSummary = ({ orderSummary }) => {
         block
         size="large"
         className={styles.checkoutButton}
+        onClick={handleCheckout}
       >
         Proceed to Checkout
       </Button>

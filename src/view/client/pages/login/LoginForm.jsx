@@ -1,69 +1,59 @@
 import React from "react";
-import { Form, Input, Button, Divider } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import SocialLogin from "./SocialLogin";
+import { useNavigate } from "react-router-dom";
+import authApi from "../../../../api/authApi";
+import { useContext } from "react";
+import { AuthContext } from "../../../../context/AuthProvider";
 
 const LoginForm = () => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext); // ✅ Lấy hàm login từ Context
+
+  const onFinish = async (values) => {
+    try {
+      const response = await authApi.login(values);
+
+      if (response.success && response.jwtToken) {
+        // ✅ Gọi login() để cập nhật context
+        login(response.jwtToken, response.user);
+        
+        message.success("Login successful!");
+
+        setTimeout(() => {
+          navigate("/home");
+        }, 1000);
+      } else {
+        message.error(response.responseMessage || "Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      message.error("Error connecting to server. Please try again.");
+      console.error(error);
+    }
   };
 
   return (
-    <div className="login-form-container">
-      <Form
-        name="login"
-        layout="vertical"
-        onFinish={onFinish}
-        className="login-form"
+    <Form name="login" layout="vertical" onFinish={onFinish}>
+      <Form.Item
+        label="Email"
+        name="email"
+        rules={[{ required: true, type: "email", message: "Enter your email!" }]}
       >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            {
-              required: true,
-              message: "Please input your email!",
-            },
-            {
-              type: "email",
-              message: "Please enter a valid email!",
-            },
-          ]}
-        >
-          <Input placeholder="Username or Email ID" size="large" />
-        </Form.Item>
+        <Input placeholder="Enter Email" />
+      </Form.Item>
 
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your password!",
-            },
-          ]}
-        >
-          <Input.Password placeholder="Enter Password" size="large" />
-        </Form.Item>
+      <Form.Item
+        label="Password"
+        name="password"
+        rules={[{ required: true, message: "Enter your password!" }]}
+      >
+        <Input.Password placeholder="Enter Password" />
+      </Form.Item>
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-button"
-            icon={<ArrowRightOutlined />}
-          >
-            Sign In
-          </Button>
-        </Form.Item>
-
-        <div className="divider-container">
-          <Divider className="login-divider">Sign in with</Divider>
-        </div>
-
-        <SocialLogin />
-      </Form>
-    </div>
+      <Button type="primary" htmlType="submit" icon={<ArrowRightOutlined />} block>
+        Sign In
+      </Button>
+    </Form>
   );
 };
 

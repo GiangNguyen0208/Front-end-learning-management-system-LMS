@@ -16,7 +16,7 @@ const AddToCart = ({
   const navigate = useNavigate(); // Hook điều hướng
 
   const handleAddToCart = () => {
-    navigate("/check-out"); // Điều hướng đến trang checkout
+    navigate("/shopping-cart"); // Điều hướng đến trang checkout
   };
 
   return (

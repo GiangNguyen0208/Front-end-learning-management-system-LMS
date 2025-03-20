@@ -1,62 +1,91 @@
+import { Routes, Route } from "react-router-dom";
 import PrivateRouter from "../components/PrivateRouter/PrivateRouter";
+import PublicRoute from "../components/PublicRouter/PublicRoute";
+
+// Layouts
 import HomeLayout from "../view/client/layout/default";
-import Categories from "../view/client/pages/categories/CourseList";
-import Checkout from "../view/client/pages/checkout/Checkout";
-import CourseHeader from "../view/client/pages/course";
-import Error404 from "../view/client/pages/error/Error404";
+import MentorLayout from "../view/mentor/layout/MentorLayout";
+import AdminLayout from "../view/admin/layout/AdminLayout";
+
+// Client Pages
 import HomeScreen from "../view/client/pages/home";
-import InfoUser from "../view/client/pages/info/InfoUser";
 import Login from "../view/client/pages/login/Login";
 import Signup from "../view/client/pages/register/SignUp";
+import ResendEmail from "../view/client/pages/register/ResendEmail";
+import Success from "../components/Success";
+import Infomation from "../view/client/pages/profile";
+import InstructorInfo from "../view/client/pages/instructor-info";
 import ShoppingCart from "../view/client/pages/shopping-cart/ShoppingCart";
+import Checkout from "../view/client/pages/checkout/Checkout";
+import OrderComplete from "../view/client/pages/order-complete/OrderComplete";
+import Categories from "../view/client/pages/categories/CourseList";
+import CourseViewer from "../view/client/pages/course-viewer/CourseViewer";
+import CourseHeader from "../view/client/pages/course";
 
+// Mentor Pages
+import Dashboard from "../view/mentor/pages/dashboard/Dashboard";
+import Communication from "../view/mentor/pages/communication/Communication";
+import CoursesSection from "../view/mentor/pages/courses/CoursesSection";
+import AddCourseForm from "../components/AddCourse/AddCourseForm";
+import AddCourseSectionForm from "../components/AddCourse/AddCourseSectionForm";
 
-export const routes = [
-    {
-        path: "/",
-        element: <HomeLayout />,
-        children: [
-            {
-                path: "/",
-                element: <HomeScreen/>
-            },
-            {
-                path: "login",
-                element: <Login/>
-            },
-            {
-                path: "sign-up",
-                element: <Signup/>
-            },
-            {
-                path: "categories",
-                element: <Categories/>
-            },
-            {
-                path: "course",
-                element: <CourseHeader/>
-            },
-            {
-                path: "shopping-cart",
-                element: <ShoppingCart/>
-            },
-            {
-                path: "check-out",
-                element: <Checkout/>
-            },
-            {
-                element: <PrivateRouter />,
-                children: [
-                    {
-                        path: "info-user",
-                        element: <InfoUser />
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        path: "*",
-        element: <Error404 />
-    }
-];
+// Admin Pages
+import AdminDashboard from "../view/admin/pages/dashboard/Dashboard";
+import CategoryList from "../view/admin/pages/categories/CategoryList";
+import CategoryWarehouse from "../view/admin/pages/categories/CategoryWarehouse";
+
+// Error Pages
+import Error404 from "../view/client/pages/error/Error404";
+import VerifyEmail from "../view/client/pages/register/VerifyEmail ";
+import ViewMentorCourses from "../view/mentor/pages/courses/ViewListCourse/ViewMentorCourses";
+import SignUpMentor from "../view/client/pages/register/SignUpMentor";
+
+const AppRoutes = () => (
+  <Routes>
+    {/* Routes cho Client */}
+    <Route path="/" element={<HomeLayout />}>
+      <Route element={<PublicRoute />}>
+        <Route path="login" element={<Login />} />
+        <Route path="sign-up" element={<Signup />} />
+        <Route path="verify-email" element={<VerifyEmail />} />
+        <Route path="resend-confirmation" element={<ResendEmail />} />
+        <Route path="success" element={<Success />} />
+      </Route>
+
+      <Route element={<PrivateRouter />}>
+        <Route path="info-user" element={<Infomation />} />
+        <Route path="instructor-info" element={<InstructorInfo />} />
+        <Route path="shopping-cart" element={<ShoppingCart />} />
+        <Route path="check-out" element={<Checkout />} />
+        <Route path="order-complete" element={<OrderComplete />} />
+        <Route path="sign-up-mentor" element={<SignUpMentor />}/>
+      </Route>
+
+      <Route path="home" element={<HomeScreen />} />
+      <Route path="categories" element={<Categories />} />
+      <Route path="course" element={<CourseHeader />} />
+      <Route path="course-viewer" element={<CourseViewer />} />
+    </Route>
+
+    {/* Routes cho Mentor */}
+    <Route path="mentor/*" element={<MentorLayout />}>
+      <Route path="dashboard" element={<Dashboard />} />
+      <Route path="communication" element={<Communication />} />
+      <Route path="courses" element={<ViewMentorCourses />} />
+      <Route path="courses/add" element={<AddCourseForm />} />
+      <Route path="courses/section/add" element={<AddCourseSectionForm />} />
+    </Route>
+
+    {/* Routes cho Admin */}
+    <Route path="admin/*" element={<AdminLayout />}>
+      <Route path="dashboard" element={<AdminDashboard />} />
+      <Route path="categories" element={<CategoryList />} />
+      <Route path="warehouse" element={<CategoryWarehouse />} />
+    </Route>
+
+    {/* Route 404 */}
+    <Route path="*" element={<Error404 />} />
+  </Routes>
+);
+
+export default AppRoutes;

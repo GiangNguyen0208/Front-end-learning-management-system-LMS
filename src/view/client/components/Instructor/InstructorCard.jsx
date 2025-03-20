@@ -9,7 +9,7 @@ const InstructorCard = ({ avatar, name, role, rating, students }) => {
   const navigate = useNavigate(); 
 
   const handleNavigate = () => {
-    navigate("instructor");
+    navigate("/instructor-info");
   };
 
   return (
