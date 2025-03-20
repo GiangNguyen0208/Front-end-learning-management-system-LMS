@@ -22,7 +22,7 @@ export default function Sidebar() {
         { key: "dashboard", label: "Dashboard", icon: <DashboardOutlined />, path: "/admin/dashboard" },
         { key: "users", label: "Users", icon: <UserOutlined />, path: "/admin/users" },
         { key: "courses", label: "Courses", icon: <BookOutlined />, path: "/admin/courses" },
-        { key: "categories", label: "Category", icon: <UnorderedListOutlined />, path: "/admin/courses" },
+        { key: "categories", label: "Category", icon: <UnorderedListOutlined />, path: "/admin/categories" },
         { key: "communication", label: "Communication", icon: <WechatOutlined />, path: "/admin/communication" },
         { key: "settings", label: "Settings", icon: <SettingOutlined />, path: "/admin/settings" },
     ];

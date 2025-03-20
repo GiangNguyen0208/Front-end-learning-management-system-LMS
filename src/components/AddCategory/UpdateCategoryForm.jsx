@@ -1,40 +1,48 @@
-import { useState } from "react";
-import { Form, Input, Button, Card, Typography, message } from "antd";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Modal, Form, Input, Button, message, Select } from "antd";
+import categoryApi from "../../api/categoryApi"; // Import API
 
-const { Title } = Typography;
+const { Option } = Select;
 
-const UpdateCategoryForm = () => {
-  const location = useLocation();
-  const category = location.state || { id: 1, name: "Sample Category", description: "Sample Description" };
-  
-  const [name, setName] = useState(category.name);
-  const [description, setDescription] = useState(category.description);
-  const navigate = useNavigate();
+const UpdateCategoryForm = ({ visible, onClose, category, handleUpdate }) => {
+  const [form] = Form.useForm(); // Sử dụng Form của Ant Design
 
-  const handleUpdate = () => {
-    message.success("Category updated successfully (sample data)");
-    setTimeout(() => {
-      navigate("/admin/course/category/all");
-    }, 2000);
-  };
+  useEffect(() => {
+    if (category) {
+      form.setFieldsValue({
+        name: category.name,
+        description: category.description,
+        status: category.status || "ACTIVE",
+      });
+    }
+  }, [category, form]);
+
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
-      <Card title={<Title level={4}>Update Course Category</Title>} style={{ width: 400 }}>
-        <Form layout="vertical" onFinish={handleUpdate}>
-          <Form.Item label="Category Title" name="title" rules={[{ required: true, message: "Please enter the category title" }]}>  
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </Form.Item>
-          <Form.Item label="Category Description" name="description">  
-            <Input.TextArea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>Update Category</Button>
-          </Form.Item>
-        </Form>
-      </Card>
-    </div>
+    <Modal title="Update Course Category" open={visible} onCancel={onClose} footer={null}>
+      <Form form={form} layout="vertical" onFinish={handleUpdate}>
+        <Form.Item label="Category Title" name="name" rules={[{ required: true, message: "Please enter category title" }]}>
+          <Input />
+        </Form.Item>
+
+        <Form.Item label="Category Description" name="description" rules={[{ required: true, message: "Please enter description" }]}>
+          <Input.TextArea rows={3} />
+        </Form.Item>
+
+        <Form.Item label="Category Status" name="status">
+          <Select>
+            <Option value="Active">ACTIVE</Option>
+            <Option value="Deactivated">DEACTIVATED</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block>
+            Update Category
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 };
 

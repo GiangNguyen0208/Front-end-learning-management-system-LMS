@@ -26,6 +26,8 @@ import ResendEmail from "../view/client/pages/register/ResendEmail";
 import Success from "../components/Success";
 import PublicRoute from "../components/PublicRouter/PublicRoute";
 import SignUpMentor from "../view/client/pages/register/SignUpMentor";
+import CategoryList from "../view/admin/pages/categories/CategoryList";
+import CategoryWarehouse from "../view/admin/pages/categories/CategoryWarehouse";
 
 const AppRoutes = () => (
   <Routes>
@@ -69,6 +71,8 @@ const AppRoutes = () => (
     {/* Routes cho Admin */}
     <Route path="admin" element={<AdminLayout />}>
       <Route path="dashboard" element={<AdminDashboard />} />
+      <Route path="categories" element={<CategoryList />} />
+      <Route path="warehouse" element={<CategoryWarehouse/>} />
       <Route path="settings" element={<div>Settings</div>} />
     </Route>
 

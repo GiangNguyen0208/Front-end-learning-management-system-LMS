@@ -7,7 +7,7 @@ const { Option } = Select;
 const AddCategoryForm = ({ visible, onClose }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("ACTIVE"); // State lưu trạng thái
+  const [status, setStatus] = useState("DEACTIVATED"); // State lưu trạng thái
   const [loading, setLoading] = useState(false); // Trạng thái loading khi gọi API
 
   const saveCategory = async () => {
@@ -28,7 +28,7 @@ const AddCategoryForm = ({ visible, onClose }) => {
         setTimeout(() => {
           setName("");
           setDescription("");
-          setStatus("ACTIVE"); // Reset trạng thái về ACTIVE
+          setStatus(status); // Reset trạng thái về ACTIVE
           onClose();
         }, 500); // Chờ 500ms trước khi đóng modal
       } else {

@@ -12,7 +12,7 @@ const { Title } = Typography;
 const Dashboard = () => {
   return (
     <div className="dashboard-container">
-      <DashboardHeader />
+      <DashboardHeader title="Dashboard"/>
 
       {/* Stats Cards */}
       <Row gutter={[16, 16]}>
