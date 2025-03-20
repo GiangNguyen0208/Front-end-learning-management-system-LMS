@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import PrivateRouter from "../components/PrivateRouter/PrivateRouter";
 import ChatRoom from "../view/mentor/pages/chat/index";
+import AdminLayout from "../view/admin/layout/AdminLayout";
+import AdminDashboard from "../view/admin/pages/dashboard/Dashboard"
 import MentorLayout from "../view/mentor/layout/mentorLayout";
 import CommissionDashboard from "../view/mentor/pages/courses/Commission/CommissionDashboard";
 import Communication from "../view/mentor/pages/communication/Communication";
@@ -61,6 +63,12 @@ const AppRoutes = () => (
       <Route path="courses" element={<CoursesSection />}>
         <Route path="commission/:id" element={<CommissionDashboard />} />
       </Route>
+      <Route path="settings" element={<div>Settings</div>} />
+    </Route>
+
+    {/* Routes cho Admin */}
+    <Route path="admin" element={<AdminLayout />}>
+      <Route path="dashboard" element={<AdminDashboard />} />
       <Route path="settings" element={<div>Settings</div>} />
     </Route>
 

@@ -5,6 +5,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthProvider";
+import { ADMIN_INFO } from "./constant";
 // import firebase from "firebase/compat/app";
 
 // 🔍 Hàm kiểm tra user đã tồn tại chưa
@@ -185,4 +186,38 @@ const authApi = {
   },
 };
 
+
+export async function initializeAdmin() {
+  try {
+    console.log("🔍 Kiểm tra admin:", ADMIN_INFO.emailId);
+
+    const adminExists = await checkUserExists(ADMIN_INFO.emailId);
+    if (adminExists) {
+      console.log("✅ Admin đã tồn tại!");
+      return;
+    }
+
+    console.log("🚀 Tạo tài khoản admin...");
+
+    // 🟢 Đăng ký Admin trên Firebase
+    const userCredential = await createUserWithEmailAndPassword(auth, ADMIN_INFO.emailId, ADMIN_INFO.password);
+    const firebaseUser = userCredential.user;
+
+    // 🟢 Lưu admin vào Firestore
+    const adminRef = doc(db, "users", firebaseUser.uid);
+    await setDoc(adminRef, {
+      username: ADMIN_INFO.username,
+      firstName: ADMIN_INFO.firstName,
+      lastName: ADMIN_INFO.lastName,
+      emailId: ADMIN_INFO.emailId,
+      firebase_uid: firebaseUser.uid,
+      role: "Admin",
+      createdAt: new Date(),
+    });
+
+    console.log("✅ Admin đã được tạo thành công!");
+  } catch (error) {
+    console.error("❌ Lỗi khi khởi tạo admin:", error);
+  }
+}
 export default authApi;
