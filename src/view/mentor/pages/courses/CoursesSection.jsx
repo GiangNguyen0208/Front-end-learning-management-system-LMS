@@ -3,10 +3,12 @@ import { Row, Col, Button, Typography, Space } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import CourseCard from "./CourseCard";
 import "./css/CoursesSection.css";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const CoursesSection = () => {
+  const navigate = useNavigate();
   // Sample course data - in a real application, this would come from props or API
   const courses = [
     {
@@ -62,9 +64,19 @@ const CoursesSection = () => {
           Courses
         </Title>
         <div className="courses-actions">
-          <Button type="primary" className="add-course-btn">
-            Add Course
-          </Button>
+          <Link
+            to="/mentor/courses/add"
+            className="nav-link active"
+            aria-current="page"
+          >
+            <Button 
+              type="primary" 
+              className="add-course-btn"
+            >
+              Add Course
+            </Button>
+          </Link>
+          
           <EllipsisOutlined className="dots-icon" />
         </div>
       </div>
