@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Table, Card, Button, Image, Popconfirm, message, Spin, Space } from "antd";
 import courseApi from "../../../../../api/courseApi";
 import { URL } from "../../../../../api/constant";
-import { ArrowLeftOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 const ViewMentorCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -41,8 +41,10 @@ const ViewMentorCourses = () => {
     }
   };
 
+  
+
   const addSection = (course) => {
-    navigate("/mentor/courses/section/add", { state: course });
+    navigate(`/mentor/courses/section/${course.id}`);
   };
 
   const addCourse = () => {
@@ -52,6 +54,8 @@ const ViewMentorCourses = () => {
   const formatDateFromEpoch = (epochTime) => {
     return new Date(Number(epochTime)).toLocaleString();
   };
+
+  
 
   const columns = [
     {

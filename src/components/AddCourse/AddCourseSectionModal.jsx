@@ -1,31 +1,49 @@
 import { Modal, Form, Input, Button } from "antd";
+import { useEffect } from "react";
 import courseApi from "../../api/courseApi";
 
-const AddCourseSectionModal = ({ visible, onClose, onSuccess }) => {
+const AddCourseSectionModal = ({ visible, onClose, onSuccess, course }) => {
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (visible) {
+      form.resetFields(); // Reset form khi mở modal
+    }
+  }, [visible, form]);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      await courseApi.addCourseSection(values);
+      const payload = { 
+        courseId: course?.id, 
+        srNo: String(values.srNo), // 🔥 Chuyển đổi srNo thành string
+        name: values.name, 
+        description: values.description || "" 
+      };
+
+      const response = await courseApi.addCourseSection(payload);
+
+      if (response?.data && typeof onSuccess === "function") {
+        onSuccess(response.data); // ✅ Gửi dữ liệu để cập nhật danh sách sections
+      }
+
       form.resetFields();
-      onSuccess(); // Gọi lại danh sách khóa học
       onClose();
     } catch (error) {
-      console.error("Lỗi khi thêm chương:", error);
+      console.error("❌ Lỗi khi thêm chương:", error);
     }
   };
 
   return (
-    <Modal title="Thêm Chương Mới" visible={visible} onCancel={onClose} footer={null}>
+    <Modal title="Thêm Chương Mới" open={visible} onCancel={onClose} footer={null}>
       <Form form={form} layout="vertical">
-        <Form.Item label="Số thứ tự" name="srNo" rules={[{ required: true, message: "Nhập số thứ tự" }]}>
+        <Form.Item name="srNo" label="Số thứ tự" rules={[{ required: true, message: "Nhập số thứ tự!" }]}>
           <Input />
         </Form.Item>
-        <Form.Item label="Tên chương" name="name" rules={[{ required: true, message: "Nhập tên chương" }]}>
+        <Form.Item name="name" label="Tên chương" rules={[{ required: true, message: "Nhập tên chương!" }]}>
           <Input />
         </Form.Item>
-        <Form.Item label="Mô tả" name="description">
+        <Form.Item name="description" label="Mô tả">
           <Input.TextArea rows={3} />
         </Form.Item>
         <Button type="primary" onClick={handleSubmit} block>

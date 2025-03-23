@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Form, Input, Select, Button, Upload, Card, message, Spin } from "antd";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import categoryApi from "../../api/categoryApi";
-import axios from "axios";
 import courseApi from "../../api/courseApi";
 
 const { Option } = Select;
@@ -52,22 +51,41 @@ const AddCourseForm = () => {
     setCourse((prev) => ({ ...prev, [name]: value }));
   };
 
+  if (!mentor.id) {
+    message.error("Lỗi: Không tìm thấy thông tin mentor.");
+    return;
+  }
+
+  // if (!course.categoryId || course.categoryId === "0") {
+  //   message.error("Vui lòng chọn danh mục khóa học.");
+  //   return;
+  // }
+
+
   const saveCourse = async () => {
-    if (!course.name || !course.categoryId) {
+    if (!course.name || !course.categoryId || !course.mentorId || !course.type) {
       message.error("Vui lòng nhập đầy đủ thông tin.");
       return;
     }
-
-    setSubmitting(true);
+  
+    if (!selectedThumbnail || !selectedNotesFile) {
+      message.error("Vui lòng tải lên hình thu nhỏ và tài liệu khóa học.");
+      return;
+    }
+  
     const formData = new FormData();
     Object.keys(course).forEach((key) => {
       formData.append(key, course[key]);
     });
     formData.append("thumbnail", selectedThumbnail);
     formData.append("notesFileName", selectedNotesFile);
-
+  
+    console.log("🚀 Dữ liệu gửi lên BE:", Object.fromEntries(formData.entries())); // Kiểm tra dữ liệu trước khi gửi
+  
     try {
       const response = await courseApi.addCourse(formData);
+      console.log("📡 Phản hồi từ BE:", response);
+  
       if (response.data.success) {
         message.success("Thêm khóa học thành công!");
         setTimeout(() => {
@@ -77,9 +95,8 @@ const AddCourseForm = () => {
         message.error(response.data.responseMessage);
       }
     } catch (error) {
+      console.error("🔥 Lỗi API:", error);
       message.error("Lỗi máy chủ, vui lòng thử lại sau.");
-    } finally {
-      setSubmitting(false);
     }
   };
 

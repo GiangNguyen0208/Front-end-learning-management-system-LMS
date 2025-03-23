@@ -73,7 +73,7 @@ const AppRoutes = () => (
       <Route path="communication" element={<Communication />} />
       <Route path="courses" element={<ViewMentorCourses />} />
       <Route path="courses/add" element={<AddCourseForm />} />
-      <Route path="courses/section/add" element={<AddCourseSectionForm />} />
+      <Route path="courses/section/:courseId" element={<AddCourseSectionForm />} />
     </Route>
 
     {/* Routes cho Admin */}

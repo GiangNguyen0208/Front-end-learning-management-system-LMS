@@ -5,6 +5,7 @@ import CourseSectionTopicList from "./CourseSectionTopicList";
 const { Panel } = Collapse;
 
 const CourseSectionItem = ({ section, showAddTopicModal }) => {
+
   return (
     <Panel
       header={
