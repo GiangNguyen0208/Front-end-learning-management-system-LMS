@@ -80,7 +80,7 @@ const AddCourseSectionForm = () => {
       </Button>
       <div className="row">
         <div className="col-md-7">
-          <CourseDetails courseId={courseId} />
+          <CourseDetails courseId={courseData?.course?.id} />
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowSectionModal(true)}>
             Add Chapter
           </Button>

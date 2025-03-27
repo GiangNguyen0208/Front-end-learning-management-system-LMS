@@ -1,19 +1,42 @@
 import { useState } from "react";
-import { Modal, Form, Input, Upload, Button } from "antd";
+import { Modal, Form, Input, Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import courseApi from "../../api/courseApi";
 
-const AddCourseSectionTopicModal = ({ visible, onClose, onSubmit }) => {
+const AddCourseSectionTopicModal = ({ visible, onClose, onSubmit, sectionId }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]); // ✅ Quản lý fileList bằng state
 
   const handleSubmit = () => {
-    form.validateFields().then((values) => {
-      onSubmit({ ...values, video: fileList }); // Gửi cả dữ liệu form và fileList
-      form.resetFields();
-      setFileList([]); // ✅ Reset fileList sau khi submit
-      onClose();
+    form.validateFields().then(async (values) => {
+      if (!fileList.length) {
+        message.error("Vui lòng tải lên video!");
+        return;
+      }
+      console.log(values);
+      
+      const formData = new FormData();
+      formData.append("srNo", values.srNo);
+      formData.append("name", values.name);
+      formData.append("description", values.description);
+      formData.append("sectionId", sectionId); // Đảm bảo có sectionId
+      formData.append("video", fileList[0].originFileObj); // Lấy file thực tế
+  
+      try {
+        const response = await courseApi.addCourseSectionTopic(formData);
+        message.success("Thêm chủ đề thành công!");
+        console.log("✅ API Response:", response.data);
+  
+        form.resetFields();
+        setFileList([]); // Reset sau khi thành công
+        onClose();
+      } catch (error) {
+        console.error("❌ Lỗi API:", error.response?.data || error);
+        message.error("Thêm chủ đề thất bại!");
+      }
     });
   };
+  
 
   const handleChange = ({ fileList }) => {
     setFileList(fileList); // ✅ Cập nhật danh sách file khi chọn file mới

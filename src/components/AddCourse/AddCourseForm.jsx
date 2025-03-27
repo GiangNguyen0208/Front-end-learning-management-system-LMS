@@ -89,7 +89,7 @@ const AddCourseForm = () => {
       if (response.data.success) {
         message.success("Thêm khóa học thành công!");
         setTimeout(() => {
-          navigate("/mentor/courses/section/add", { state: response.data.course });
+          navigate(`/mentor/courses/section/${response.data.course.id}`, { state: response.data.course });
         }, 1500);
       } else {
         message.error(response.data.responseMessage);
