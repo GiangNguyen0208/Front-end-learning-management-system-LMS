@@ -13,7 +13,7 @@ const CourseCard = ({ course }) => {
   }
 
   const handleNavigate = () => {
-    navigate(`/course-details/${course.id}`); // Điều hướng đến trang khóa học
+    navigate(`/course-details/${course.id}`, { state: { course } });
   };
 
   return (

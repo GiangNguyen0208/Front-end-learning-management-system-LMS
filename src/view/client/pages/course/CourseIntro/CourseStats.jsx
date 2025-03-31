@@ -1,10 +1,10 @@
 import React from "react";
 import { Row, Col, Rate, Space, Avatar, Typography } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
-
+import { URL } from "../../../../../api/constant";
 const { Text } = Typography;
 
-const CourseStats = () => {
+const CourseStats = ({course}) => {
   return (
     <div className="course-stats">
       <Row gutter={[16, 24]}>
@@ -24,10 +24,10 @@ const CourseStats = () => {
           <Space align="center">
             <Avatar
               size={40}
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/a4db56e8b86a6b6b4f9a8cc848750f178c36beb73315c5621419f9a2bf934f38"
+              src={`${URL.BASE_URL}/user/${course?.mentor?.mentorDetail?.profilePic}`}
             />
             <Text>
-              Created by <Text className="instructor-name">Giang Trương Nguyễn</Text>
+              Giảng dạy bởi <Text className="instructor-name">{course.mentor.firstName + " " + course.mentor.lastName}</Text>
             </Text>
           </Space>
         </Col>

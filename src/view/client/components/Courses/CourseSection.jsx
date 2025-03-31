@@ -3,6 +3,7 @@ import { Typography, Row, Col, Button } from "antd";
 import CourseCard from "../../components/Courses/CourseCard";
 import courseApi from "../../../../api/courseApi";
 
+
 const { Title } = Typography;
 
 const CourseSection = () => {
