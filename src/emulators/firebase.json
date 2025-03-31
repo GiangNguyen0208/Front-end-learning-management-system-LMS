@@ -6,13 +6,16 @@
   "emulators": {
     "singleProjectMode": true,
     "auth": {
-      "port": 9099
+      "port": 9099,
+      "persistence": "./data/auth"
     },
     "firestore": {
-      "port": 8082
+      "port": 8082,
+      "persistence": "./data/firestore"
     },
     "storage": {
-      "port": 9199
+      "port": 9199,
+      "persistence": "./data/storage"
     },
     "ui": {
       "enabled": true

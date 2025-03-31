@@ -30,8 +30,10 @@ const AddCourseForm = () => {
   });
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    if (categories.length === 0) {
+      fetchCategories();
+    }
+  }, [categories.length]);
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -109,7 +111,7 @@ const AddCourseForm = () => {
       title="Thêm khóa học" 
       style={{ maxWidth: "800px", margin: "auto" }}
       extra={
-        <Button type="primary" icon={<ArrowLeftOutlined />} onClick={handleGoBack} style={{ marginBottom: 16, marginLeft: 16 }}>
+        <Button type="primary" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} style={{ marginBottom: 16, marginLeft: 16 }}>
             Go Back
         </Button>
       }

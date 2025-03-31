@@ -1,56 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Row, Col, Button } from "antd";
 import CourseCard from "../../components/Courses/CourseCard";
+import courseApi from "../../../../api/courseApi";
 
 const { Title } = Typography;
 
 const CourseSection = () => {
-  const courseSection = [
-    {
-      id: 1,
-      imageUrl:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-      title: "Beginner's Guide to Design",
-      instructor: "Ronald Richards",
-      rating: 4.9,
-      ratingCount: 1200,
-      details: "22 Total Hours. 155 Lectures. Beginner",
-      price: 149.9,
-    },
-    {
-        id: 1,
-        imageUrl:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-        title: "Beginner's Guide to Design",
-        instructor: "Ronald Richards",
-        rating: 4.9,
-        ratingCount: 1200,
-        details: "22 Total Hours. 155 Lectures. Beginner",
-        price: 149.9,
-      },
-      {
-        id: 1,
-        imageUrl:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-        title: "Beginner's Guide to Design",
-        instructor: "Ronald Richards",
-        rating: 4.9,
-        ratingCount: 1200,
-        details: "22 Total Hours. 155 Lectures. Beginner",
-        price: 149.9,
-      },
-      {
-        id: 1,
-        imageUrl:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-        title: "Beginner's Guide to Design",
-        instructor: "Ronald Richards",
-        rating: 4.9,
-        ratingCount: 1200,
-        details: "22 Total Hours. 155 Lectures. Beginner",
-        price: 149.9,
+  const [courseSection, setCourseSection] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await courseApi.getCoursesByStatus("Active", "No");
+        setCourseSection(response.data.courses);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      } finally {
+        setLoading(false);
       }
-  ];
+    };
+
+    fetchCourses();
+  }, []);
 
   return (
     <section className="featured-courses" style={{ marginTop: 60 }}>
@@ -59,16 +31,20 @@ const CourseSection = () => {
         <Button type="link">See All</Button>
       </div>
       
-
-      <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
-        {courseSection.map((course) => (
-          <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-            <CourseCard {...course} />
-          </Col>
-        ))}
-      </Row>
+      {loading ? (
+        <p>Loading courses...</p>
+      ) : (
+        <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
+          {courseSection.map((course) => (
+            <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
+              <CourseCard course={course} />
+            </Col>
+          ))}
+        </Row>
+      )}
     </section>
   );
 };
 
 export default CourseSection;
+

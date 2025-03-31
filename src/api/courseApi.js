@@ -23,6 +23,13 @@ const courseApi = {
     });
   },
 
+  // Lấy danh sách khóa học
+  getCoursesByStatus: (status, videoShow) => {
+    return axiosClient.get(`/course/fetch/status-wise`, {
+      params: { status, videoShow },
+    });
+  },
+
   updateCourse: (courseId, updateData) => {
     return axiosClient.put(`/course/update/${courseId}`, updateData);
   },

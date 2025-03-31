@@ -26,7 +26,7 @@ const CourseHeader = () => {
         </Col>
       </Row>
       <Row justify="center" gutter={[16, 16]}>
-        <TestimonialsSection title="What Our Customer Say About Us"/>
+        <TestimonialsSection title="Khách hàng nói gì về chúng tôi"/>
         <SimilarCourses />
       </Row>
     </Layout.Content>

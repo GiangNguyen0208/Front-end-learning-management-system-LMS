@@ -1,49 +1,63 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import { Card, Typography, Rate, Space } from "antd";
-
+import { Card, Typography, Rate, Space, Row, Col, Tag } from "antd";
+import { DollarCircleOutlined, UserOutlined } from "@ant-design/icons";
+import { URL } from "../../../../api/constant";
 const { Title, Text } = Typography;
 
-const CourseCard = ({ imageUrl, title, instructor, rating, ratingCount, details, price }) => {
+const CourseCard = ({ course }) => {
   const navigate = useNavigate();
+  if (!course) {
+    return <p>Đang tải khóa học...</p>;
+  }
 
   const handleNavigate = () => {
-    navigate("/course"); // Điều hướng đến trang khóa học
+    navigate(`/course-details/${course.id}`); // Điều hướng đến trang khóa học
   };
 
   return (
     <Card
       hoverable
       onClick={handleNavigate}
-      cover={<img alt={title} src={imageUrl} style={{ borderRadius: "8px 8px 0 0" }} />}
-      className="course-card"
+      cover={<img alt={course.name} src={`${URL.BASE_URL}/course/${course.thumbnail}`} />}
+      style={{ width: 300 }}
     >
-      <Space direction="vertical" size={8} style={{ width: "100%" }}>
-        <Title level={4}>{title}</Title>
-        <Text type="secondary">By {instructor}</Text>
+      <Title level={4}>{course.name}</Title>
+      <Text type="secondary">{course.category?.name}</Text>
+      <p>{course.description}</p>
 
-        <Space>
-          <Rate disabled defaultValue={rating} />
-          <Text type="secondary">({ratingCount} Ratings)</Text>
-        </Space>
-
-        <Text type="secondary">{details}</Text>
-        <Title level={4}>${price}</Title>
-      </Space>
+      <Row justify="space-between">
+        <Col>
+          {course.type === "free" ? (
+            <Tag color="green">Miễn phí</Tag>
+          ) : (
+            <Tag icon={<DollarCircleOutlined />} color="blue">
+              ${course.fee}
+            </Tag>
+          )}
+        </Col>
+        <Col>
+          <Tag icon={<UserOutlined />} color="purple">
+            {course.mentor?.name}
+          </Tag>
+        </Col>
+      </Row>
     </Card>
   );
 };
 
 // Định nghĩa kiểu dữ liệu của props bằng PropTypes
 CourseCard.propTypes = {
-  imageUrl: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  instructor: PropTypes.string.isRequired,
-  rating: PropTypes.number.isRequired,
-  ratingCount: PropTypes.number.isRequired,
-  details: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
+  course: PropTypes.shape({
+    imageUrl: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    instructor: PropTypes.string.isRequired,
+    rating: PropTypes.number.isRequired,
+    ratingCount: PropTypes.number.isRequired,
+    details: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 export default CourseCard;

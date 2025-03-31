@@ -18,7 +18,8 @@ const VerifyEmail = () => {
     const verify = async () => {
         try {
           const res = await authApi.verifyEmail(token);
-          console.log("API Response:", res.success); 
+          console.log("API Response 1:", res); 
+          console.log("API Response 2:", res.success); 
           if (res.success) {
             setStatus("success");
           } else {

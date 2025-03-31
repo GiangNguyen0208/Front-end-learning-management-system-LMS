@@ -176,10 +176,7 @@ const authApi = {
   verifyEmail: async (token) => {
     try {
       console.log("🔍 Sending token:", token); // Kiểm tra token trước khi gửi
-  
       const response = await axiosClient.get(`/user/confirm?token=${token}`);
-      console.log("✅ API Response:", response); // Kiểm tra toàn bộ phản hồi
-  
       return response.data; // Trả về dữ liệu từ API
     } catch (error) {
       console.error("❌ API Error:", error.response ? error.response.data : error.message);

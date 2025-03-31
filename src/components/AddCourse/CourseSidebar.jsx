@@ -1,4 +1,5 @@
-import { Card, Typography, Badge } from "antd";
+import { Card, Typography, Badge, Image } from "antd";
+import { URL } from "../../api/constant";
 
 const { Title, Text } = Typography;
 
@@ -7,15 +8,21 @@ const CourseSidebar = ({ course }) => {
     return (fee - (fee * discount) / 100).toFixed(2);
   };
 
-  const sections = course?.sections || []; // Đảm bảo sections không bị undefined
+  const thumbnailUrl = course?.thumbnail
+  ? `${URL.BASE_URL}/course/${course.thumbnail}`
+  : "/default-image.png"; // Ảnh mặc định
+
+  console.log(`Ảnh được load: ${thumbnailUrl}`);
+
+  const sections = course?.sections || [];
   const totalTopics = sections.reduce((sum, sec) => sum + (sec.courseSectionTopics?.length || 0), 0);
 
   return (
     <Card className="shadow-lg">
-      <img
-        src={`${URL.BASE_URL}/course/${course?.thumbnail || "default-thumbnail.jpg"}`}
+      <Image
+        width="100%"
+        src={thumbnailUrl}
         alt="Course Thumbnail"
-        style={{ width: "100%", borderRadius: "10px" }}
       />
 
       {course?.type === "Paid" && (
@@ -26,10 +33,7 @@ const CourseSidebar = ({ course }) => {
           <Text delete style={{ marginLeft: 10 }}>
             &#8377;{course.fee}
           </Text>
-          <Badge
-            count={`${course.discountInPercent}% OFF`}
-            style={{ backgroundColor: "#fab440", marginLeft: 10 }}
-          />
+          <Badge count={`${course.discountInPercent}% OFF`} style={{ backgroundColor: "#fab440", marginLeft: 10 }} />
         </div>
       )}
 

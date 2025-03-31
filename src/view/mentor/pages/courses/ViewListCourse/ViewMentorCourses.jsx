@@ -55,6 +55,10 @@ const ViewMentorCourses = () => {
     return new Date(Number(epochTime)).toLocaleString();
   };
 
+  const viewStudents = (course) => {
+    navigate(`/mentor/courses/${course.id}/students`);
+  };
+
   
 
   const columns = [
@@ -104,13 +108,25 @@ const ViewMentorCourses = () => {
           <Button type="primary" onClick={() => addSection(record)}>
             Cập nhật
           </Button>
+          <Button 
+            type="primary" 
+            onClick={() => viewStudents(record)}
+            style={{ backgroundColor: "green", borderColor: "green" }}
+          >
+            Xem học viên
+          </Button>
           <Popconfirm
             title="Bạn có chắc muốn xóa khóa học này?"
             onConfirm={() => deleteCourse(record.id)}
             okText="Có"
             cancelText="Không"
           >
-            <Button danger>Xóa</Button>
+            <Button 
+              type="primary" 
+              style={{ backgroundColor: "red", borderColor: "red" }}
+            >
+              Xóa
+            </Button>
           </Popconfirm>
         </Space>
       ),
