@@ -3,7 +3,6 @@ import { Typography, Row, Col, Button } from "antd";
 import CourseCard from "../../components/Courses/CourseCard";
 import courseApi from "../../../../api/courseApi";
 
-
 const { Title } = Typography;
 
 const CourseSection = () => {
@@ -14,7 +13,8 @@ const CourseSection = () => {
     const fetchCourses = async () => {
       try {
         const response = await courseApi.getCoursesByStatus("Active", "No");
-        setCourseSection(response.data.courses);
+        console.log("Response", response);
+        setCourseSection(response.data.courseDTOs);
       } catch (error) {
         console.error("Error fetching courses:", error);
       } finally {
@@ -25,6 +25,8 @@ const CourseSection = () => {
     fetchCourses();
   }, []);
 
+  console.log("Course Section", courseSection);
+  
   return (
     <section className="featured-courses" style={{ marginTop: 60 }}>
       <div className="section-header">
@@ -32,9 +34,7 @@ const CourseSection = () => {
         <Button type="link">See All</Button>
       </div>
       
-      {loading ? (
-        <p>Loading courses...</p>
-      ) : (
+      {Array.isArray(courseSection) && courseSection.length > 0 ? (
         <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
           {courseSection.map((course) => (
             <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
@@ -42,6 +42,8 @@ const CourseSection = () => {
             </Col>
           ))}
         </Row>
+      ) : (
+        <p>No courses found.</p>
       )}
     </section>
   );

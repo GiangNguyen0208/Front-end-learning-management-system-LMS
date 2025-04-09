@@ -68,6 +68,8 @@ const AddCourseSectionForm = () => {
     }
   };
 
+  console.log("Course Data:", courseData);
+  
   return (
     <div className="container mt-5 mb-5">
       <Button

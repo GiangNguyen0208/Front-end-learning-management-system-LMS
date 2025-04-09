@@ -10,6 +10,9 @@ const CourseDetails = ({ courseId }) => {
   const [courseDetail, setCourseDetail] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  console.log("Course ID:", courseId);
+  
+
   useEffect(() => {
     if (!courseId) {
       console.error("🚨 Lỗi: course.id không tồn tại!");

@@ -1,33 +1,97 @@
-import React from "react";
-import { Upload, Button, Input } from "antd";
+import React, { useState, useContext } from "react";
+import { Upload, Button, Form, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import "./ImageUpload.css";
+import { URL } from "../../../../../../api/constant";
+import userApi from "../../../../../../api/userApi";
+import { AuthContext } from "../../../../../../context/AuthProvider";
 
-function ImageUpload() {
+function ImageUpload({ user }) {
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const { setUser } = useContext(AuthContext);
+
+  const handleUpload = async () => {
+    if (!selectedProfile) {
+      message.warning("Vui lòng chọn một ảnh.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("avatar", selectedProfile);
+
+    try {
+      setLoading(true);
+      const response = await userApi.uploadAvatar(user.id, formData);
+
+      if (response.success && response.avatar) {
+        message.success("Ảnh đại diện đã được cập nhật.");
+
+        // Cập nhật localStorage + context
+        const updatedUser = { ...user, avatar: response.avatar };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        if (setUser) setUser(updatedUser);
+
+        // Reset preview
+        setPreviewUrl(null);
+        setSelectedProfile(null);
+      } else {
+        message.error("Upload thất bại.");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      message.error("Đã xảy ra lỗi khi upload.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBeforeUpload = (file) => {
+    setSelectedProfile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    return false;
+  };
+
   return (
     <div className="image-upload-container">
       <h3 className="section-title">Image Preview</h3>
 
       <div className="image-preview-box">
-        <div className="image-placeholder">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/7c50ea7090888fbd0b90405dfdb8c1bb9f887372c34e37c40fdfe7569da936aa?placeholderIfAbsent=true&apiKey=91edb325cc2b4ce5940b1638fa283b2c"
-            alt="Upload placeholder"
-            className="placeholder-icon"
-          />
-        </div>
+        <img
+          src={
+            previewUrl
+              ? previewUrl
+              : `${URL.BASE_URL}/user/${user.avatar}`
+          }
+          alt="Avatar"
+          className="placeholder-icon"
+        />
       </div>
 
       <h3 className="section-title upload-title">Add/Change Image</h3>
 
-      <div className="upload-controls">
-        <Input placeholder="Label" className="file-input" />
-        <Button className="upload-button">Upload Image</Button>
-      </div>
+      <Form layout="vertical">
+        <Form.Item label="Ảnh đại diện">
+          <Upload
+            beforeUpload={handleBeforeUpload}
+            maxCount={1}
+            showUploadList={false}
+          >
+            <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+          </Upload>
+        </Form.Item>
 
-      <Button type="primary" className="save-button">
-        Save Image
-      </Button>
+        <Button
+          type="primary"
+          className="save-button"
+          onClick={handleUpload}
+          loading={loading}
+        >
+          Save Image
+        </Button>
+      </Form>
     </div>
   );
 }

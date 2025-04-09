@@ -61,6 +61,8 @@ const AppRoutes = () => (
         <Route path="check-out" element={<Checkout />} />
         <Route path="order-complete" element={<OrderComplete />} />
         <Route path="sign-up-mentor" element={<SignUpMentor />}/>
+        <Route path="course/:id/learn" element={<CourseViewer />} />
+        {/* <Route path="course-viewer" element={<CourseViewer />} /> */}
       </Route>
 
       <Route path="home" element={<HomeScreen />} />
@@ -68,7 +70,6 @@ const AppRoutes = () => (
       <Route path="course-details/:id" element={<CourseHeader />} />
         {/* <Route path="course-detail/:id" element={<CourseDetails />} />
       </Route> */}
-      <Route path="course-viewer" element={<CourseViewer />} />
       
     </Route>
 

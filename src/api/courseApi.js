@@ -8,6 +8,10 @@ const courseApi = {
     });
   },
 
+  bookingCourseFree: (courseId, customerId) => {
+    return axiosClient.post("/booking/add-free", { courseId, customerId });
+  },
+
   getCourseById: (courseId, videoShow = "Yes") => {
     if (!courseId) {
       console.error("Error: courseId is missing!");

@@ -2,12 +2,11 @@ import axiosClient from "./axiosClient";
 
 const ratingApi = {
   getRatingsByCourse: (courseId) => {
-    return axiosClient.get(`/rating/course/${courseId}`);
+    return axiosClient.get(`/course/ratings/${courseId}`);
   },
   addRating: (commentData) => {
     console.log("Data Rating: ", commentData);
-    
-    return axiosClient.post("/rating/course/add", commentData);
+    return axiosClient.post("/course/rating/add", commentData);
   },
 };
 

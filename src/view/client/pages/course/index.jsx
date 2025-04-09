@@ -38,9 +38,6 @@ const CourseHeader = () => {
     fetchCourse();
   }, [id]);
 
-  console.log("Course: ", course);
-  
-
   if (loading) return <p>Đang tải khóa học...</p>;
   if (!course) return <p>Không tìm thấy khóa học.</p>;
 

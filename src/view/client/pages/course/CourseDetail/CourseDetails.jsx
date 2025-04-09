@@ -6,27 +6,27 @@ import CourseSyllabus from "./CourseSyllabus";
 import CourseReviews from "./CourseReviews";
 import { StyledTabs, CourseDetailsWrapper } from "../js/styles";
 
-const CourseDetails = ({ courseDetail }) => {
+const CourseDetails = ({ course }) => {
   const items = [
     {
       key: "1",
       label: "Description",
-      children: <CourseDescription courseDetail={courseDetail} />,
+      children: <CourseDescription course={course} />,
     },
     {
       key: "2",
       label: "Instructor",
-      children: <CourseInstructor courseDetail={courseDetail} />,
+      children: <CourseInstructor course={course} />,
     },
     {
       key: "3",
       label: "Syllabus",
-      children: <CourseSyllabus courseDetail={courseDetail} />,
+      children: <CourseSyllabus course={course} />,
     },
     {
       key: "4",
       label: "Reviews",
-      children: <CourseReviews courseDetail={courseDetail} />,
+      children: <CourseReviews course={course} />,
     },
   ];
 

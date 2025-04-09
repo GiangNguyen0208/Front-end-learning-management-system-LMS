@@ -3,6 +3,8 @@ import { Button, Input, List, message, Rate, Card, Avatar, Typography, Modal } f
 import { UserOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import ratingApi from "../../../../api/ratingApi"; 
+import { formatDate } from "../../../../utils/helper/formatDate";
+
 import {
   ReviewsSection,
   ReviewItem,
@@ -29,9 +31,12 @@ const CourseRatingForm = ({ user }) => {
   const fetchRatings = async () => {
     try {
       const response = await ratingApi.getRatingsByCourse(courseId);
-      setRatings(response.data);
+      const ratingsData = Array.isArray(response?.data?.ratings) ? response.data.ratings : [];
+      console.log("Ratings Data:", response.data.ratings);
+      setRatings(ratingsData);
     } catch (error) {
       console.error("Lỗi khi tải đánh giá:", error);
+      message.error("Không thể tải đánh giá");
     }
   };
 
@@ -58,35 +63,21 @@ const CourseRatingForm = ({ user }) => {
         comment: ratingText,
       });
   
-      if (response.data.isSuccess) {
+      if (response.data?.isSuccess) {
         message.success("Đánh giá đã được gửi!");
         setRatingText("");
         setRatingValue(0);
-  
-        // Gọi API để lấy danh sách mới
-        const updatedRatings = await ratingApi.getRatingsByCourse(courseId);
-        setRatings([...updatedRatings.data]); // Cập nhật state để React re-render
+        await fetchRatings(); // Sử dụng lại hàm fetchRatings đã có
       } else {
-        message.error("Không thể gửi đánh giá!");
+        message.error(response.data?.message || "Không thể gửi đánh giá!");
       }
     } catch (error) {
       console.error("Lỗi khi gửi đánh giá:", error);
-      message.error("Có lỗi xảy ra!");
+      message.error(error.response?.data?.message || "Có lỗi xảy ra!");
     } finally {
       setLoading(false);
     }
   };
-
-  const formatDate = (dateArray) => {
-    if (!dateArray || dateArray.length < 3) return "Invalid date";
-    const date = new Date(...dateArray); 
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(date);
-  };
-  
 
   return (
     <ReviewsSection>
@@ -117,12 +108,17 @@ const CourseRatingForm = ({ user }) => {
 
       <List
         dataSource={ratings}
+        locale={{ emptyText: "Chưa có đánh giá nào" }}
         renderItem={(rating) => (
-          <ReviewItem>
+          <ReviewItem key={rating.id || Math.random()}>
             <ReviewerInfo>
-              <Avatar size={60} src={rating.avatar || ""} icon={!rating.avatar && <UserOutlined />} />
-              <span>{rating.firstName + " " + rating.lastName}</span>
-              <span>{rating.role}</span>
+              <Avatar 
+                size={60} 
+                src={rating.avatar || rating.user?.avatar} 
+                icon={!rating.avatar && <UserOutlined />} 
+              />
+              <span>{rating.firstName || rating.user?.firstName} {rating.lastName || rating.user?.lastName}</span>
+              <span>{rating.role || rating.user?.role}</span>
             </ReviewerInfo>
             <ReviewContent>
               <div>
@@ -139,7 +135,7 @@ const CourseRatingForm = ({ user }) => {
 
       <Modal
         title="Xác nhận đánh giá"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleRatingSubmit}
         onCancel={() => setIsModalVisible(false)}
         confirmLoading={loading}
