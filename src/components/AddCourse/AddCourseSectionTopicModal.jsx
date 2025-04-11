@@ -3,9 +3,9 @@ import { Modal, Form, Input, Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import courseApi from "../../api/courseApi";
 
-const AddCourseSectionTopicModal = ({ visible, onClose, onSubmit, sectionId }) => {
+const AddCourseSectionTopicModal = ({ visible, onClose, sectionId }) => {
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState([]); // ✅ Quản lý fileList bằng state
+  const [fileList, setFileList] = useState([]);
 
   const handleSubmit = () => {
     form.validateFields().then(async (values) => {
@@ -13,42 +13,49 @@ const AddCourseSectionTopicModal = ({ visible, onClose, onSubmit, sectionId }) =
         message.error("Vui lòng tải lên video!");
         return;
       }
-      console.log(values);
-      
+
+      const file = fileList[0].originFileObj;
+      if (!file.type.startsWith("video/")) {
+        message.error("Chỉ được phép tải lên file video!");
+        return;
+      }
+
       const formData = new FormData();
       formData.append("srNo", values.srNo);
       formData.append("name", values.name);
       formData.append("description", values.description);
-      formData.append("sectionId", sectionId); // Đảm bảo có sectionId
-      formData.append("video", fileList[0].originFileObj); // Lấy file thực tế
-  
+      formData.append("sectionId", sectionId);
+      formData.append("video", file);
+
       try {
-        const response = await courseApi.addCourseSectionTopic(formData);
+        await courseApi.addCourseSectionTopic(formData);
         message.success("Thêm chủ đề thành công!");
-        console.log("✅ API Response:", response.data);
-  
         form.resetFields();
-        setFileList([]); // Reset sau khi thành công
+        setFileList([]);
         onClose();
       } catch (error) {
-        console.error("❌ Lỗi API:", error.response?.data || error);
+        console.error("❌ API lỗi:", error.response?.data || error);
         message.error("Thêm chủ đề thất bại!");
       }
     });
   };
-  
 
   const handleChange = ({ fileList }) => {
-    setFileList(fileList); // ✅ Cập nhật danh sách file khi chọn file mới
+    const file = fileList[0]?.originFileObj;
+    if (file && !file.type.startsWith("video/")) {
+      message.error("Chỉ được chọn file video!");
+      return;
+    }
+    setFileList(fileList);
   };
 
   return (
     <Modal title="Thêm Chủ Đề Mới" open={visible} onCancel={onClose} footer={null}>
       <Form form={form} layout="vertical">
-        <Form.Item label="Số thứ tự" name="srNo" rules={[{ required: true, message: "Nhập số thứ tự" }]}>
+        <Form.Item label="Số thứ tự" name="srNo" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item label="Tên chủ đề" name="name" rules={[{ required: true, message: "Nhập tên chủ đề" }]}>
+        <Form.Item label="Tên chủ đề" name="name" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
         <Form.Item label="Mô tả" name="description">
@@ -56,9 +63,11 @@ const AddCourseSectionTopicModal = ({ visible, onClose, onSubmit, sectionId }) =
         </Form.Item>
         <Form.Item label="Tải lên video">
           <Upload
-            fileList={fileList} // ✅ Dùng fileList thay vì value
-            beforeUpload={() => false} // ✅ Ngăn upload ngay lập tức
-            onChange={handleChange} // ✅ Cập nhật state khi thay đổi file
+            fileList={fileList}
+            beforeUpload={() => false}
+            onChange={handleChange}
+            accept="video/*"
+            maxCount={1}
           >
             <Button icon={<UploadOutlined />}>Chọn video</Button>
           </Upload>

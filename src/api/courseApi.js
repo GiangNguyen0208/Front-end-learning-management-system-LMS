@@ -62,6 +62,14 @@ const courseApi = {
   deleteCourse: (courseId) => {
     return axiosClient.delete(`/course/delete`, { params: { courseId } });
   },
+
+  updateVideoProgress: (userId, videoId, percentWatched) => {
+    return axiosClient.post("/course/video/progress", {
+      userId,
+      videoId,
+      percentWatched,
+    });
+  },
 };
 
 

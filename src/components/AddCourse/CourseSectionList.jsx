@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Collapse, Button, List, Badge } from "antd";
 import { PlusOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import CourseSectionTopicItem from "./CourseSectionTopicItem";
 
 const { Panel } = Collapse;
 
@@ -36,10 +37,7 @@ const CourseSectionList = ({ sections, showAddTopicModal }) => {
               <List
                 dataSource={section?.courseSectionTopics || []}
                 renderItem={(topic) => (
-                  <List.Item>
-                    <VideoCameraOutlined style={{ marginRight: 8 }} />
-                    {topic.srNo}. {topic.name}
-                  </List.Item>
+                  <CourseSectionTopicItem topic={topic} />
                 )}
               />
             </Panel>
