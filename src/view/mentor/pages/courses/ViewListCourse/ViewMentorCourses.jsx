@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Table, Card, Button, Image, Popconfirm, message, Spin, Space } from "antd";
 import courseApi from "../../../../../api/courseApi";
 import { URL } from "../../../../../api/constant";
-import { ArrowLeftOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 const ViewMentorCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -41,8 +41,10 @@ const ViewMentorCourses = () => {
     }
   };
 
+  
+
   const addSection = (course) => {
-    navigate("/mentor/courses/section/add", { state: course });
+    navigate(`/mentor/courses/section/${course.id}`);
   };
 
   const addCourse = () => {
@@ -52,6 +54,12 @@ const ViewMentorCourses = () => {
   const formatDateFromEpoch = (epochTime) => {
     return new Date(Number(epochTime)).toLocaleString();
   };
+
+  const viewStudents = (course) => {
+    navigate(`/mentor/courses/${course.id}/students`);
+  };
+
+  
 
   const columns = [
     {
@@ -100,13 +108,25 @@ const ViewMentorCourses = () => {
           <Button type="primary" onClick={() => addSection(record)}>
             Cập nhật
           </Button>
+          <Button 
+            type="primary" 
+            onClick={() => viewStudents(record)}
+            style={{ backgroundColor: "green", borderColor: "green" }}
+          >
+            Xem học viên
+          </Button>
           <Popconfirm
             title="Bạn có chắc muốn xóa khóa học này?"
             onConfirm={() => deleteCourse(record.id)}
             okText="Có"
             cancelText="Không"
           >
-            <Button danger>Xóa</Button>
+            <Button 
+              type="primary" 
+              style={{ backgroundColor: "red", borderColor: "red" }}
+            >
+              Xóa
+            </Button>
           </Popconfirm>
         </Space>
       ),

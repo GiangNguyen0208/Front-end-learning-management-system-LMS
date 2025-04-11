@@ -8,7 +8,7 @@ const CourseGrid = ({ courses }) => {
       <Row gutter={[24, 24]}>
         {courses.map((course) => (
           <Col xs={24} sm={12} lg={8} key={course.id}>
-            <CourseCard {...course} />
+            <CourseCard course={course} />
           </Col>
         ))}
       </Row>

@@ -21,13 +21,14 @@ import OrderComplete from "../view/client/pages/order-complete/OrderComplete";
 import Categories from "../view/client/pages/categories/CourseList";
 import CourseViewer from "../view/client/pages/course-viewer/CourseViewer";
 import CourseHeader from "../view/client/pages/course";
-
+import CourseDetails from "../view/client/pages/course/CourseDetail/CourseDetails";
 // Mentor Pages
 import Dashboard from "../view/mentor/pages/dashboard/Dashboard";
 import Communication from "../view/mentor/pages/communication/Communication";
 import CoursesSection from "../view/mentor/pages/courses/CoursesSection";
 import AddCourseForm from "../components/AddCourse/AddCourseForm";
 import AddCourseSectionForm from "../components/AddCourse/AddCourseSectionForm";
+import CourseStudentList from "../view/mentor/pages/courses/CourseStudentList/CourseStudentList";
 
 // Admin Pages
 import AdminDashboard from "../view/admin/pages/dashboard/Dashboard";
@@ -43,13 +44,14 @@ import SignUpMentor from "../view/client/pages/register/SignUpMentor";
 const AppRoutes = () => (
   <Routes>
     {/* Routes cho Client */}
-    <Route path="/" element={<HomeLayout />}>
+    <Route path="/*" element={<HomeLayout />}>
       <Route element={<PublicRoute />}>
         <Route path="login" element={<Login />} />
         <Route path="sign-up" element={<Signup />} />
         <Route path="verify-email" element={<VerifyEmail />} />
         <Route path="resend-confirmation" element={<ResendEmail />} />
         <Route path="success" element={<Success />} />
+        
       </Route>
 
       <Route element={<PrivateRouter />}>
@@ -59,12 +61,16 @@ const AppRoutes = () => (
         <Route path="check-out" element={<Checkout />} />
         <Route path="order-complete" element={<OrderComplete />} />
         <Route path="sign-up-mentor" element={<SignUpMentor />}/>
+        <Route path="course/:id/learn" element={<CourseViewer />} />
+        {/* <Route path="course-viewer" element={<CourseViewer />} /> */}
       </Route>
 
       <Route path="home" element={<HomeScreen />} />
       <Route path="categories" element={<Categories />} />
-      <Route path="course" element={<CourseHeader />} />
-      <Route path="course-viewer" element={<CourseViewer />} />
+      <Route path="course-details/:id" element={<CourseHeader />} />
+        {/* <Route path="course-detail/:id" element={<CourseDetails />} />
+      </Route> */}
+      
     </Route>
 
     {/* Routes cho Mentor */}
@@ -73,7 +79,8 @@ const AppRoutes = () => (
       <Route path="communication" element={<Communication />} />
       <Route path="courses" element={<ViewMentorCourses />} />
       <Route path="courses/add" element={<AddCourseForm />} />
-      <Route path="courses/section/add" element={<AddCourseSectionForm />} />
+      <Route path="courses/section/:courseId" element={<AddCourseSectionForm />} />
+      <Route path="courses/:id/students" element={<CourseStudentList/>} />
     </Route>
 
     {/* Routes cho Admin */}

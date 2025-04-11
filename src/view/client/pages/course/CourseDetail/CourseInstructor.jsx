@@ -9,18 +9,20 @@ import {
   InstructorBio,
   StatsWrapper,
 } from "../js/styles";
+import { URL } from "../../../../../api/constant";
 
-const CourseInstructor = () => {
+const CourseInstructor = ({course}) => {
+  const mentorData = course?.mentor || null;
   return (
     <InstructorSection>
-      <InstructorName>Ronald Richards</InstructorName>
-      <InstructorTitle>UI/UX Designer</InstructorTitle>
+      <InstructorName>{mentorData.firstName + " " + mentorData.lastName}</InstructorName>
+      <InstructorTitle>{mentorData.mentorDetail.profession}</InstructorTitle>
 
       <Row gutter={[16, 16]} align="middle">
         <Col>
           <Avatar
             size={120}
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/e4dc102c55492ab8fbd4f7b12f0f88eb83749e901866e392a737939b328b1582"
+            src={`${URL.BASE_URL}/user/${mentorData.mentorDetail.profilePic}`}
           />
         </Col>
         <Col>
@@ -42,10 +44,7 @@ const CourseInstructor = () => {
       </Row>
 
       <InstructorBio>
-        With over a decade of industry experience, Ronald brings a wealth of
-        practical knowledge to the classroom. He has played a pivotal role in
-        designing user-centric interfaces for renowned tech companies, ensuring
-        seamless and engaging user experiences.
+        {mentorData.mentorDetail.bio}
       </InstructorBio>
     </InstructorSection>
   );

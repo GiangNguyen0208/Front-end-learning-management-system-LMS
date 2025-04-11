@@ -1,49 +1,141 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import { Card, Typography, Rate, Space } from "antd";
+import { Card, Typography, Rate, Space, Row, Col, Tag } from "antd";
+import { DollarCircleOutlined, UserOutlined, StarFilled } from "@ant-design/icons";
+import { URL } from "../../../../api/constant";
+import { formatFeeToVND } from "../../../../utils/helper/formatFeeToVND";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
-const CourseCard = ({ imageUrl, title, instructor, rating, ratingCount, details, price }) => {
+const CourseCard = ({ course }) => {
   const navigate = useNavigate();
+  if (!course) {
+    return <p>Đang tải khóa học...</p>;
+  }
 
   const handleNavigate = () => {
-    navigate("/course"); // Điều hướng đến trang khóa học
+    navigate(`/course-details/${course.id}`, { state: { course } });
+  };
+
+  // Hàm cắt ngắn mô tả nếu quá dài
+  const truncateDescription = (text, maxLength = 100) => {
+    if (text.length <= maxLength) return text;
+    return `${text.substring(0, maxLength)}...`;
   };
 
   return (
     <Card
       hoverable
       onClick={handleNavigate}
-      cover={<img alt={title} src={imageUrl} style={{ borderRadius: "8px 8px 0 0" }} />}
-      className="course-card"
+      cover={
+        <img 
+          alt={course.name} 
+          src={`${URL.BASE_URL}/course/${course.thumbnail}`}
+          style={{ 
+            height: 160,
+            objectFit: "cover"
+          }}
+        />
+      }
+      style={{ 
+        width: 300,
+        height: 420, // Chiều cao cố định
+        display: "flex",
+        flexDirection: "column"
+      }}
+      bodyStyle={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        padding: 16
+      }}
     >
-      <Space direction="vertical" size={8} style={{ width: "100%" }}>
-        <Title level={4}>{title}</Title>
-        <Text type="secondary">By {instructor}</Text>
+      <div style={{ flex: 1 }}>
+        <Title 
+          level={4} 
+          ellipsis={{ rows: 2 }} 
+          style={{ 
+            marginBottom: 8,
+            minHeight: 56 // Đảm bảo tiêu đề luôn chiếm 2 dòng
+          }}
+        >
+          {course.name}
+        </Title>
+        
+        <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
+          {course.category?.name}
+        </Text>
+        
+        <Paragraph 
+          ellipsis={{ rows: 3 }} 
+          style={{ 
+            marginBottom: 12,
+            color: "#666",
+            minHeight: 72 // Đảm bảo mô tả chiếm 3 dòng
+          }}
+        >
+          {course.description}
+        </Paragraph>
+      </div>
 
-        <Space>
-          <Rate disabled defaultValue={rating} />
-          <Text type="secondary">({ratingCount} Ratings)</Text>
+      <div>
+        <Space size={4} style={{ marginBottom: 8 }}>
+          <Rate 
+            disabled 
+            value={course.averageRating || 0} 
+            character={<StarFilled />}
+            style={{ fontSize: 14 }}
+          />
+          <Text type="secondary">({course.ratingCount || 0})</Text>
         </Space>
-
-        <Text type="secondary">{details}</Text>
-        <Title level={4}>${price}</Title>
-      </Space>
+        
+        <Row justify="space-between" align="middle">
+          <Col>
+            {course.type === "free" ? (
+              <Tag color="green" style={{ margin: 0 }}>MIỄN PHÍ</Tag>
+            ) : (
+              <Tag 
+                icon={<DollarCircleOutlined />} 
+                color="blue"
+                style={{ margin: 0 }}
+              >
+                {formatFeeToVND(course.fee)}
+              </Tag>
+            )}
+          </Col>
+          <Col>
+            <Tag 
+              icon={<UserOutlined />} 
+              color="purple"
+              style={{ margin: 0 }}
+            >
+              {course.mentor?.name || "Giảng viên"}
+            </Tag>
+          </Col>
+        </Row>
+      </div>
     </Card>
   );
 };
 
-// Định nghĩa kiểu dữ liệu của props bằng PropTypes
 CourseCard.propTypes = {
-  imageUrl: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  instructor: PropTypes.string.isRequired,
-  rating: PropTypes.number.isRequired,
-  ratingCount: PropTypes.number.isRequired,
-  details: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
+  course: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    thumbnail: PropTypes.string,
+    description: PropTypes.string,
+    category: PropTypes.shape({
+      name: PropTypes.string
+    }),
+    type: PropTypes.string,
+    fee: PropTypes.number,
+    mentor: PropTypes.shape({
+      name: PropTypes.string
+    }),
+    averageRating: PropTypes.number,
+    ratingCount: PropTypes.number
+  })
 };
 
 export default CourseCard;

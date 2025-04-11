@@ -43,13 +43,16 @@ const authApi = {
       if (!user) throw new Error("Bạn phải đăng nhập trước khi đăng ký Mentor.");
   
       let profilePicUrl = "";
+      let selectedCertificateUrl = "";
       let profilePicFile = null;
+      let selectedCertificatePic = "";
   
       // 🟢 Kiểm tra nếu `profilePic` là File thì upload lên Firebase Storage
-      if (mentorData.profilePic && mentorData.profilePic instanceof File) {
+      if (mentorData.profilePic && mentorData.profilePic && mentorData.selectedCertificate instanceof File) {
         try {
           const file = mentorData.profilePic;
           profilePicFile = file;
+          selectedCertificatePic = file;
   
           // 🟢 Tạo đường dẫn lưu ảnh: `/profile_pictures/{user.uid}/profile.jpg`
           const storageRef = ref(storage, `profile_pictures/${user.uid}/profile.jpg`);
@@ -57,8 +60,10 @@ const authApi = {
           // 🟢 Upload ảnh lên Firebase Storage
           const snapshot = await uploadBytes(storageRef, file);
           profilePicUrl = await getDownloadURL(snapshot.ref);
+          selectedCertificateUrl = await getDownloadURL(snapshot.ref);
   
           console.log("✅ Ảnh đại diện đã được tải lên Firebase:", profilePicUrl);
+          console.log("✅ Ảnh chứng chỉ Ngôn ngữ đã được tải lên Firebase:", selectedCertificateUrl);
         } catch (error) {
           console.error("❌ Lỗi khi upload ảnh:", error);
           throw new Error("Không thể tải ảnh lên. Vui lòng thử lại.");
@@ -74,23 +79,31 @@ const authApi = {
         ...oldData,
         role: "Mentor",
         profilePic: profilePicUrl || oldData.profilePic || null,
+        selectedCertificate: selectedCertificateUrl || oldData.selectedCertificate || null,
         age: mentorData.age,
         bio: mentorData.bio,
         highestQualification: mentorData.highestQualification,
         profession: mentorData.profession,
         experience: mentorData.experience,
+        languageCertificate: mentorData.languageCertificate, // 🆕 Bằng cấp ngôn ngữ
+        degreeLevel: mentorData.degreeLevel, // 🆕 Bậc cấp
       }, { merge: true });
   
       // 🟢 Gửi dữ liệu lên Backend
       const formData = new FormData();
       if (profilePicFile) formData.append("profilePic", profilePicFile);
+      if (selectedCertificatePic) formData.append("selectedCertificate", selectedCertificatePic);
       formData.append("profilePicUrl", profilePicUrl);
+      formData.append("selectedCertificate", selectedCertificateUrl);
       formData.append("age", mentorData.age);
       formData.append("bio", mentorData.bio);
       formData.append("highestQualification", mentorData.highestQualification);
       formData.append("profession", mentorData.profession);
       formData.append("experience", mentorData.experience);
       formData.append("mentorId", mentorData.mentorId);
+      formData.append("languageCertificate", mentorData.languageCertificate);
+      formData.append("degreeLevel", mentorData.degreeLevel);
+
   
       try {
         const response = await axiosClient.put("/user/mentor/detail/update", formData, {
@@ -163,10 +176,7 @@ const authApi = {
   verifyEmail: async (token) => {
     try {
       console.log("🔍 Sending token:", token); // Kiểm tra token trước khi gửi
-  
       const response = await axiosClient.get(`/user/confirm?token=${token}`);
-      console.log("✅ API Response:", response); // Kiểm tra toàn bộ phản hồi
-  
       return response.data; // Trả về dữ liệu từ API
     } catch (error) {
       console.error("❌ API Error:", error.response ? error.response.data : error.message);
