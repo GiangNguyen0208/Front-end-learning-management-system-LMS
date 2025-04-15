@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Typography, Row, Col, Button } from "antd";
 import CourseCard from "../../components/Courses/CourseCard";
 import courseApi from "../../../../api/courseApi";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const CourseSection = () => {
   const [courseSection, setCourseSection] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -25,8 +27,6 @@ const CourseSection = () => {
     fetchCourses();
   }, []);
 
-  console.log("Course Section", courseSection);
-  
   return (
     <section className="featured-courses" style={{ marginTop: 60 }}>
       <div className="section-header">

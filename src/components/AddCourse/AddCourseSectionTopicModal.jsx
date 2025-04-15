@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Modal, Form, Input, Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import courseApi from "../../api/courseApi";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddCourseSectionTopicModal = ({ visible, onClose, sectionId }) => {
   const [form] = Form.useForm();
@@ -10,13 +12,13 @@ const AddCourseSectionTopicModal = ({ visible, onClose, sectionId }) => {
   const handleSubmit = () => {
     form.validateFields().then(async (values) => {
       if (!fileList.length) {
-        message.error("Vui lòng tải lên video!");
+        toast.error("Vui lòng tải lên video!");
         return;
       }
 
       const file = fileList[0].originFileObj;
       if (!file.type.startsWith("video/")) {
-        message.error("Chỉ được phép tải lên file video!");
+        toast.error("Chỉ được phép tải lên file video!");
         return;
       }
 
@@ -29,13 +31,13 @@ const AddCourseSectionTopicModal = ({ visible, onClose, sectionId }) => {
 
       try {
         await courseApi.addCourseSectionTopic(formData);
-        message.success("Thêm chủ đề thành công!");
+        toast.success("Thêm chủ đề thành công!");
         form.resetFields();
         setFileList([]);
         onClose();
       } catch (error) {
         console.error("❌ API lỗi:", error.response?.data || error);
-        message.error("Thêm chủ đề thất bại!");
+        toast.error("Thêm chủ đề thất bại!");
       }
     });
   };
@@ -43,7 +45,7 @@ const AddCourseSectionTopicModal = ({ visible, onClose, sectionId }) => {
   const handleChange = ({ fileList }) => {
     const file = fileList[0]?.originFileObj;
     if (file && !file.type.startsWith("video/")) {
-      message.error("Chỉ được chọn file video!");
+      toast.error("Chỉ được chọn file video!");
       return;
     }
     setFileList(fileList);

@@ -3,6 +3,7 @@ import { Row, Col, Pagination } from "antd";
 import CourseCard from "../../components/Courses/CourseCard";
 
 const CourseGrid = ({ courses }) => {
+  console.log("Courses in CourseGrid:", courses);
   return (
     <div className="course-grid">
       <Row gutter={[24, 24]}>

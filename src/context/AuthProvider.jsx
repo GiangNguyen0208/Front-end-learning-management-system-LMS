@@ -1,5 +1,7 @@
 import React, { useState, useEffect, createContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export const AuthContext = createContext();
 
@@ -34,6 +36,7 @@ export default function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("user");
+    toast.success("Đăng xuất thành công!");
     setIsLoggedIn(false);
     setUser(null); // ✅ Xóa user khi logout
     navigate("/home");

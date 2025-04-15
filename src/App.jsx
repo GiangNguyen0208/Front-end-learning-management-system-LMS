@@ -3,6 +3,8 @@ import './App.css'
 import AuthProvider from './context/AuthProvider';
 import AppRoutes from './routes/index';
 import { initializeAdmin } from './api/authApi';
+import { ToastContainer } from 'react-toastify';
+
 
 function App() {
   useEffect(() => {
@@ -12,6 +14,7 @@ function App() {
     <>
       <AuthProvider>
         <AppRoutes />
+        <ToastContainer />
       </AuthProvider>
     </>
   )

@@ -9,46 +9,24 @@ import {
   LessonStats,
 } from "../js/styles";
 
-const syllabusData = [
-  {
-    title: "Introduction to UX Design",
-    lessons: 5,
-    duration: "1 hour",
-  },
-  {
-    title: "Basics of User-Centered Design",
-    lessons: 5,
-    duration: "1 hour",
-  },
-  {
-    title: "Elements of User Experience",
-    lessons: 5,
-    duration: "1 hour",
-  },
-  {
-    title: "Visual Design Principles",
-    lessons: 5,
-    duration: "1 hour",
-  },
-];
+const CourseSyllabus = ({ course }) => {
 
-const CourseSyllabus = () => {
   return (
     <SyllabusSection>
       <SyllabusTitle>Syllabus</SyllabusTitle>
       <List
-        dataSource={syllabusData}
+        dataSource={course.sections || []}
         renderItem={(item) => (
           <LessonItem>
-            <LessonTitle>{item.title}</LessonTitle>
+            <LessonTitle>{item.name}</LessonTitle>
             <LessonStats>
               <Space>
                 <ReadOutlined />
-                <span>{item.lessons} Lessons</span>
+                <span>{item.courseSectionTopics?.length || 0} Lessons</span>
               </Space>
               <Space>
                 <ClockCircleOutlined />
-                <span>{item.duration}</span>
+                <span>~{(item.courseSectionTopics?.length || 0) * 10} minutes</span>
               </Space>
             </LessonStats>
           </LessonItem>

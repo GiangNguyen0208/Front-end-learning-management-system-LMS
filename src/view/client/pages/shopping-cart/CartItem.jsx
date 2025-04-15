@@ -1,44 +1,63 @@
 import React from "react";
-import { Card, Typography, Rate, Divider } from "antd";
+import { Card, Typography, Rate, Divider, Image } from "antd";
+import { DeleteOutlined, HeartOutlined } from "@ant-design/icons";
 import styles from "./ShoppingCart.module.css";
 
 const { Text, Title } = Typography;
 
-const CartItem = ({ item }) => {
+const CartItem = ({ key, item, onRemove }) => {
   return (
-    <Card className={styles.cartItem}>
+    <Card key={key} className={styles.cartItem} bodyStyle={{ padding: 16, borderRadius: 12 }}>
       <div className={styles.cartItemContent}>
         <div className={styles.itemDetails}>
-          <img
-            src={item.image}
+          <Image
+            src={item.thumbnail}
             alt={item.title}
-            className={styles.courseImage}
+            width={140}
+            height={100}
+            style={{ borderRadius: 8, objectFit: "cover" }}
+            preview={false}
           />
           <div className={styles.courseInfo}>
-            <Title level={4}>{item.title}</Title>
-            <Text type="secondary">{item.instructor}</Text>
+            <Title level={5} style={{ marginBottom: 4 }}>{item.title}</Title>
+            <Text type="secondary" style={{ display: "block", marginBottom: 4 }}>
+              {item.mentorName || "Instructor"}
+            </Text>
 
-            <div className={styles.ratingContainer}>
-              <Text className={styles.rating}>{item.rating}</Text>
-              <Rate disabled defaultValue={4.5} className={styles.stars} />
-              <Text type="secondary">({item.totalRatings} rating)</Text>
-              <Divider type="vertical" />
-              <Text>{`${item.duration}. ${item.lectures}. ${item.level}`}</Text>
+            <div className={styles.ratingContainer} style={{ marginBottom: 4 }}>
+              <Rate disabled allowHalf defaultValue={4.5} style={{ fontSize: 14 }} />
+              <Text type="secondary" style={{ marginLeft: 8 }}>
+                ({item.totalRatings || 0} đánh giá)
+              </Text>
             </div>
 
-            <div className={styles.actions}>
-              <Text type="primary" className={styles.actionLink}>
-                Save for later
+            <Text style={{ fontSize: 13 }}>
+              {item.duration} • {item.lectures} • {item.level}
+            </Text>
+
+            <div className={styles.actions} style={{ marginTop: 8 }}>
+              <Text className={styles.actionLink} style={{ color: "#1677ff", cursor: "pointer" }}>
+                <HeartOutlined /> Lưu lại sau
               </Text>
               <Divider type="vertical" />
-              <Text type="danger" className={styles.actionLink}>
-                Remove
+              <Text
+                className={styles.actionLink}
+                style={{ color: "#e53935", cursor: "pointer" }}
+                onClick={() => onRemove(item.id)}
+              >
+                <DeleteOutlined /> Xóa
               </Text>
             </div>
           </div>
         </div>
-        <div className={styles.price}>
-          <Text strong>{item.price}</Text>
+
+        <div className={styles.price} style={{ textAlign: "right" }}>
+          <Text strong style={{ fontSize: 16, color: "#fa541c" }}>{item.price}</Text>
+          {item.originalPrice && item.originalPrice !== item.price && (
+            <Text delete type="secondary" style={{ display: "block", fontSize: 13 }}>
+              {item.originalPrice}
+            </Text>
+          )}
         </div>
       </div>
     </Card>

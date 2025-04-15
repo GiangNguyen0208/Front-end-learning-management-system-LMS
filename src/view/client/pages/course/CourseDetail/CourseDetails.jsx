@@ -6,7 +6,7 @@ import CourseSyllabus from "./CourseSyllabus";
 import CourseReviews from "./CourseReviews";
 import { StyledTabs, CourseDetailsWrapper } from "../js/styles";
 
-const CourseDetails = ({ course }) => {
+const CourseDetails = ({ course, ratings }) => {
   const items = [
     {
       key: "1",
@@ -16,7 +16,7 @@ const CourseDetails = ({ course }) => {
     {
       key: "2",
       label: "Instructor",
-      children: <CourseInstructor course={course} />,
+      children: <CourseInstructor course={course} ratings={ratings} />,
     },
     {
       key: "3",

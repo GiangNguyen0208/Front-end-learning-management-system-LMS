@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Input, List, message, Rate, Card, Avatar, Typography, Modal } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ratingApi from "../../../../api/ratingApi"; 
 import { formatDate } from "../../../../utils/helper/formatDate";
 
@@ -17,6 +17,7 @@ const { TextArea } = Input;
 
 const CourseRatingForm = ({ user }) => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const courseId = Number(id);
   const [ratings, setRatings] = useState([]);
   const [ratingText, setRatingText] = useState("");
@@ -24,6 +25,7 @@ const CourseRatingForm = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  
   useEffect(() => {
     fetchRatings();
   }, []);
@@ -33,6 +35,8 @@ const CourseRatingForm = ({ user }) => {
       const response = await ratingApi.getRatingsByCourse(courseId);
       const ratingsData = Array.isArray(response?.data?.ratings) ? response.data.ratings : [];
       console.log("Ratings Data:", response.data.ratings);
+      setRatings(response.data.ratings);
+      navigate(`/course-details/${courseId}`, { state: { ratings } });
       setRatings(ratingsData);
     } catch (error) {
       console.error("Lỗi khi tải đánh giá:", error);

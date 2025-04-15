@@ -33,7 +33,7 @@ const ratingStats = [
   { stars: 1, percentage: 2 },
 ];
 
-const CourseReviews = () => {
+const CourseReviews = ({course}) => {
   return (
     <ReviewsSection>
       <ReviewsHeader>

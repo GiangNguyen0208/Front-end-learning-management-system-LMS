@@ -10,6 +10,7 @@ import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     WechatOutlined,
+    HomeOutlined,
 } from "@ant-design/icons";
 
 const { Sider } = Layout;
@@ -19,52 +20,79 @@ export default function Sidebar() {
     const location = useLocation();
 
     const menuItems = [
+        { key: "/home", label: "Trang chủ", icon: <HomeOutlined />, path: "/home" },
         { key: "dashboard", label: "Dashboard", icon: <DashboardOutlined />, path: "/admin/dashboard" },
         { key: "users", label: "Users", icon: <UserOutlined />, path: "/admin/users" },
-        { key: "courses", label: "Courses", icon: <BookOutlined />, path: "/admin/courses" },
         { key: "categories", label: "Category", icon: <UnorderedListOutlined />, path: "/admin/categories" },
-        { key: "communication", label: "Communication", icon: <WechatOutlined />, path: "/admin/communication" },
-        { key: "settings", label: "Settings", icon: <SettingOutlined />, path: "/admin/settings" },
+        { key: "courses", label: "Courses", icon: <BookOutlined />, path: "/admin/courses" },
+        // { key: "communication", label: "Communication", icon: <WechatOutlined />, path: "/admin/communication" },
     ];
 
     return (
-        <Sider collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} style={{ minHeight: "100vh" }}>
-            <div style={{
-                height: 64,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 20,
-                fontWeight: "bold",
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={() => setCollapsed(!collapsed)}
+          style={{
+            minHeight: "100vh",
+            background: "#001529",
+            position: "sticky",
+            top: 0,
+            boxShadow: "2px 0 6px rgba(0, 21, 41, 0.35)",
+          }}
+        >
+          <div
+            style={{
+              height: 64,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 22,
+              fontWeight: "bold",
+              color: "#fff",
+              background: "linear-gradient(90deg, #1890ff 0%, #40a9ff 100%)",
+              margin: "16px",
+              borderRadius: 8,
+            }}
+          >
+            {collapsed ? <UserOutlined style={{ fontSize: 22 }} /> : "AdminZone"}
+          </div>
+    
+          <Menu
+            theme="dark"
+            mode="inline"
+            selectedKeys={[location.pathname]}
+            items={menuItems.map(({ key, label, icon, path }) => ({
+              key,
+              icon,
+              label: <Link to={path} style={{ fontWeight: 500 }}>{label}</Link>,
+            }))}
+            style={{ borderRight: 0 }}
+          />
+    
+          <div
+            style={{
+              textAlign: "center",
+              padding: 12,
+              marginTop: "auto",
+            }}
+          >
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                background: "#1890ff",
+                border: "none",
                 color: "#fff",
-                background: "#001529",
-                marginBottom: 10,
-            }}>
-                {collapsed ? "A" : "Admin"}
-            </div>
-            
-            <Menu
-                theme="dark"
-                mode="inline"
-                selectedKeys={[location.pathname]}
-                items={menuItems.map(({ key, label, icon, path }) => ({
-                    key,
-                    icon,
-                    label: <Link to={path}>{label}</Link>,
-                }))}
-            />
-
-            <div style={{ textAlign: "center", padding: 10 }}>
-                <button onClick={() => setCollapsed(!collapsed)} style={{
-                    background: "transparent",
-                    border: "none",
-                    color: "#fff",
-                    fontSize: 18,
-                    cursor: "pointer",
-                }}>
-                    {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                </button>
-            </div>
+                fontSize: 18,
+                borderRadius: 6,
+                padding: "6px 12px",
+                cursor: "pointer",
+                transition: "all 0.3s",
+              }}
+            >
+              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            </button>
+          </div>
         </Sider>
-    );
+      );
 }

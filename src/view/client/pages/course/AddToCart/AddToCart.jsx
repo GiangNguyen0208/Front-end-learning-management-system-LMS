@@ -1,26 +1,27 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Card, Button, Typography, Space, Divider, message } from "antd";
+import { Card, Button, Typography, Space, Divider, Tag, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./../css/addToCart.css";
 import { URL } from "../../../../../api/constant";
 import courseApi from "../../../../../api/courseApi";
+import { formatFeeToVND } from "../../../../../utils/helper/formatFeeToVND";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const AddToCart = ({ course }) => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")); // Lấy thông tin user từ localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
 
   if (!course || !user) return null;
 
   const { id, name, thumbnail, fee, discountInPercent } = course;
 
   const originalPrice = fee;
-  const currentPrice =
-    fee === 0 ? 0 : Math.round(fee - (fee * discountInPercent) / 100);
+  const currentPrice = fee === 0 ? 0 : Math.round(fee - (fee * discountInPercent) / 100);
   const isFree = fee === 0;
-
   const thumbnailUrl = `${URL.BASE_URL}/course/${thumbnail}`;
 
   const handleAddToCart = () => {
@@ -28,26 +29,42 @@ const AddToCart = ({ course }) => {
       message.info("Khoá học này miễn phí!");
       return;
     }
-
+  
     const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
     const courseAlreadyAdded = existingCart.some((item) => item.id === id);
-
+  
     if (!courseAlreadyAdded) {
-      existingCart.push({
-        id,
-        name,
-        currentPrice,
-        originalPrice,
-        thumbnailUrl,
-      });
-      localStorage.setItem("cart", JSON.stringify(existingCart));
-      message.success("Đã thêm vào giỏ hàng!");
+      const sessions = course.sections || []; // đổi từ sessions thành sections theo data bạn gửi
+      const allTopics = sessions.flatMap((section) => section.courseSectionTopics || []);
+      const totalLectures = allTopics.length;
+      const totalDuration = totalLectures * 10;
+  
+      const newCartItem = {
+        id: course.id,
+        title: course.name,
+        thumbnail: `${URL.BASE_URL}/course/${course.thumbnail}`,
+        price: formatFeeToVND(currentPrice),
+        originalPrice: formatFeeToVND(originalPrice),
+        discountInPercent: course.discountInPercent,
+        mentorName: `${course.mentor?.lastName || ""} ${course.mentor?.firstName || ""}`.trim(),
+        lectures: `${totalLectures} bài học`,
+        duration: `${totalDuration} phút`,
+        level: "Tất cả trình độ", // Có thể lấy từ course.level nếu có
+        description: course.description,
+      };
+  
+      const updatedCart = [...existingCart, newCartItem];
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      window.dispatchEvent(new Event("storage"));
+  
+      toast.success("Đã thêm vào giỏ hàng!");
     } else {
-      message.warning("Khoá học đã có trong giỏ hàng.");
+      toast.warning("Khoá học đã có trong giỏ hàng.");
     }
-
-    // navigate("/shopping-cart");
   };
+  
+  
+  
 
   const handleBuyNow = async () => {
     if (isFree) {
@@ -71,54 +88,139 @@ const AddToCart = ({ course }) => {
   };
 
   return (
-    <Card className="product-card">
-      <img src={thumbnailUrl} alt={name} className="product-image" />
+    <Card
+      className="product-card"
+      style={{
+        borderRadius: "16px",
+        boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+        overflow: "hidden",
+        padding: 0,
+      }}
+    >
+      <div style={{ position: "relative" }}>
+        <img
+          src={thumbnailUrl}
+          alt={name}
+          style={{
+            width: "100%",
+            height: 200,
+            objectFit: "cover",
+          }}
+        />
+        {discountInPercent > 0 && (
+          <Tag
+            color="red"
+            style={{
+              position: "absolute",
+              top: 16,
+              left: 16,
+              fontWeight: "bold",
+              fontSize: 14,
+              animation: "pulse 1.5s infinite",
+            }}
+          >
+            -{discountInPercent}%
+          </Tag>
+        )}
+      </div>
 
-      <div className="price-container">
+      <div style={{ padding: 16 }}>
+      <Title level={5} ellipsis={{ rows: 2 }} style={{ marginBottom: 8 }}>
+        <span style={{ color: "#fa8c16", fontWeight: 600 }}>📘 Khóa học:</span>{" "}
+        <span style={{ color: "#141414", fontWeight: 600 }}>{name}</span>
+      </Title>
+
+
         {isFree ? (
-          <Text className="current-price" style={{ color: "green", fontSize: "18px" }}>
+          <Text strong style={{ fontSize: 18, color: "green" }}>
             Miễn phí
           </Text>
         ) : (
-          <Space className="price-details">
-            <Text className="current-price">${currentPrice}</Text>
+          <Space direction="vertical" size={0}>
+            {/* Giá hiện tại */}
+            <Text
+              style={{
+                fontSize: 24,
+                color: "#e53935", // đỏ rực – tạo sự chú ý
+                fontWeight: 800,
+                lineHeight: 1.2,
+              }}
+            >
+              🔥 Giá chỉ {formatFeeToVND(currentPrice)}
+            </Text>
+
+            {/* Giá gốc */}
             {discountInPercent > 0 && (
-              <>
-                <div className="original-price-container">
-                  <div className="strike-through" />
-                  <Text className="original-price">${originalPrice}</Text>
-                </div>
-                <Text className="discount">{discountInPercent}% Off</Text>
-              </>
+              <Text
+                delete
+                type="secondary"
+                style={{
+                  fontSize: 14,
+                  textDecorationThickness: 2,
+                  textDecorationColor: "#999",
+                }}
+              >
+                {formatFeeToVND(originalPrice)}
+              </Text>
             )}
+
+            {/* Số tiền tiết kiệm */}
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 600,
+                color: "#52c41a",
+                marginTop: 4,
+                backgroundColor: "#f6ffed",
+                padding: "4px 8px",
+                borderRadius: 6,
+                display: "inline-block",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+              }}
+            >
+              🎁 Tiết kiệm lên đến {formatFeeToVND(originalPrice - currentPrice)}
+            </Text>
           </Space>
+
         )}
 
-        <Space direction="vertical" className="button-group">
+        <Space direction="vertical" style={{ marginTop: 16, width: "100%" }}>
           <Button
             type="primary"
+            size="large"
             block
-            className="add-cart-btn"
+            style={{ backgroundColor: "#fa541c", borderRadius: 8 }}
             onClick={handleAddToCart}
+            
             disabled={isFree}
           >
-            Add To Cart
+            Thêm vào giỏ hàng
           </Button>
-          <Button block className="buy-now-btn" onClick={handleBuyNow}>
-            {isFree ? "Học ngay" : "Buy Now"}
+          <Button
+            size="large"
+            block
+            style={{
+              backgroundColor: "#13c2c2",
+              color: "#fff",
+              borderRadius: 8,
+              border: "none",
+            }}
+            onClick={handleBuyNow}
+          >
+            {isFree ? "Học ngay" : "Mua ngay"}
           </Button>
         </Space>
-      </div>
 
-      <Divider className="divider" />
+        <Divider />
 
-      <div className="share-section">
-        <Text>Share</Text>
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/f8cd3375628a2d19e34a2bdc59140bca2f452f3ffe1bae02993baccc6ba25b65"
-          alt="Share"
-          className="share-image"
-        />
+        <div className="share-section" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Text strong>Chia sẻ khoá học</Text>
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/f8cd3375628a2d19e34a2bdc59140bca2f452f3ffe1bae02993baccc6ba25b65"
+            alt="Share"
+            style={{ width: 24, height: 24, cursor: "pointer" }}
+          />
+        </div>
       </div>
     </Card>
   );

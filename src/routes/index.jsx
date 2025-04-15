@@ -21,11 +21,9 @@ import OrderComplete from "../view/client/pages/order-complete/OrderComplete";
 import Categories from "../view/client/pages/categories/CourseList";
 import CourseViewer from "../view/client/pages/course-viewer/CourseViewer";
 import CourseHeader from "../view/client/pages/course";
-import CourseDetails from "../view/client/pages/course/CourseDetail/CourseDetails";
 // Mentor Pages
 import Dashboard from "../view/mentor/pages/dashboard/Dashboard";
 import Communication from "../view/mentor/pages/communication/Communication";
-import CoursesSection from "../view/mentor/pages/courses/CoursesSection";
 import AddCourseForm from "../components/AddCourse/AddCourseForm";
 import AddCourseSectionForm from "../components/AddCourse/AddCourseSectionForm";
 import CourseStudentList from "../view/mentor/pages/courses/CourseStudentList/CourseStudentList";

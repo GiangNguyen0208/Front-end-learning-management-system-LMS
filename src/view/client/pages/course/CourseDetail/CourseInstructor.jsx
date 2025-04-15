@@ -11,7 +11,8 @@ import {
 } from "../js/styles";
 import { URL } from "../../../../../api/constant";
 
-const CourseInstructor = ({course}) => {
+const CourseInstructor = ({course, ratings}) => {
+  console.log("CourseInstructor", course);
   const mentorData = course?.mentor || null;
   return (
     <InstructorSection>
@@ -29,15 +30,15 @@ const CourseInstructor = ({course}) => {
           <StatsWrapper>
             <StatItem>
               <StarFilled />
-              <span>40,445 Reviews</span>
+              <span>{ratings.length} Reviews</span>
             </StatItem>
             <StatItem>
               <UserOutlined />
-              <span>500 Students</span>
+              <span>{course.quantityStudent} Student</span>
             </StatItem>
             <StatItem>
               <BookOutlined />
-              <span>15 Courses</span>
+              <span>{course.mentor.mentorDetail.quantityCourse} Courses</span>
             </StatItem>
           </StatsWrapper>
         </Col>

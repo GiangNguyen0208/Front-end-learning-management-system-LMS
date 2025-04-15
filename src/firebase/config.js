@@ -7,15 +7,15 @@ import { connectAuthEmulator } from "firebase/auth";
 import { connectFirestoreEmulator } from "firebase/firestore";
 import { connectStorageEmulator, getStorage } from "firebase/storage"; 
 
+// Đọc từ biến môi trường
 const firebaseConfig = {
-  apiKey: "AIzaSyA80j04C2sPCDfiN6cZfwUq_EYJLy_w0CY",
-  authDomain: "lms-learningmanagementsyte.firebaseapp.com",
-  projectId: "lms-learningmanagementsyte",
-  // storageBucket: "lms-learningmanagementsyte.firebasestorage.app",
-  storageBucket: "lms-learningmanagementsyte.appspot.com",
-  messagingSenderId: "360800483688",
-  appId: "1:360800483688:web:81b6d1fedbf928a398fedd",
-  measurementId: "G-HKWVMWN5CH"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Khởi tạo Firebase
