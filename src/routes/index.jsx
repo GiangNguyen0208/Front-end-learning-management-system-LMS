@@ -38,6 +38,7 @@ import Error404 from "../view/client/pages/error/Error404";
 import VerifyEmail from "../view/client/pages/register/VerifyEmail ";
 import ViewMentorCourses from "../view/mentor/pages/courses/ViewListCourse/ViewMentorCourses";
 import SignUpMentor from "../view/client/pages/register/SignUpMentor";
+import AdminUserPage from "../view/admin/pages/users/AdminUserPage";
 
 const AppRoutes = () => (
   <Routes>
@@ -54,10 +55,10 @@ const AppRoutes = () => (
 
       <Route element={<PrivateRouter />}>
         <Route path="info-user" element={<Infomation />} />
-        <Route path="instructor-info" element={<InstructorInfo />} />
+        <Route path="instructor-info/:id" element={<InstructorInfo />} />
         <Route path="shopping-cart" element={<ShoppingCart />} />
         <Route path="check-out" element={<Checkout />} />
-        <Route path="order-complete" element={<OrderComplete />} />
+        <Route path="payment-success" element={<OrderComplete />} />
         <Route path="sign-up-mentor" element={<SignUpMentor />}/>
         <Route path="course/:id/learn" element={<CourseViewer />} />
         {/* <Route path="course-viewer" element={<CourseViewer />} /> */}
@@ -86,6 +87,7 @@ const AppRoutes = () => (
       <Route path="dashboard" element={<AdminDashboard />} />
       <Route path="categories" element={<CategoryList />} />
       <Route path="warehouse" element={<CategoryWarehouse />} />
+      <Route path="users" element={<AdminUserPage />} />
     </Route>
 
     {/* Route 404 */}

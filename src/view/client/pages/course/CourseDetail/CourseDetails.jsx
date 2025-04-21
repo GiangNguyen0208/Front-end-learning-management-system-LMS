@@ -10,22 +10,22 @@ const CourseDetails = ({ course, ratings }) => {
   const items = [
     {
       key: "1",
-      label: "Description",
+      label: "Mô tả khóa học",
       children: <CourseDescription course={course} />,
     },
     {
       key: "2",
-      label: "Instructor",
+      label: "Giảng viên",
       children: <CourseInstructor course={course} ratings={ratings} />,
     },
     {
       key: "3",
-      label: "Syllabus",
+      label: "Chương trình học",
       children: <CourseSyllabus course={course} />,
     },
     {
       key: "4",
-      label: "Reviews",
+      label: "Đánh giá",
       children: <CourseReviews course={course} />,
     },
   ];

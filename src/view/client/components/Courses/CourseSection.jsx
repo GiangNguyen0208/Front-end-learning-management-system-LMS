@@ -15,7 +15,6 @@ const CourseSection = () => {
     const fetchCourses = async () => {
       try {
         const response = await courseApi.getCoursesByStatus("Active", "No");
-        console.log("Response", response);
         setCourseSection(response.data.courseDTOs);
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -30,7 +29,7 @@ const CourseSection = () => {
   return (
     <section className="featured-courses" style={{ marginTop: 60 }}>
       <div className="section-header">
-        <Title level={2}>Top Courses</Title>
+        <Title level={2}>Khóa học</Title>
         <Button type="link">See All</Button>
       </div>
       

@@ -79,6 +79,26 @@ const CourseCard = ({ course }) => {
         </Paragraph>
       </div>
 
+      {course.discountInPercent ? (
+        <div style={{ marginBottom: 8 }}>
+          <Tag color="red" style={{ fontWeight: "bold", fontSize: 12 }}>
+            🔥 GIẢM {course.discountInPercent}%
+          </Tag>
+        </div>
+      ) : (
+        course.type === "free" ? (
+          <Tag color="green" style={{ marginBottom: 8 }}>MIỄN PHÍ</Tag>
+        ) : (
+          <Tag 
+            color="red"
+            style={{ fontWeight: "bold", fontSize: 12 }}
+          >
+            🔥 Khóa học này MIỄN PHÍ cho bạn
+          </Tag>
+        )
+      )}
+
+
       <div>
         <Space size={4} style={{ marginBottom: 8 }}>
           <Rate 

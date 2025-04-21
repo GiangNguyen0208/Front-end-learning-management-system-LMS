@@ -25,9 +25,9 @@ const SignupForm = () => {
       const response = await authApi.register(userData);
       
       if (response.success) {
-        toast.success("Đăng ký thành công! Hãy đăng nhập.");
-        setTimeout(() => navigate("/login"), 1000);
-        setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500)
+        toast.success("Đăng ký thành công !");
+        // setTimeout(() => navigate("/login"), 1000);
+        setTimeout(() => toast.success("Đã gửi mã xác nhận đến email, xác nhận Email để đăng nhập !"), 1500)
       } else {
         toast.error(response.responseMessage || "Đăng ký thất bại. Kiểm tra thông tin!");
       }

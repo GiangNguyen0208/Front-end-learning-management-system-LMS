@@ -6,6 +6,7 @@ import OrderSummary from "./OrderSummary";
 import styles from "./ShoppingCart.module.css";
 import CheckoutHeader from "../checkout/CheckoutHeader";
 import { toast } from "react-toastify";
+import { formatFeeToVND } from "../../../../utils/helper/formatFeeToVND";
 
 const { Title, Text } = Typography;
 
@@ -28,16 +29,19 @@ const ShoppingCart = () => {
   };
 
   const calculateTotal = () => {
-    const price = cartItems.reduce((sum, item) => sum + (parseFloat(item.price?.replace("$", "")) || 0), 0);
-    const discount = 10;
-    const tax = 0.1 * (price - discount);
-    const total = price - discount + tax;
+    const price = cartItems.reduce((sum, item) => sum + item.price, 0);
+    const discount = cartItems.reduce(
+      (acc, item) => acc + (item.originalPrice - item.price),
+      0
+    );
+    const tax = Math.round(price * 0.1); // Thuế giả sử là 10%
+    const total = price + tax - discount;
 
     return {
-      price: `$${price.toFixed(2)}`,
-      discount: `-$${discount.toFixed(2)}`,
-      tax: `$${tax.toFixed(2)}`,
-      total: `$${total.toFixed(2)}`,
+      price: formatFeeToVND(price),
+      discount: `-${formatFeeToVND(discount)}`,
+      tax: formatFeeToVND(tax),
+      total: formatFeeToVND(total),
     };
   };
 

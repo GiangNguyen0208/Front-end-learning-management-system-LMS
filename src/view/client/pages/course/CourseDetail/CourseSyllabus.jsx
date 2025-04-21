@@ -13,7 +13,7 @@ const CourseSyllabus = ({ course }) => {
 
   return (
     <SyllabusSection>
-      <SyllabusTitle>Syllabus</SyllabusTitle>
+      <SyllabusTitle>Chương trình học</SyllabusTitle>
       <List
         dataSource={course.sections || []}
         renderItem={(item) => (
@@ -22,11 +22,11 @@ const CourseSyllabus = ({ course }) => {
             <LessonStats>
               <Space>
                 <ReadOutlined />
-                <span>{item.courseSectionTopics?.length || 0} Lessons</span>
+                <span>{item.courseSectionTopics?.length || 0} Bài giảng</span>
               </Space>
               <Space>
                 <ClockCircleOutlined />
-                <span>~{(item.courseSectionTopics?.length || 0) * 10} minutes</span>
+                <span>~{(item.courseSectionTopics?.length || 0) * 10} phút</span>
               </Space>
             </LessonStats>
           </LessonItem>

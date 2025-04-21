@@ -30,15 +30,15 @@ const CourseInstructor = ({course, ratings}) => {
           <StatsWrapper>
             <StatItem>
               <StarFilled />
-              <span>{ratings.length} Reviews</span>
+              <span>{ratings.length} Đánh giá</span>
             </StatItem>
             <StatItem>
               <UserOutlined />
-              <span>{course.quantityStudent} Student</span>
+              <span>{course.quantityStudent} Học viên</span>
             </StatItem>
             <StatItem>
               <BookOutlined />
-              <span>{course.mentor.mentorDetail.quantityCourse} Courses</span>
+              <span>{course.mentor.mentorDetail.quantityCourse} Khóa học</span>
             </StatItem>
           </StatsWrapper>
         </Col>

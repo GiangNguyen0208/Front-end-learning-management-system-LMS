@@ -37,7 +37,7 @@ const Header = () => {
         </Col>
 
         <Col className="nav-item" onClick={() => navigate("/categories")}>
-          <span>Danh mục</span>
+          <span>Danh sách khóa học</span>
         </Col>
 
         <Col flex="none" style={{ width: "800px" }}>

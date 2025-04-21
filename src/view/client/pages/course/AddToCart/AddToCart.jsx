@@ -23,8 +23,15 @@ const AddToCart = ({ course }) => {
   const currentPrice = fee === 0 ? 0 : Math.round(fee - (fee * discountInPercent) / 100);
   const isFree = fee === 0;
   const thumbnailUrl = `${URL.BASE_URL}/course/${thumbnail}`;
+  
+  // Kiểm tra nếu ID người dùng trùng với ID của mentor
+  const isOwner = user.id === course?.mentor?.id;
 
   const handleAddToCart = () => {
+    if (isOwner) {
+      toast.error("Bạn không thể thêm khóa học của chính bạn vào giỏ hàng.");
+      return;  // Nếu là chủ khóa học, không cho thêm vào giỏ hàng
+    }
     if (isFree) {
       message.info("Khoá học này miễn phí!");
       return;
@@ -43,8 +50,8 @@ const AddToCart = ({ course }) => {
         id: course.id,
         title: course.name,
         thumbnail: `${URL.BASE_URL}/course/${course.thumbnail}`,
-        price: formatFeeToVND(currentPrice),
-        originalPrice: formatFeeToVND(originalPrice),
+        price: currentPrice,
+        originalPrice: originalPrice,
         discountInPercent: course.discountInPercent,
         mentorName: `${course.mentor?.lastName || ""} ${course.mentor?.firstName || ""}`.trim(),
         lectures: `${totalLectures} bài học`,
@@ -63,10 +70,12 @@ const AddToCart = ({ course }) => {
     }
   };
   
-  
-  
 
   const handleBuyNow = async () => {
+    if (isOwner) {
+      toast.error("Bạn không thể đăng ký khóa học của chính bạn");
+      return;  // Nếu là chủ khóa học, không cho thêm vào giỏ hàng
+    }
     if (isFree) {
       try {
         const response = await courseApi.bookingCourseFree(id, user.id);
@@ -84,7 +93,7 @@ const AddToCart = ({ course }) => {
     }
 
     localStorage.setItem("buyNow", JSON.stringify(course));
-    navigate("/checkout");
+    navigate("/check-out");
   };
 
   return (
@@ -207,7 +216,7 @@ const AddToCart = ({ course }) => {
             }}
             onClick={handleBuyNow}
           >
-            {isFree ? "Học ngay" : "Mua ngay"}
+            {isFree ? "Học ngay" : "Đăng ký ngay"}
           </Button>
         </Space>
 

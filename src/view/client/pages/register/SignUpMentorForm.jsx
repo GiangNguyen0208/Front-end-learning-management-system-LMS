@@ -38,9 +38,9 @@ const SignUpMentorForm = () => {
       const response = await authApi.registerMentor(mentorData, user, setUser);
 
       if (response.success) {
-        toast.success("Đăng ký thành công! Hãy đăng nhập.");
-        setTimeout(() => navigate("/login"), 1000);
-        setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500);
+        toast.success("Đăng ký Mentor thành công!");
+        setTimeout(() => navigate("/home"), 1000);
+        // setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500);
       } else {
         toast.error(response.responseMessage || "Đăng ký thất bại. Kiểm tra thông tin!");
       }

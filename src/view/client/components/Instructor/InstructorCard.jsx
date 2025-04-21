@@ -5,11 +5,11 @@ import "./styles.css";
 
 const { Title, Text } = Typography;
 
-const InstructorCard = ({ avatar, name, role, rating, students }) => {
+const InstructorCard = ({ mentor, avatar, name, role, rating, students }) => {
   const navigate = useNavigate(); 
 
   const handleNavigate = () => {
-    navigate("/instructor-info");
+    navigate(`/instructor-info/${mentor.mentorDetail.id}`, { state: { mentor } });
   };
 
   return (

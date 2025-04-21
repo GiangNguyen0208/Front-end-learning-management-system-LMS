@@ -4,11 +4,11 @@ import PropTypes from "prop-types";
 
 const { Title, Text } = Typography;
 
-function MentorHeader({ name, title, students, reviews }) {
+function MentorHeader({ name, title, students, course }) {
   return (
     <div className="mentor-header">
       <div>
-        <Text className="instructor-label">Instructor</Text>
+        <Text className="instructor-label">Giảng Viên</Text>
         <div className="mentor-name-container">
           <Title level={2} className="mentor-name">
             {name}
@@ -18,15 +18,15 @@ function MentorHeader({ name, title, students, reviews }) {
       </div>
       <div className="mentor-stats">
         <div className="stat-item">
-          <Text className="stat-label">Total Students</Text>
+          <Text className="stat-label">Số lượng Học viên</Text>
           <Title level={3} className="stat-value">
             {students}
           </Title>
         </div>
         <div className="stat-item">
-          <Text className="stat-label">Reviews</Text>
+          <Text className="stat-label">Số khóa học giảng dạy</Text>
           <Title level={3} className="stat-value">
-            {reviews}
+            {course}
           </Title>
         </div>
       </div>

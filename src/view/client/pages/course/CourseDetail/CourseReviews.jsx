@@ -41,7 +41,7 @@ const CourseReviews = ({course}) => {
           <div>
             <Rate disabled defaultValue={4.6} /> 4.6
           </div>
-          <span>146,951 reviews</span>
+          <span>146,951 đánh giá</span>
         </RatingOverview>
 
         <RatingStats>

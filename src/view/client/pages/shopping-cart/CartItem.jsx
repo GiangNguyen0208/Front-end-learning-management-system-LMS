@@ -2,6 +2,7 @@ import React from "react";
 import { Card, Typography, Rate, Divider, Image } from "antd";
 import { DeleteOutlined, HeartOutlined } from "@ant-design/icons";
 import styles from "./ShoppingCart.module.css";
+import { formatFeeToVND } from "../../../../utils/helper/formatFeeToVND";
 
 const { Text, Title } = Typography;
 
@@ -25,7 +26,7 @@ const CartItem = ({ key, item, onRemove }) => {
             </Text>
 
             <div className={styles.ratingContainer} style={{ marginBottom: 4 }}>
-              <Rate disabled allowHalf defaultValue={4.5} style={{ fontSize: 14 }} />
+              <Rate disabled allowHalf defaultValue={5} style={{ fontSize: 14 }} />
               <Text type="secondary" style={{ marginLeft: 8 }}>
                 ({item.totalRatings || 0} đánh giá)
               </Text>
@@ -52,10 +53,10 @@ const CartItem = ({ key, item, onRemove }) => {
         </div>
 
         <div className={styles.price} style={{ textAlign: "right" }}>
-          <Text strong style={{ fontSize: 16, color: "#fa541c" }}>{item.price}</Text>
+          <Text strong style={{ fontSize: 16, color: "#fa541c" }}>{formatFeeToVND(item.price)}</Text>
           {item.originalPrice && item.originalPrice !== item.price && (
             <Text delete type="secondary" style={{ display: "block", fontSize: 13 }}>
-              {item.originalPrice}
+              {formatFeeToVND(item.originalPrice)}
             </Text>
           )}
         </div>

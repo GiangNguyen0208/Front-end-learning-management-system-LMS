@@ -1,29 +1,29 @@
-import React from "react";
-import { Form, Input, Row, Col } from "antd";
+import React from 'react';
+import { Form, Input } from 'antd';
 
-const AddressForm = () => {
+const PaymentMethodForm = ({ onChange }) => {
+  const [form] = Form.useForm();
+
+  const handleValuesChange = (_, allValues) => {
+    onChange?.(allValues); // Gửi dữ liệu lên component cha
+  };
+
   return (
-    <Row gutter={16}>
-      <Col xs={24} md={12}>
-        <Form.Item
-          label="Country"
-          name="country"
-          rules={[{ required: true, message: "Please enter your country" }]}
-        >
-          <Input placeholder="Enter Country" />
-        </Form.Item>
-      </Col>
-      <Col xs={24} md={12}>
-        <Form.Item
-          label="State/Union Territory"
-          name="state"
-          rules={[{ required: true, message: "Please enter your state" }]}
-        >
-          <Input placeholder="Enter State" />
-        </Form.Item>
-      </Col>
-    </Row>
+    <Form form={form} layout="vertical" onValuesChange={handleValuesChange}>
+      <Form.Item label="Tên trên thẻ" name="nameOnCard" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item label="Số thẻ" name="cardNo" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item label="Ngày hết hạn" name="expiryDate" rules={[{ required: true }]}>
+        <Input placeholder="MM/YY" />
+      </Form.Item>
+      <Form.Item label="CVV" name="cvv" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+    </Form>
   );
 };
 
-export default AddressForm;
+export default PaymentMethodForm;
