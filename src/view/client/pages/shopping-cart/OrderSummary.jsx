@@ -12,7 +12,7 @@ const OrderSummary = () => {
   const [orderSummary, setOrderSummary] = useState({
     price: 0,
     discount: 0,
-    tax: 0,
+    // tax: 0,
     total: 0,
   });
 
@@ -25,13 +25,14 @@ const OrderSummary = () => {
       (acc, item) => acc + (item.originalPrice - item.price),
       0
     );
-    const tax = Math.round(price * 0.1); // Thuế giả sử là 10%
-    const total = price + tax - discount;
+    // const tax = Math.round(price * 0.1); // Thuế giả sử là 10%
+    // const total = price + tax - discount;
+    const total = price;
 
     setOrderSummary({
       price: formatFeeToVND(price),
       discount: `-${formatFeeToVND(discount)}`,
-      tax: formatFeeToVND(tax),
+      // tax: formatFeeToVND(tax),
       total: formatFeeToVND(total),
     });
   };

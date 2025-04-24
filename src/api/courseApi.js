@@ -8,11 +8,18 @@ const courseApi = {
     });
   },
 
+  sendOtpToEmail: (email) => {
+    return axiosClient.get(`/booking/send-otp`, {
+      params: { email }
+    });
+  },
+
   bookingCourseFree: () => {
     return axiosClient.post("/booking/add-free", { courseId, customerId });
   },
 
-  bookingCourse: ({ nameOnCard, cardNo, cvv, expiryDate, courseIds, amount, customerId }) => {
+  bookingCourse: ({ nameOnCard, cardNo, cvv, expiryDate, courseIds, amount, customerId, otpConfirm }) => {
+    
     return axiosClient.post("/booking/add", {
       nameOnCard,
       cardNo,
@@ -21,6 +28,7 @@ const courseApi = {
       courseIds,
       amount,
       customerId,
+      otpConfirm,
     });
   },
   
