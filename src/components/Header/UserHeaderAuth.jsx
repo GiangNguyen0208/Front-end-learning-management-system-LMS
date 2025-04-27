@@ -38,7 +38,7 @@ export const UserHeaderAuth = () => {
 
   const menuItems = [
     { key: "profile", label: "Trang cá nhân", onClick: () => navigate("/info-user") },
-    { key: "orders", label: "Đơn hàng", onClick: () => navigate("/shopping-cart") },
+    { key: "orders", label: "Lịch sử Đơn hàng", onClick: () => navigate("/order-history") },
     user?.role === "Mentor" && { key: "mentor", label: "Giảng Viên", onClick: () => navigate("/mentor/dashboard") },
     user?.role === "Admin" && { key: "admin", label: "Quản trị viên", onClick: () => navigate("/admin/dashboard") },
     { key: "logout", label: "Đăng xuất", icon: <LogoutOutlined />, onClick: logout },

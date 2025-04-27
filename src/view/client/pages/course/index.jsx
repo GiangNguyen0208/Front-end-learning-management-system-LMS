@@ -10,7 +10,6 @@ import TestimonialsSection from "./TestimonialSession/index";
 import "./css/styles.css";
 import CheckoutHeader from "../checkout/CheckoutHeader";
 import SimilarCourses from "./SimilarCourses/SimilarCourses";
-import { URL } from "../../../../api/constant";
 import courseApi  from "../../../../api/courseApi";
 import CourseRatingForm from "./CourseRatingForm"
 

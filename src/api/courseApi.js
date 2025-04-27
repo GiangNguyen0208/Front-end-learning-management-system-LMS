@@ -8,13 +8,19 @@ const courseApi = {
     });
   },
 
+  getOrderHistory: (customerId) => {
+    return axiosClient.get(`/booking/fetch/customer-wise`, {
+      params: { customerId },
+    });
+  },
+
   sendOtpToEmail: (email) => {
     return axiosClient.get(`/booking/send-otp`, {
       params: { email }
     });
   },
 
-  bookingCourseFree: () => {
+  bookingCourseFree: (courseId, customerId) => {
     return axiosClient.post("/booking/add-free", { courseId, customerId });
   },
 
@@ -33,10 +39,6 @@ const courseApi = {
   },
   
   getCourseById: (courseId, videoShow = "Yes") => {
-    if (!courseId) {
-      console.error("Error: courseId is missing!");
-      return;
-    }
     return axiosClient.get(`/course/fetch/course-id?courseId=${courseId}&videoShow=${videoShow}`);
   },
 

@@ -72,18 +72,20 @@ const AddToCart = ({ course }) => {
   
 
   const handleBuyNow = async () => {
+    const customerId = user.id;
     if (isOwner) {
       toast.error("Bạn không thể đăng ký khóa học của chính bạn");
       return;  // Nếu là chủ khóa học, không cho thêm vào giỏ hàng
     }
     if (isFree) {
       try {
-        const response = await courseApi.bookingCourseFree(id, user.id);
+        const response = await courseApi.bookingCourseFree(id, customerId);
+        console.log("Đăng ký khoá học miễn phí:", response.data);
         if (response.data?.success) {
-          message.success("Đã đăng ký khoá học miễn phí!");
+          toast.success("Đã đăng ký khoá học miễn phí!");
           // navigate(`/course/${id}/learn`);
         } else {
-          message.warning(response.data?.responseMessage || "Đăng ký không thành công.");
+          toast.warning(response.data?.responseMessage || "Đăng ký không thành công.");
         }
       } catch (error) {
         console.error("Lỗi khi đăng ký khoá học miễn phí:", error);

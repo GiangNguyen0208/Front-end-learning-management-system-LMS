@@ -39,6 +39,7 @@ import VerifyEmail from "../view/client/pages/register/VerifyEmail ";
 import ViewMentorCourses from "../view/mentor/pages/courses/ViewListCourse/ViewMentorCourses";
 import SignUpMentor from "../view/client/pages/register/SignUpMentor";
 import AdminUserPage from "../view/admin/pages/users/AdminUserPage";
+import OrderHistory from "../view/client/pages/order-history/OrderHistory";
 
 const AppRoutes = () => (
   <Routes>
@@ -61,6 +62,7 @@ const AppRoutes = () => (
         <Route path="payment-success" element={<OrderComplete />} />
         <Route path="sign-up-mentor" element={<SignUpMentor />}/>
         <Route path="course/:id/learn" element={<CourseViewer />} />
+        <Route path="order-history" element={<OrderHistory />} />
         {/* <Route path="course-viewer" element={<CourseViewer />} /> */}
       </Route>
 
