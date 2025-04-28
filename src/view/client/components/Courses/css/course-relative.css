@@ -128,3 +128,11 @@
     padding: 0 8px;
   }
 }
+
+@keyframes flash {
+  0%, 100% { opacity: 1 }
+  50% { opacity: 0.3 }
+}
+.flash-badge {
+  animation: flash 1s infinite;
+}

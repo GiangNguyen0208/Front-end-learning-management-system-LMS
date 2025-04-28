@@ -4,6 +4,7 @@ import { UploadOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import authApi from "../../../../api/authApi";
 import { AuthContext } from "../../../../context/AuthProvider";
+import { toast } from "react-toastify";
 
 const { Option } = Select;
 
@@ -37,14 +38,14 @@ const SignUpMentorForm = () => {
       const response = await authApi.registerMentor(mentorData, user, setUser);
 
       if (response.success) {
-        message.success("Đăng ký thành công! Hãy đăng nhập.");
-        setTimeout(() => navigate("/login"), 1000);
-        setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500);
+        toast.success("Đăng ký Mentor thành công!");
+        setTimeout(() => navigate("/home"), 1000);
+        // setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500);
       } else {
-        message.error(response.responseMessage || "Đăng ký thất bại. Kiểm tra thông tin!");
+        toast.error(response.responseMessage || "Đăng ký thất bại. Kiểm tra thông tin!");
       }
     } catch (error) {
-      message.error(`Lỗi đăng ký: ${error.response?.data?.message || error.message}`);
+      toast.error(`Lỗi đăng ký: ${error.response?.data?.message || error.message}`);
       console.error("❌ Lỗi đăng ký:", error);
     }
   };

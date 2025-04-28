@@ -1,47 +1,97 @@
 import React from "react";
-import { Row, Col, Rate, Space, Avatar, Typography } from "antd";
-import { GlobalOutlined } from "@ant-design/icons";
+import { Row, Col, Rate, Space, Avatar, Typography, Card, Divider, Tooltip } from "antd";
+import { GlobalOutlined, ClockCircleOutlined, ReadOutlined, UserOutlined } from "@ant-design/icons";
 import { URL } from "../../../../../api/constant";
-const { Text } = Typography;
 
-const CourseStats = ({course}) => {
+const { Text, Title } = Typography;
+
+const CourseStats = ({ course }) => {
+  const totalLectures = course.sections?.reduce(
+    (sum, section) => sum + (section.courseSectionTopics?.length || 0),
+    0
+  ) || 0;
+
+  const totalMinutes = totalLectures * 10;
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
   return (
-    <div className="course-stats">
-      <Row gutter={[16, 24]}>
-        <Col>
-          <Space align="center">
-            <Text className="rating-score">4.6</Text>
-            <Rate disabled defaultValue={4.6} />
-            <Text className="rating-count">(651651 rating)</Text>
-            <div className="vertical-divider" />
-            <Text>22 Total Hours. 155 Lectures. All levels</Text>
-          </Space>
-        </Col>
-      </Row>
-
-      <Row className="instructor-row" align="middle">
-        <Col>
-          <Space align="center">
-            <Avatar
-              size={40}
-              src={`${URL.BASE_URL}/user/${course?.mentor?.mentorDetail?.profilePic}`}
-            />
-            <Text>
-              Giảng dạy bởi <Text className="instructor-name">{course.mentor.firstName + " " + course.mentor.lastName}</Text>
+    <Card
+      style={{
+        borderRadius: 16,
+        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        marginTop: 24,
+      }}
+    >
+      {/* Rating & stats */}
+      <Row gutter={[16, 16]} align="middle" style={{ marginBottom: 12 }}>
+        <Col flex="auto">
+          <Space size="middle" wrap>
+            <Text strong style={{ fontSize: 24, color: "#fadb14" }}>
+              4.6
             </Text>
+            <Rate disabled defaultValue={4.6} />
+            <Text type="secondary">(651,651 đánh giá)</Text>
           </Space>
         </Col>
       </Row>
 
-      <Row className="languages-row" align="middle">
+      <Divider style={{ margin: "12px 0" }} />
+
+      {/* Lectures & duration */}
+      <Row gutter={[16, 16]}>
         <Col>
-          <Space align="center">
-            <GlobalOutlined />
-            <Text>English, Spanish, Italian, German</Text>
+          <Space>
+            <ReadOutlined style={{ fontSize: 18 }} />
+            <Text strong>{totalLectures} bài giảng</Text>
+          </Space>
+        </Col>
+        <Col>
+          <Space>
+            <ClockCircleOutlined style={{ fontSize: 18 }} />
+            <Text strong>{hours}h {minutes > 0 ? `${minutes}m` : ""} tổng thời lượng</Text>
+          </Space>
+        </Col>
+        <Col>
+          <Space>
+            <Text type="secondary">Trình độ: </Text>
+            <Text strong>Dành cho mọi người</Text>
           </Space>
         </Col>
       </Row>
-    </div>
+
+      <Divider style={{ margin: "12px 0" }} />
+
+      {/* Instructor info */}
+      <Row gutter={[16, 16]} align="middle">
+        <Col>
+          <Avatar
+            size={48}
+            icon={<UserOutlined />}
+            src={`${URL.BASE_URL}/user/${course?.mentor?.mentorDetail?.profilePic}`}
+          />
+        </Col>
+        <Col flex="auto">
+          <Text type="secondary">Giảng viên</Text>
+          <br />
+          <Text strong>
+            {course.mentor.firstName + " " + course.mentor.lastName}
+          </Text>
+        </Col>
+      </Row>
+
+      <Divider style={{ margin: "12px 0" }} />
+
+      {/* Language */}
+      <Row gutter={[16, 16]} align="middle">
+        <Col>
+          <Space>
+            <GlobalOutlined />
+            <Text>English, Vietnamese</Text>
+          </Space>
+        </Col>
+      </Row>
+    </Card>
   );
 };
 

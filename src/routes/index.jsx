@@ -21,11 +21,9 @@ import OrderComplete from "../view/client/pages/order-complete/OrderComplete";
 import Categories from "../view/client/pages/categories/CourseList";
 import CourseViewer from "../view/client/pages/course-viewer/CourseViewer";
 import CourseHeader from "../view/client/pages/course";
-import CourseDetails from "../view/client/pages/course/CourseDetail/CourseDetails";
 // Mentor Pages
 import Dashboard from "../view/mentor/pages/dashboard/Dashboard";
 import Communication from "../view/mentor/pages/communication/Communication";
-import CoursesSection from "../view/mentor/pages/courses/CoursesSection";
 import AddCourseForm from "../components/AddCourse/AddCourseForm";
 import AddCourseSectionForm from "../components/AddCourse/AddCourseSectionForm";
 import CourseStudentList from "../view/mentor/pages/courses/CourseStudentList/CourseStudentList";
@@ -40,6 +38,8 @@ import Error404 from "../view/client/pages/error/Error404";
 import VerifyEmail from "../view/client/pages/register/VerifyEmail ";
 import ViewMentorCourses from "../view/mentor/pages/courses/ViewListCourse/ViewMentorCourses";
 import SignUpMentor from "../view/client/pages/register/SignUpMentor";
+import AdminUserPage from "../view/admin/pages/users/AdminUserPage";
+import OrderHistory from "../view/client/pages/order-history/OrderHistory";
 
 const AppRoutes = () => (
   <Routes>
@@ -56,12 +56,13 @@ const AppRoutes = () => (
 
       <Route element={<PrivateRouter />}>
         <Route path="info-user" element={<Infomation />} />
-        <Route path="instructor-info" element={<InstructorInfo />} />
+        <Route path="instructor-info/:id" element={<InstructorInfo />} />
         <Route path="shopping-cart" element={<ShoppingCart />} />
         <Route path="check-out" element={<Checkout />} />
-        <Route path="order-complete" element={<OrderComplete />} />
+        <Route path="payment-success" element={<OrderComplete />} />
         <Route path="sign-up-mentor" element={<SignUpMentor />}/>
-        <Route path="course/:id/learn" element={<CourseViewer />} />
+        <Route path="my-learning/:id/learn" element={<CourseViewer />} />
+        <Route path="order-history" element={<OrderHistory />} />
         {/* <Route path="course-viewer" element={<CourseViewer />} /> */}
       </Route>
 
@@ -88,6 +89,7 @@ const AppRoutes = () => (
       <Route path="dashboard" element={<AdminDashboard />} />
       <Route path="categories" element={<CategoryList />} />
       <Route path="warehouse" element={<CategoryWarehouse />} />
+      <Route path="users" element={<AdminUserPage />} />
     </Route>
 
     {/* Route 404 */}

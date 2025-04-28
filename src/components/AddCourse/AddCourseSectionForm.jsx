@@ -8,6 +8,8 @@ import AddCourseSectionTopicModal from "./AddCourseSectionTopicModal";
 import CourseSidebar from "./CourseSidebar";
 import { useParams, useNavigate } from "react-router-dom";
 import courseApi from "../../api/courseApi";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddCourseSectionForm = () => {
   const [showSectionModal, setShowSectionModal] = useState(false);
@@ -22,8 +24,10 @@ const AddCourseSectionForm = () => {
       courseApi.getCourseById(courseId)
         .then(response => {
           if (response?.data) {
+            toast.success("Tải dữ liệu khóa học thành công!");
             setCourseData(response.data);
           } else {
+            toast.error("Lỗi: Không có dữ liệu khóa học!");
             console.error("Lỗi: API không trả về dữ liệu hợp lệ.");
           }
         })

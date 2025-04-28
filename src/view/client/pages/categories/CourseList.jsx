@@ -1,78 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Typography, Row, Col } from 'antd';
 import CourseFilters from './CourseFilters';
 import CourseGrid from './CourseGrid';
 import './styles.css'
 import InstructorSection from './../../components/Instructor/InstructorSection';
 import CourseSection from '../../components/Courses/CourseSection';
+import { useLocation, useNavigate } from 'react-router-dom';
+import courseApi from '../../../../api/courseApi';
 
 const { Title } = Typography;
 
 const Categories = () => {
-  const courses = [
-    {
-      id: 1,
-      imageUrl:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-      title: "Beginner's Guide to Design",
-      instructor: "Ronald Richards",
-      rating: 4.9,
-      ratingCount: 1200,
-      details: "22 Total Hours. 155 Lectures. Beginner",
-      price: 149.9,
-    },
-    {
-      id: 1,
-      imageUrl:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-      title: "Beginner's Guide to Design",
-      instructor: "Ronald Richards",
-      rating: 4.9,
-      ratingCount: 1200,
-      details: "22 Total Hours. 155 Lectures. Beginner",
-      price: 149.9,
-    },{
-      id: 1,
-      imageUrl:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-      title: "Beginner's Guide to Design",
-      instructor: "Ronald Richards",
-      rating: 4.9,
-      ratingCount: 1200,
-      details: "22 Total Hours. 155 Lectures. Beginner",
-      price: 149.9,
-    },{
-      id: 1,
-      imageUrl:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-      title: "Beginner's Guide to Design",
-      instructor: "Ronald Richards",
-      rating: 4.9,
-      ratingCount: 1200,
-      details: "22 Total Hours. 155 Lectures. Beginner",
-      price: 149.9,
-    },{
-      id: 1,
-      imageUrl:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-      title: "Beginner's Guide to Design",
-      instructor: "Ronald Richards",
-      rating: 4.9,
-      ratingCount: 1200,
-      details: "22 Total Hours. 155 Lectures. Beginner",
-      price: 149.9,
-    },{
-      id: 1,
-      imageUrl:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-      title: "Beginner's Guide to Design",
-      instructor: "Ronald Richards",
-      rating: 4.9,
-      ratingCount: 1200,
-      details: "22 Total Hours. 155 Lectures. Beginner",
-      price: 149.9,
-    },
-  ];
+  const [courseSection, setCourseSection] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await courseApi.getCoursesByStatus("Active", "No");
+        console.log("Response", response);
+        setCourseSection(response.data.courseDTOs);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   return (
     <Layout.Content className="course-list-container" style={{ maxWidth: 1280, margin: '0 auto', padding: '24px' }}>
@@ -86,7 +43,7 @@ const Categories = () => {
             <CourseFilters />
           </Col>
           <Col xs={24} lg={18}>
-            <CourseGrid courses={courses} />
+            <CourseGrid courses={courseSection} />
           </Col>
         </Row>
       </div>

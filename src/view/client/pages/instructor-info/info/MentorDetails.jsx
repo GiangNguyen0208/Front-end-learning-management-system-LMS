@@ -1,22 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import DetailSection from "./DetailSection";
+import "../MentorDetails.css"; // Gợi ý tạo CSS riêng nếu cần style tùy chỉnh
 
-function MentorDetails({ about, expertise, experience }) {
+const MentorDetails = ({ about, expertise, experience }) => {
   return (
     <div className="mentor-details">
-      <DetailSection title="About Ronald Richard" content={about} />
-
-      <DetailSection
-        title="Areas of Expertise"
-        content={expertise}
-        isListContent={true}
-      />
-
-      <DetailSection title="Professional Experience" content={experience} />
+      <DetailSection title="Giới thiệu về Giảng viên" content={about} />
+      <DetailSection title="Lĩnh vực chuyên môn" content={expertise} isList />
+      <DetailSection title="Kinh nghiệm làm việc" content={experience} />
     </div>
   );
-}
+};
 
 MentorDetails.propTypes = {
   about: PropTypes.string.isRequired,

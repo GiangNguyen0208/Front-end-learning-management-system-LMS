@@ -24,7 +24,7 @@ const Header = () => {
 
   return (
     <Layout.Header className="site-header">
-      <Row className="header-container" align="middle" justify="center">
+      <Row className="header-container" align="middle" justify="space-between" wrap={false}>
         <Col className="logo-section" onClick={() => navigate("/home")}>
           <Space size={16} className="logo-clickable">
             <img
@@ -36,11 +36,11 @@ const Header = () => {
           </Space>
         </Col>
 
-        <Col className="nav-item" onClick={() => navigate("categories")}>
-          <span>Danh mục</span>
+        <Col className="nav-item" onClick={() => navigate("/categories")}>
+          <span>Danh sách khóa học</span>
         </Col>
 
-        <Col flex="auto">
+        <Col flex="none" style={{ width: "800px" }}>
           <HeaderSearch />
         </Col>
 

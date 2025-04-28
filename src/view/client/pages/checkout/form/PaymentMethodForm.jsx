@@ -2,6 +2,7 @@ import React from "react";
 import { Form, Radio, Card, Space, Typography } from "antd";
 import { CreditCardOutlined, PayCircleOutlined } from "@ant-design/icons";
 import CreditCardForm from "./CreditCardForm";
+// import PayPalForm from "./PayPalForm";
 
 const { Title } = Typography;
 
@@ -37,6 +38,7 @@ const PaymentMethodForm = () => {
                   <span>PayPal</span>
                 </Space>
               </Radio>
+              {/* {paymentMethod === "paypal" && <PayPalForm />} */}
             </Card>
           </Space>
         </Radio.Group>

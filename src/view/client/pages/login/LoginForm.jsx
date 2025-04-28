@@ -4,6 +4,8 @@ import { ArrowRightOutlined, MailOutlined, LockOutlined, GooglePlusOutlined } fr
 import { useNavigate } from "react-router-dom";
 import authApi from "../../../../api/authApi";
 import { AuthContext } from "../../../../context/AuthProvider";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const { Title, Text } = Typography;
 
@@ -17,15 +19,15 @@ const LoginForm = () => {
 
       if (response.success && response.jwtToken) {
         login(response.jwtToken, response.user);
-        message.success("Login successful!");
+        toast.success("Đăng nhập thành công!");
         setTimeout(() => {
           navigate("/home");
         }, 1000);
       } else {
-        message.error(response.responseMessage || "Login failed. Please check your credentials.");
+        toast.error(response.responseMessage || "Đăng nhập thất bại, Vui lòng thử lại!");
       }
     } catch (error) {
-      message.error("Error connecting to server. Please try again.");
+      toast.error("Lỗi khi đăng nhập, Vui lòng thử lại!");
       console.error(error);
     }
   };
@@ -43,6 +45,7 @@ const LoginForm = () => {
             onFinish={onFinish}
             className="login-form"
           >
+            
             <Form.Item
               label="Email"
               name="email"

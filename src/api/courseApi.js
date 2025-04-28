@@ -8,15 +8,43 @@ const courseApi = {
     });
   },
 
+  fetchCourseByCustomerId: (customerId) => {
+    return axiosClient.get(`/booking/fetch/customer-wise`, {
+      params: { customerId },
+    });  
+  },
+
+  getOrderHistory: (customerId) => {
+    return axiosClient.get(`/booking/fetch/customer-wise`, {
+      params: { customerId },
+    });
+  },
+
+  sendOtpToEmail: (email) => {
+    return axiosClient.get(`/booking/send-otp`, {
+      params: { email }
+    });
+  },
+
   bookingCourseFree: (courseId, customerId) => {
     return axiosClient.post("/booking/add-free", { courseId, customerId });
   },
 
+  bookingCourse: ({ nameOnCard, cardNo, cvv, expiryDate, courseIds, amount, customerId, otpConfirm }) => {
+    
+    return axiosClient.post("/booking/add", {
+      nameOnCard,
+      cardNo,
+      cvv,
+      expiryDate,
+      courseIds,
+      amount,
+      customerId,
+      otpConfirm,
+    });
+  },
+  
   getCourseById: (courseId, videoShow = "Yes") => {
-    if (!courseId) {
-      console.error("Error: courseId is missing!");
-      return;
-    }
     return axiosClient.get(`/course/fetch/course-id?courseId=${courseId}&videoShow=${videoShow}`);
   },
 
@@ -63,13 +91,24 @@ const courseApi = {
     return axiosClient.delete(`/course/delete`, { params: { courseId } });
   },
 
-  updateVideoProgress: (userId, videoId, percentWatched) => {
-    return axiosClient.post("/course/video/progress", {
+  updateVideoProgress: (userId, topicId, percent) => {
+    return axiosClient.put(`/course/video-progress/update`, {
       userId,
-      videoId,
-      percentWatched,
+      videoId: topicId,
+      percentWatched: percent,
     });
   },
+
+  markVideoCompleted: (userId, topicId) => {
+    return axiosClient.post(`/course/video-progress/mark-completed`, {
+      userId,
+      videoId: topicId,
+    });
+  },
+
+  getCourseProgress: (userId, courseId) => {
+    return axiosClient.get(`/course/course-progress/${userId}/${courseId}`);
+  }
 };
 
 

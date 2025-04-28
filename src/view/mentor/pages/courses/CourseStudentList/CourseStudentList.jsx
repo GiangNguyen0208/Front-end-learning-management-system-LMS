@@ -1,10 +1,23 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Table, Card, Button, Popconfirm, message, Space, Tag, Modal, Descriptions } from "antd";
-import { ArrowLeftOutlined, UploadOutlined, UserAddOutlined, UndoOutlined, DeleteOutlined, EyeOutlined } from "@ant-design/icons";
-// import studentApi from "../../api/studentApi";
-// import mentorApi from "../../api/mentorApi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Table,
+  Card,
+  Button,
+  Popconfirm,
+  message,
+  Space,
+  Tag,
+  Modal,
+  Descriptions,
+} from "antd";
+import {
+  ArrowLeftOutlined,
+  UserAddOutlined,
+  UndoOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 
 const CourseStudentList = () => {
   const { courseId } = useParams();
@@ -14,51 +27,51 @@ const CourseStudentList = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  useEffect(() => {
-    fetchStudents();
-  }, []);
+  // useEffect(() => {
+  //   fetchStudents();
+  // }, [courseId]);
 
-  const fetchStudents = async () => {
-    setLoading(true);
-    try {
-      const response = await studentApi.getStudentsByCourse(courseId);
-      setStudents(response.data.students || []);
-    } catch (error) {
-      message.error("Không thể tải danh sách học viên.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchStudents = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await studentApi.getStudentsByCourse(courseId);
+  //     setStudents(response.data.students || []);
+  //   } catch (error) {
+  //     message.error("Không thể tải danh sách học viên.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const removeStudent = async (studentId) => {
-    try {
-      await studentApi.removeStudentFromCourse(courseId, studentId);
-      message.success("Xóa học viên thành công!");
-      setStudents(students.filter((s) => s.id !== studentId));
-    } catch (error) {
-      message.error("Lỗi khi xóa học viên.");
-    }
-  };
+  // const removeStudent = async (studentId) => {
+  //   try {
+  //     await studentApi.removeStudentFromCourse(courseId, studentId);
+  //     message.success("Xóa học viên thành công!");
+  //     setStudents((prev) => prev.filter((s) => s.id !== studentId));
+  //   } catch (error) {
+  //     message.error("Lỗi khi xóa học viên.");
+  //   }
+  // };
 
-  const inviteAsMentor = async (studentId) => {
-    try {
-      await mentorApi.inviteAsMentor(studentId);
-      message.success("Đã mời học viên làm giảng viên!");
-      fetchStudents();
-    } catch (error) {
-      message.error("Lỗi khi mời học viên.");
-    }
-  };
+  // const inviteAsMentor = async (studentId) => {
+  //   try {
+  //     await mentorApi.inviteAsMentor(studentId);
+  //     message.success("Đã mời học viên làm giảng viên!");
+  //     fetchStudents();
+  //   } catch (error) {
+  //     message.error("Lỗi khi mời học viên.");
+  //   }
+  // };
 
-  const undoMentor = async (studentId) => {
-    try {
-      await mentorApi.undoMentorRole(studentId);
-      message.success("Đã hoàn tác giảng viên!");
-      fetchStudents();
-    } catch (error) {
-      message.error("Lỗi khi hoàn tác giảng viên.");
-    }
-  };
+  // const undoMentor = async (studentId) => {
+  //   try {
+  //     await mentorApi.undoMentorRole(studentId);
+  //     message.success("Đã hoàn tác giảng viên!");
+  //     fetchStudents();
+  //   } catch (error) {
+  //     message.error("Lỗi khi hoàn tác giảng viên.");
+  //   }
+  // };
 
   const showStudentDetails = (student) => {
     setSelectedStudent(student);
@@ -69,6 +82,49 @@ const CourseStudentList = () => {
     setIsModalVisible(false);
     setSelectedStudent(null);
   };
+
+  const renderRoleTag = (role) => (
+    <Tag color={role === "MENTOR" ? "green" : "blue"}>
+      {role === "MENTOR" ? "Giảng viên" : "Học viên"}
+    </Tag>
+  );
+
+  const renderActions = (record) => (
+    <Space>
+      <Button icon={<EyeOutlined />} onClick={() => showStudentDetails(record)}>
+        Xem chi tiết
+      </Button>
+
+      {record.role === "STUDENT" ? (
+        <Button
+          type="primary"
+          icon={<UserAddOutlined />}
+          // onClick={() => inviteAsMentor(record.id)}
+        >
+          Mời làm giảng viên
+        </Button>
+      ) : (
+        <Button
+          type="dashed"
+          icon={<UndoOutlined />}
+          // onClick={() => undoMentor(record.id)}
+        >
+          Hoàn tác giảng viên
+        </Button>
+      )}
+
+      <Popconfirm
+        title="Bạn có chắc muốn xóa học viên này?"
+        // onConfirm={() => removeStudent(record.id)}
+        okText="Có"
+        cancelText="Không"
+      >
+        <Button danger icon={<DeleteOutlined />}>
+          Xóa
+        </Button>
+      </Popconfirm>
+    </Space>
+  );
 
   const columns = [
     {
@@ -83,50 +139,25 @@ const CourseStudentList = () => {
     {
       title: "Vai trò",
       dataIndex: "role",
-      render: (role) => (
-        <Tag color={role === "MENTOR" ? "green" : "blue"}>
-          {role === "MENTOR" ? "Giảng viên" : "Học viên"}
-        </Tag>
-      ),
+      render: renderRoleTag,
     },
     {
       title: "Hành động",
-      render: (text, record) => (
-        <Space>
-          <Button icon={<EyeOutlined />} onClick={() => showStudentDetails(record)}>
-            Xem chi tiết
-          </Button>
-
-          {record.role === "STUDENT" ? (
-            <Button type="primary" icon={<UserAddOutlined />} onClick={() => inviteAsMentor(record.id)}>
-              Mời làm giảng viên
-            </Button>
-          ) : (
-            <Button type="dashed" icon={<UndoOutlined />} onClick={() => undoMentor(record.id)}>
-              Hoàn tác giảng viên
-            </Button>
-          )}
-
-          <Popconfirm
-            title="Bạn có chắc muốn xóa học viên này?"
-            // onConfirm={() => removeStudent(record.id)}
-            okText="Có"
-            cancelText="Không"
-          >
-            <Button danger icon={<DeleteOutlined />}>Xóa</Button>
-          </Popconfirm>
-        </Space>
-      ),
+      render: (_, record) => renderActions(record),
     },
   ];
 
   return (
-    <Card 
-      title="Danh sách học viên" 
-      style={{ maxWidth: "1200px", margin: "auto" }}
+    <Card
+      title="Danh sách học viên"
+      style={{ maxWidth: 1200, margin: "auto" }}
       extra={
-        <Button type="primary" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} style={{ marginBottom: 16, marginLeft: 16 }}>
-            Go Back
+        <Button
+          type="primary"
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate(-1)}
+        >
+          Quay lại
         </Button>
       }
     >
@@ -138,7 +169,6 @@ const CourseStudentList = () => {
         pagination={{ pageSize: 5 }}
       />
 
-      {/* Modal hiển thị chi tiết học viên */}
       <Modal
         title="Chi tiết học viên"
         visible={isModalVisible}
@@ -153,11 +183,7 @@ const CourseStudentList = () => {
           <Descriptions bordered column={1}>
             <Descriptions.Item label="Họ và tên">{selectedStudent.fullName}</Descriptions.Item>
             <Descriptions.Item label="Email">{selectedStudent.email}</Descriptions.Item>
-            <Descriptions.Item label="Vai trò">
-              <Tag color={selectedStudent.role === "MENTOR" ? "green" : "blue"}>
-                {selectedStudent.role === "MENTOR" ? "Giảng viên" : "Học viên"}
-              </Tag>
-            </Descriptions.Item>
+            <Descriptions.Item label="Vai trò">{renderRoleTag(selectedStudent.role)}</Descriptions.Item>
             <Descriptions.Item label="Số điện thoại">{selectedStudent.phone || "Chưa có"}</Descriptions.Item>
             <Descriptions.Item label="Ngày đăng ký">{selectedStudent.registeredDate || "Chưa có"}</Descriptions.Item>
           </Descriptions>

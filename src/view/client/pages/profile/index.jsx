@@ -10,6 +10,7 @@ import CourseGrid from "../categories/CourseGrid";
 import ReviewList from "./Reviews/ReviewList";
 import InstructorCardGrid from "./Instructor/InstructorCardGrid";
 import MessageList from "./Message/MessageList";
+import MyCourses from "./MyCourses/MyCourses";
 
 const { Content } = Layout;
 
@@ -99,8 +100,7 @@ function Infomation() {
           case "courses":
             return (
                 <>
-                  <SearchFilter title="Courses" />
-                  <CourseGrid courses={courses} />
+                  <MyCourses courses={courses}/>
                 </>
             );
           case "teachers":

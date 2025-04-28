@@ -1,27 +1,24 @@
 {
   "firestore": {
-    "rules": "firestore.rules",
+    "rules": "y",
     "indexes": "firestore.indexes.json"
-  },
-  "emulators": {
-    "singleProjectMode": true,
-    "auth": {
-      "port": 9099,
-      "persistence": "./data/auth"
-    },
-    "firestore": {
-      "port": 8082,
-      "persistence": "./data/firestore"
-    },
-    "storage": {
-      "port": 9199,
-      "persistence": "./data/storage"
-    },
-    "ui": {
-      "enabled": true
-    }
   },
   "storage": {
     "rules": "storage.rules"
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8082
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
   }
 }

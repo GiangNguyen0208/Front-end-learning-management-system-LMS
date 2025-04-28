@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Input, Button, Card, message, Form } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ResendEmail = () => {
   const navigate = useNavigate();
@@ -15,12 +16,12 @@ const ResendEmail = () => {
       });
 
       if (response.data.success) {
-        message.success("Email xác nhận đã được gửi lại!");
+        toast.success("Email xác nhận đã được gửi lại!");
       } else {
-        message.error(response.data.responseMessage);
+        toast.error(response.data.responseMessage);
       }
     } catch (error) {
-      message.error("Có lỗi xảy ra, vui lòng thử lại!");
+      toast.error("Có lỗi xảy ra, vui lòng thử lại!");
     } finally {
       setLoading(false);
     }

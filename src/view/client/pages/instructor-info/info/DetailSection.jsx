@@ -1,30 +1,28 @@
 import React from "react";
-import { Typography } from "antd";
 import PropTypes from "prop-types";
+import { Typography, List } from "antd";
 
 const { Title, Paragraph } = Typography;
 
-function DetailSection({ title, content, isListContent = false }) {
+const DetailSection = ({ title, content, isList = false }) => {
   return (
-    <div className="detail-section">
-      <Title level={4} className="section-title">
+    <div className="detail-section" style={{ marginBottom: 24 }}>
+      <Title level={4} style={{ marginBottom: 12 }}>
         {title}
       </Title>
-      {isListContent ? (
-        <Paragraph className="section-content">
-          {content.map((item, index) => (
-            <React.Fragment key={index}>
-              {item}
-              {index < content.length - 1 && <br />}
-            </React.Fragment>
-          ))}
-        </Paragraph>
+      {isList ? (
+        <List
+          size="small"
+          dataSource={content}
+          renderItem={(item) => <List.Item>- {item}</List.Item>}
+          style={{ paddingLeft: 16 }}
+        />
       ) : (
-        <Paragraph className="section-content">{content}</Paragraph>
+        <Paragraph style={{ color: "#555", lineHeight: 1.6 }}>{content}</Paragraph>
       )}
     </div>
   );
-}
+};
 
 DetailSection.propTypes = {
   title: PropTypes.string.isRequired,
@@ -32,7 +30,7 @@ DetailSection.propTypes = {
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
   ]).isRequired,
-  isListContent: PropTypes.bool,
+  isList: PropTypes.bool,
 };
 
 export default DetailSection;

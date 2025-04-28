@@ -4,6 +4,7 @@ import { Form, Input, Select, Button, Upload, Card, message, Spin } from "antd";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import categoryApi from "../../api/categoryApi";
 import courseApi from "../../api/courseApi";
+import { toast } from "react-toastify";
 
 const { Option } = Select;
 
@@ -89,16 +90,16 @@ const AddCourseForm = () => {
       console.log("📡 Phản hồi từ BE:", response);
   
       if (response.data.success) {
-        message.success("Thêm khóa học thành công!");
+        toast.success("Thêm khóa học thành công!");
         setTimeout(() => {
           navigate(`/mentor/courses/section/${response.data.course.id}`, { state: response.data.course });
         }, 1500);
       } else {
-        message.error(response.data.responseMessage);
+        toast.error(response.data.responseMessage);
       }
     } catch (error) {
       console.error("🔥 Lỗi API:", error);
-      message.error("Lỗi máy chủ, vui lòng thử lại sau.");
+      toast.error("Lỗi máy chủ, vui lòng thử lại sau.");
     }
   };
 

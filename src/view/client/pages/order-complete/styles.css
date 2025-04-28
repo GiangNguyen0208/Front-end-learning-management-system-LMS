@@ -1,69 +1,31 @@
-.order-complete-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  
-  .icon-wrapper {
-    width: 200px;
-    max-width: 100%;
-  }
-  
-  .success-icon {
-    background-color: #16a34a;
-    border-radius: 50%;
-    display: flex;
-    padding: 20px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
-  }
-  
-  .check-icon {
-    font-size: 104px;
-    color: #ffffff;
-  }
-  
-  .order-result {
-    margin-top: 16px;
-    font-family:
-      Inter,
-      -apple-system,
-      Roboto,
-      Helvetica,
-      sans-serif;
-    color: #0f172a;
-    text-align: center;
-  }
-  
-  .order-result .ant-result-title {
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 1.2;
-    color: #0f172a;
-  }
-  
-  .order-result .ant-result-subtitle {
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 1.4;
-    margin-top: 8px;
-    color: #0f172a;
-  }
-  
-  @media (max-width: 991px) {
-    .success-icon {
-      padding: 20px;
-    }
-  
-    .order-result {
-      max-width: 100%;
-    }
-  
-    .order-result .ant-result-subtitle {
-      max-width: 100%;
-    }
-  }
-  
+/* OrderCompleted.css */
+
+.order-completed {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.order-header {
+  background-color: #f4f6f9;
+}
+
+.order-summary {
+  margin-top: 20px;
+}
+
+.order-summary .ant-table {
+  margin-top: 20px;
+}
+
+.ant-table-cell {
+  padding: 8px 16px;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: 14px;
+}
+
+.ant-btn {
+  font-size: 16px;
+}

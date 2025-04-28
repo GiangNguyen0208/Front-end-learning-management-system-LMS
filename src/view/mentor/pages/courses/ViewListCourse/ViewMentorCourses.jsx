@@ -1,9 +1,27 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Table, Card, Button, Image, Popconfirm, message, Spin, Space } from "antd";
+import {
+  Table,
+  Card,
+  Button,
+  Image,
+  Popconfirm,
+  message,
+  Space,
+  Skeleton,
+  Tooltip,
+  Typography
+} from "antd";
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  TeamOutlined
+} from "@ant-design/icons";
 import courseApi from "../../../../../api/courseApi";
 import { URL } from "../../../../../api/constant";
-import { PlusOutlined } from "@ant-design/icons";
+
+const { Paragraph } = Typography;
 
 const ViewMentorCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -32,7 +50,7 @@ const ViewMentorCourses = () => {
       const response = await courseApi.deleteCourse(courseId);
       if (response.data.success) {
         message.success("Xóa khóa học thành công!");
-        setCourses((prevCourses) => prevCourses.filter((c) => c.id !== courseId));
+        setCourses((prev) => prev.filter((c) => c.id !== courseId));
       } else {
         message.error(response.data.responseMessage);
       }
@@ -40,8 +58,6 @@ const ViewMentorCourses = () => {
       message.error("Lỗi khi xóa khóa học.");
     }
   };
-
-  
 
   const addSection = (course) => {
     navigate(`/mentor/courses/section/${course.id}`);
@@ -51,20 +67,20 @@ const ViewMentorCourses = () => {
     navigate("/mentor/courses/add");
   };
 
-  const formatDateFromEpoch = (epochTime) => {
-    return new Date(Number(epochTime)).toLocaleString();
-  };
+  const formatDateFromEpoch = (epochTime) =>
+    new Date(Number(epochTime)).toLocaleString();
 
   const viewStudents = (course) => {
     navigate(`/mentor/courses/${course.id}/students`);
   };
 
-  
-
   const columns = [
     {
-      title: "Hình ảnh",
+      title: (
+        <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>📷 Hình ảnh</div>
+      ),
       dataIndex: "thumbnail",
+      width: 100,
       render: (thumbnail) => (
         <Image
           src={`${URL.BASE_URL}/course/${thumbnail}`}
@@ -74,87 +90,151 @@ const ViewMentorCourses = () => {
       ),
     },
     {
-      title: "Tên khóa học",
+      title: (
+        <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>📘 Tên khóa học</div>
+      ),
       dataIndex: "name",
-      render: (text) => <b>{text}</b>,
+      width: 200,
+      ellipsis: true,
+      render: (text) => (
+        <span style={{ whiteSpace: "nowrap", fontWeight: 500 }}>{text}</span>
+      ),
     },
     {
-      title: "Mô tả",
+      title: <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>📄 Mô tả</div>,
       dataIndex: "description",
+      ellipsis: true,
+      render: (text) => (
+        <span style={{ whiteSpace: "nowrap", color: "#595959" }}>{text}</span>
+      ),
     },
     {
-      title: "Loại",
+      title: <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>📂 Loại</div>,
       dataIndex: "type",
+      width: 100,
+      ellipsis: true,
     },
     {
-      title: "Giá",
+      title: <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>💰 Giá</div>,
       dataIndex: "fee",
-      render: (fee) => <b>{fee} VND</b>,
+      width: 100,
+      render: (fee) => (
+        <span style={{ whiteSpace: "nowrap", fontWeight: 600 }}>{fee} VND</span>
+      ),
     },
     {
-      title: "Giảm giá",
+      title: (
+        <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
+          🔖 Giảm giá
+        </div>
+      ),
       dataIndex: "discountInPercent",
-      render: (discount) => `${discount}%`,
+      width: 100,
+      render: (discount) => (
+        <span style={{ whiteSpace: "nowrap", color: "#cf1322" }}>{discount}%</span>
+      ),
     },
     {
-      title: "Ngày thêm",
+      title: (
+        <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
+          📅 Ngày thêm
+        </div>
+      ),
       dataIndex: "addedDateTime",
-      render: (addedDateTime) => formatDateFromEpoch(addedDateTime),
+      width: 150,
+      render: (addedDateTime) => (
+        <span style={{ whiteSpace: "nowrap" }}>
+          {formatDateFromEpoch(addedDateTime)}
+        </span>
+      ),
     },
     {
-      title: "Hành động",
-      render: (text, record) => (
-        <Space>
-          <Button type="primary" onClick={() => addSection(record)}>
-            Cập nhật
-          </Button>
-          <Button 
-            type="primary" 
-            onClick={() => viewStudents(record)}
-            style={{ backgroundColor: "green", borderColor: "green" }}
-          >
-            Xem học viên
-          </Button>
+      title: (
+        <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
+          ⚙️ Hành động
+        </div>
+      ),
+      render: (_, record) => (
+        <Space wrap>
+          <Tooltip title="Cập nhật khóa học">
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => addSection(record)}
+              type="primary"
+            >
+              Cập nhật
+            </Button>
+          </Tooltip>
+
+          <Tooltip title="Danh sách học viên">
+            <Button
+              icon={<TeamOutlined />}
+              style={{ backgroundColor: "#722ed1", borderColor: "#722ed1" }}
+              type="primary"
+              onClick={() => viewStudents(record)}
+            >
+              Học viên
+            </Button>
+          </Tooltip>
+
           <Popconfirm
             title="Bạn có chắc muốn xóa khóa học này?"
             onConfirm={() => deleteCourse(record.id)}
             okText="Có"
             cancelText="Không"
           >
-            <Button 
-              type="primary" 
-              style={{ backgroundColor: "red", borderColor: "red" }}
-            >
-              Xóa
-            </Button>
+            <Tooltip title="Xóa khóa học">
+              <Button
+                icon={<DeleteOutlined />}
+                type="primary"
+                danger
+              >
+                Xóa
+              </Button>
+            </Tooltip>
           </Popconfirm>
         </Space>
       ),
     },
   ];
+  
 
   return (
     <Card
-      title="Danh sách khóa học"
+      title="🎓 Danh sách khóa học của bạn"
       extra={
-        <Button 
+        <Button
           icon={<PlusOutlined />}
-          type="primary" 
+          type="primary"
+          size="middle"
+          style={{
+            backgroundColor: "#1890ff",
+            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+          }}
           onClick={addCourse}
         >
           Thêm khóa học
         </Button>
       }
-      style={{ maxWidth: "1200px", margin: "auto" }}
+      style={{
+        maxWidth: "1300px",
+        margin: "auto",
+        marginTop: 30,
+        borderRadius: 12,
+        border: "1px solid #d9d9d9",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+      }}
     >
       {loading ? (
-        <Spin size="large" style={{ display: "flex", justifyContent: "center" }} />
+        <Skeleton active paragraph={{ rows: 8 }} />
       ) : (
         <Table
           dataSource={courses}
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 5 }}
+          bordered
+          style={{ borderRadius: 8 }}
         />
       )}
     </Card>

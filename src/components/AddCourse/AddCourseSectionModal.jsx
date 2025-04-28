@@ -1,6 +1,8 @@
 import { Modal, Form, Input, Button } from "antd";
 import { useEffect } from "react";
 import courseApi from "../../api/courseApi";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddCourseSectionModal = ({ visible, onClose, onSuccess, course }) => {
   const [form] = Form.useForm();
@@ -25,11 +27,13 @@ const AddCourseSectionModal = ({ visible, onClose, onSuccess, course }) => {
 
       if (response?.data && typeof onSuccess === "function") {
         onSuccess(response.data); // ✅ Gửi dữ liệu để cập nhật danh sách sections
+        toast.success("Chương đã được thêm thành công!");
       }
 
       form.resetFields();
       onClose();
     } catch (error) {
+      toast.error("Có lỗi xảy ra khi thêm chương.");
       console.error("❌ Lỗi khi thêm chương:", error);
     }
   };
