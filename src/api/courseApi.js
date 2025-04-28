@@ -8,6 +8,12 @@ const courseApi = {
     });
   },
 
+  fetchCourseByCustomerId: (customerId) => {
+    return axiosClient.get(`/booking/fetch/customer-wise`, {
+      params: { customerId },
+    });  
+  },
+
   getOrderHistory: (customerId) => {
     return axiosClient.get(`/booking/fetch/customer-wise`, {
       params: { customerId },
@@ -85,13 +91,24 @@ const courseApi = {
     return axiosClient.delete(`/course/delete`, { params: { courseId } });
   },
 
-  updateVideoProgress: (userId, videoId, percentWatched) => {
-    return axiosClient.post("/course/video/progress", {
+  updateVideoProgress: (userId, topicId, percent) => {
+    return axiosClient.put(`/course/video-progress/update`, {
       userId,
-      videoId,
-      percentWatched,
+      videoId: topicId,
+      percentWatched: percent,
     });
   },
+
+  markVideoCompleted: (userId, topicId) => {
+    return axiosClient.post(`/course/video-progress/mark-completed`, {
+      userId,
+      videoId: topicId,
+    });
+  },
+
+  getCourseProgress: (userId, courseId) => {
+    return axiosClient.get(`/course/course-progress/${userId}/${courseId}`);
+  }
 };
 
 
