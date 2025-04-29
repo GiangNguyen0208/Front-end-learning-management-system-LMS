@@ -45,16 +45,32 @@ const MyCourseCard = ({ courseBooking }) => {
     <Card
         hoverable
         cover={
-        <img 
-            alt={courseBooking.course.name}
-            src={`${URL.BASE_URL}/course/${courseBooking.course.thumbnail}`}
-            style={{ 
-            height: 160,
-            objectFit: "cover",
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8
-            }}
-        />
+          <div style={{ position: "relative" }}>
+            <img 
+              alt={courseBooking.course.name}
+              src={`${URL.BASE_URL}/course/${courseBooking.course.thumbnail}`}
+              style={{ 
+                height: 160,
+                objectFit: "cover",
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 8,
+                width: "100%",
+              }}
+            />
+            {(courseProgress || courseBooking.progress) === 100 && (
+              <Tag 
+                color="green" 
+                style={{ 
+                  position: "absolute", 
+                  top: 8, 
+                  left: 8, 
+                  zIndex: 10 
+                }}
+              >
+                🏁 Đã hoàn thành
+              </Tag>
+            )}
+          </div>
         }
         style={{
         width: '100%', // Đảm bảo Card chiếm toàn bộ chiều rộng của Col
@@ -108,6 +124,7 @@ const MyCourseCard = ({ courseBooking }) => {
         </Space>
 
         {/* Tiến độ học */}
+        <Text type="secondary">Tiến độ hoàn thành</Text>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
           <Progress 
             percent={courseProgress || courseBooking.progress || 0}
