@@ -28,27 +28,27 @@ function ProfileSidebar({ setSelectedMenu }) {
         items={[
           {
             key: "profile",
-            label: "Profile",
+            label: "Thông tin cá nhân",
             className: "menu-item-profile",
           },
           {
             key: "courses",
-            label: "My Courses",
+            label: "Danh sách khóa học",
             className: "menu-item",
           },
           {
             key: "teachers",
-            label: "Teachers",
+            label: "Giảng viên",
             className: "menu-item",
           },
           {
             key: "message",
-            label: "Message",
+            label: "Thảo luận",
             className: "menu-item",
           },
           {
             key: "reviews",
-            label: "My Reviews",
+            label: "Đánh giá",
             className: "menu-item-last",
           },
         ]}

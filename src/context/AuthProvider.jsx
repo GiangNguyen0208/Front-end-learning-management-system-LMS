@@ -1,18 +1,21 @@
+import { onAuthStateChanged } from "firebase/auth";
 import React, { useState, useEffect, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { auth } from "../firebase/config";
 
 export const AuthContext = createContext();
 
 export default function AuthProvider({ children }) {
+  const [userFireBase, setUserFirebase] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("jwtToken"));
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("jwtToken"));
 
   const login = (token, userData) => {
     localStorage.setItem("jwtToken", token);
@@ -21,13 +24,14 @@ export default function AuthProvider({ children }) {
     setUser(userData); // ✅ Cập nhật state user
     
     // Điều hướng dựa trên role
-    if (userData?.role === "Student") {
+    if (userData?.role !== null) {
       navigate("/home");
-    } else if (userData?.role === "Mentor") {
-      navigate("/mentor/dashboard");
-    } else if (userData?.role === "Admin") {
-      navigate("/admin/dashboard");
-    } 
+    }
+    // } else if (userData?.role === "Mentor") {
+    //   navigate("/home");
+    // } else if (userData?.role === "Admin") {
+    //   navigate("/home");
+    // } 
     else {
       navigate("/home");
     }
@@ -50,10 +54,28 @@ export default function AuthProvider({ children }) {
       setIsLoggedIn(true);
       setUser(JSON.parse(storedUser)); // ✅ Gán user từ localStorage
     }
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserFirebase({
+          displayName: user.displayName,
+          email: user.email,
+          uid: user.uid,
+          photoURL: user.photoURL,
+        });
+      } else {
+        setUserFirebase(null);
+      }
+      setIsLoading(false);
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, userFireBase, setUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

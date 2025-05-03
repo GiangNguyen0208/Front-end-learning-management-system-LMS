@@ -20,6 +20,7 @@ import {
 } from "@ant-design/icons";
 import courseApi from "../../../../../api/courseApi";
 import { URL } from "../../../../../api/constant";
+import { toast } from "react-toastify";
 
 const { Paragraph } = Typography;
 
@@ -39,7 +40,7 @@ const ViewMentorCourses = () => {
       const response = await courseApi.getCoursesByMentor(mentor.id);
       setCourses(response.data.courses || []);
     } catch (error) {
-      message.error("Không thể tải danh sách khóa học.");
+      toast.error("Không thể tải danh sách khóa học.");
     } finally {
       setLoading(false);
     }
@@ -49,13 +50,13 @@ const ViewMentorCourses = () => {
     try {
       const response = await courseApi.deleteCourse(courseId);
       if (response.data.success) {
-        message.success("Xóa khóa học thành công!");
+        toast.success("Xóa khóa học thành công!");
         setCourses((prev) => prev.filter((c) => c.id !== courseId));
       } else {
-        message.error(response.data.responseMessage);
+        toast.error(response.data.responseMessage);
       }
     } catch (error) {
-      message.error("Lỗi khi xóa khóa học.");
+      toast.error("Lỗi khi xóa khóa học.");
     }
   };
 

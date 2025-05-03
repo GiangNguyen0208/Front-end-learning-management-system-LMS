@@ -1,57 +1,80 @@
 import React from 'react';
-import { Collapse, Typography, Button } from 'antd';
+import { Collapse, Typography } from 'antd';
 import styled from 'styled-components';
-import { PlusSquareOutlined } from '@ant-design/icons';
 import { AppContext } from '../../../../context/AppProvider';
 
-const LinkStyled = styled(Typography.Link)`
-  display: block;
-  margin-bottom: 5px;
-  color: white !important;
+const { Text, Link } = Typography;
+
+const PanelStyled = styled.div`
+  .room-link {
+    display: block;
+    color: #e0f7fa;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.25s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateX(2px);
+    }
+  }
+
+  .empty-message {
+    color: #90a4ae;
+    font-style: italic;
+    padding: 8px 12px;
+  }
+`;
+
+const StyledCollapse = styled(Collapse)`
+  background-color: transparent;
+
+  .ant-collapse-item {
+    border: none;
+  }
+
+  .ant-collapse-header {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 12px;
+    background-color: #263238;
+    border-radius: 8px;
+  }
+
+  .ant-collapse-content {
+    background-color: transparent;
+  }
 `;
 
 export default function RoomList() {
-  const { rooms, setIsAddRoomVisible, setSelectedRoomId } =
-    React.useContext(AppContext);
+  const { rooms, setSelectedRoomId } = React.useContext(AppContext);
 
-  const handleAddRoom = () => {
-    setIsAddRoomVisible(true);
-  };
-
-  // Danh sách items cho Collapse
   const items = [
     {
       key: '1',
-      label: <Typography.Text style={{ color: 'white' }}>Danh sách các phòng</Typography.Text>,
+      label: <Text style={{ color: '#fff' }}>📁 Danh sách các phòng</Text>,
       children: (
-        <>
+        <PanelStyled>
           {rooms?.length > 0 ? (
             rooms.map((room) => (
-              <LinkStyled key={room.id} onClick={() => setSelectedRoomId(room.id)}>
-                {room.name}
-              </LinkStyled>
+              <Link
+                key={room.id}
+                className="room-link"
+                onClick={() => setSelectedRoomId(room.id)}
+              >
+                # {room.name}
+              </Link>
             ))
           ) : (
-            <Typography.Text style={{ color: 'white' }}>Không có phòng nào</Typography.Text>
+            <div className="empty-message">Không có phòng nào.</div>
           )}
-        </>
+        </PanelStyled>
       ),
     },
   ];
 
-  return (
-    <>
-      <Collapse ghost defaultActiveKey={['1']} items={items} />
-      {/* Đưa Button ra ngoài Collapse */}
-      <Button
-        type="text"
-        icon={<PlusSquareOutlined />}
-        className="add-room"
-        onClick={handleAddRoom}
-        style={{ color: 'white', marginTop: '10px' }}
-      >
-        Thêm phòng
-      </Button>
-    </>
-  );
+  return <StyledCollapse ghost defaultActiveKey={['1']} items={items} />;
 }

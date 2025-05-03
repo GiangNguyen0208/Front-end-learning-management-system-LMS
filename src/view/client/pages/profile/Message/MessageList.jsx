@@ -3,64 +3,67 @@ import styled from "styled-components";
 import MessageCard from "./MessageCard";
 
 const MessageList = () => {
-  const messages = [
+  const chatRooms = [
     {
       id: 1,
-      avatar:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/a4db56e8b86a6b6b4f9a8cc848750f178c36beb73315c5621419f9a2bf934f38?placeholderIfAbsent=true&apiKey=d05273649a4a432c85b3bc413f2fa2c8",
-      name: "Ronald Richards",
-      date: "18th March, 2024",
-      message:
-        "Thank you for asking your doubt, I'll send you a pdf file which cover the problems you are facing. If you have any...",
-      isBold: true,
+      thumbnail: "https://images.unsplash.com/photo-1605902711622-cfb43c4437d5",
+      courseName: "React for Beginners",
+      lastMessage: "Looking forward to our next session!",
+      lastActive: "2 hours ago",
     },
     {
       id: 2,
-      avatar:
-        "https://cdn.builder.io/api/v1/image/assets/TEMP/bdf7d56a78dabfed0fa3e0729023bb051049ed0c0547068c75944fee608888de?placeholderIfAbsent=true&apiKey=d05273649a4a432c85b3bc413f2fa2c8",
-      name: "Devon Lane",
-      date: "18th March, 2024",
-      message: "I'll Get back to you as soon as possbile.",
-      isBold: false,
+      thumbnail: "https://images.unsplash.com/photo-1581091870622-2d51aa51f20b",
+      courseName: "Advanced Node.js",
+      lastMessage: "Don't forget to submit your assignment.",
+      lastActive: "1 day ago",
+    },
+    {
+      id: 3,
+      thumbnail: "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca",
+      courseName: "UI/UX Design Bootcamp",
+      lastMessage: "New prototype files are uploaded!",
+      lastActive: "3 days ago",
     },
   ];
 
   return (
-    <Container>
-      {messages.map((message, index) => (
-        <CustomMessageCard
-          key={message.id}
-          avatar={message.avatar}
-          name={message.name}
-          date={message.date}
-          message={message.message}
-          isBold={message.isBold}
-          isLast={index === messages.length - 1}
-        />
-      ))}
-    </Container>
+    <Wrapper>
+      <Title>💬 Thảo luận môn học</Title>
+      <RoomGrid>
+        {chatRooms.map((room) => (
+          <MessageCard
+            key={room.id}
+            roomId={room.id}
+            thumbnail={room.thumbnail}
+            courseName={room.courseName}
+            lastMessage={room.lastMessage}
+            lastActive={room.lastActive}
+          />
+        ))}
+      </RoomGrid>
+    </Wrapper>
   );
 };
 
-const Container = styled.section`
-  border-radius: 16px;
-  max-width: 950px;
-  font-family:
-    Inter,
-    -apple-system,
-    Roboto,
-    Helvetica,
-    sans-serif;
+const Wrapper = styled.section`
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
 `;
 
-const CustomMessageCard = styled(({ isBold, isLast, ...props }) => (
-  <MessageCard {...props} />
-))`
-  margin-bottom: ${(props) => (props.isLast ? "0" : "16px")};
+const Title = styled.h2`
+  font-size: 28px;
+  color: #0f172a;
+  margin-bottom: 24px;
+  text-align: center;
+`;
 
-  p {
-    font-weight: ${(props) => (props.isBold ? "500" : "400")};
-  }
+const RoomGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 export default MessageList;

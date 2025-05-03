@@ -1,37 +1,38 @@
 import React, { useContext } from "react";
 import { Form, Modal, Input } from "antd";
 import { addDocument } from "../../../../../firebase/services";
-import { AuthContext, AppContext } from "../../../../../context/AuthProvider";
+import { AuthContext } from "../../../../../context/AuthProvider";
+import { AppContext } from "../../../../../context/AppProvider";
 
 export default function AddRoomModal() {
   const { isAddRoomVisible, setIsAddRoomVisible } = useContext(AppContext);
   const { user } = useContext(AuthContext);
+  const { selectedCourseId } = useContext(AppContext);
   const [form] = Form.useForm();
 
-
-  const handleOk = () => {
-    if (!user) {
-      console.error("User not found!");
-      return;
-    }
-
-    const newRoom = { ...form.getFieldsValue(), members: [user?.uid] };
-    console.log("Dữ liệu phòng mới:", newRoom);
-    
-    // Thêm phòng mới vào Firestore
-    addDocument("rooms", newRoom)
-    .then(() => {
-      console.log("Thêm phòng thành công!");
+  const handleOk = async () => {
+    if (!user) return;
+  
+    try {
+      const values = await form.validateFields(); // { name, description? }
+  
+      const newRoom = {
+        roomId: `${user.id}_${selectedCourseId}`,
+        name: values.name,
+        description: values.description ?? '', // fallback nếu không nhập
+        mentorId: user.id,
+        courseId: selectedCourseId,
+      };
+  
+      console.log("🧪 Dữ liệu gửi đi:", newRoom);
+  
+      await addDocument("rooms", newRoom);
+  
       form.resetFields();
       setIsAddRoomVisible(false);
-    })
-    .catch((error) => {
-      console.error("Lỗi khi thêm phòng:", error);
-    });
-
-    // Reset form
-    form.resetFields();
-    setIsAddRoomVisible(false);
+    } catch (error) {
+      console.error("❌ Lỗi khi thêm phòng:", error);
+    }
   };
 
   const handleCancel = () => {

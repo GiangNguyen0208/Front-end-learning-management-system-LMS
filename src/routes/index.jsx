@@ -21,25 +21,29 @@ import OrderComplete from "../view/client/pages/order-complete/OrderComplete";
 import Categories from "../view/client/pages/categories/CourseList";
 import CourseViewer from "../view/client/pages/course-viewer/CourseViewer";
 import CourseHeader from "../view/client/pages/course";
+import VerifyEmail from "../view/client/pages/register/VerifyEmail ";
+import SignUpMentor from "../view/client/pages/register/SignUpMentor";
+import OrderHistory from "../view/client/pages/order-history/OrderHistory";
+import ChatRoom from "../view/client/pages/profile/Chat/ChatRoom";
+
 // Mentor Pages
 import Dashboard from "../view/mentor/pages/dashboard/Dashboard";
 import Communication from "../view/mentor/pages/communication/Communication";
 import AddCourseForm from "../components/AddCourse/AddCourseForm";
 import AddCourseSectionForm from "../components/AddCourse/AddCourseSectionForm";
 import CourseStudentList from "../view/mentor/pages/courses/CourseStudentList/CourseStudentList";
+import ViewMentorCourses from "../view/mentor/pages/courses/ViewListCourse/ViewMentorCourses";
 
 // Admin Pages
 import AdminDashboard from "../view/admin/pages/dashboard/Dashboard";
 import CategoryList from "../view/admin/pages/categories/CategoryList";
 import CategoryWarehouse from "../view/admin/pages/categories/CategoryWarehouse";
+import AdminUserPage from "../view/admin/pages/users/AdminUserPage";
 
 // Error Pages
 import Error404 from "../view/client/pages/error/Error404";
-import VerifyEmail from "../view/client/pages/register/VerifyEmail ";
-import ViewMentorCourses from "../view/mentor/pages/courses/ViewListCourse/ViewMentorCourses";
-import SignUpMentor from "../view/client/pages/register/SignUpMentor";
-import AdminUserPage from "../view/admin/pages/users/AdminUserPage";
-import OrderHistory from "../view/client/pages/order-history/OrderHistory";
+import ChatRoomMentor from "../view/mentor/pages/chat";
+
 
 const AppRoutes = () => (
   <Routes>
@@ -63,7 +67,7 @@ const AppRoutes = () => (
         <Route path="sign-up-mentor" element={<SignUpMentor />}/>
         <Route path="my-learning/:id/learn" element={<CourseViewer />} />
         <Route path="order-history" element={<OrderHistory />} />
-        {/* <Route path="course-viewer" element={<CourseViewer />} /> */}
+        <Route path="chat-rooms" element={<ChatRoom />} />ChatRoomMentor
       </Route>
 
       <Route path="home" element={<HomeScreen />} />
@@ -82,6 +86,7 @@ const AppRoutes = () => (
       <Route path="courses/add" element={<AddCourseForm />} />
       <Route path="courses/section/:courseId" element={<AddCourseSectionForm />} />
       <Route path="courses/:id/students" element={<CourseStudentList/>} />
+      <Route path="chat-rooms" element={<ChatRoomMentor />} />
     </Route>
 
     {/* Routes cho Admin */}

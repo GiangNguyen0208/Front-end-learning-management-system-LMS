@@ -11,6 +11,7 @@ const SignupForm = () => {
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
+    toast.info("Đang xử lý đăng ký, vui lòng chờ trong giây lát...");
     try {
       // 🟢 1. Gửi request đăng ký đến backend
       const userData = {

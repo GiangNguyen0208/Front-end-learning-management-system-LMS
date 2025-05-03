@@ -4,7 +4,11 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export const addDocument = async (collectionName, data) => {
   try {
-    console.log("🔥 Đang thêm document vào:", collectionName, data);
+    const cleanData = Object.fromEntries(
+      Object.entries(data).filter(([_, v]) => v !== undefined)
+    );
+
+    console.log("🔥 Dữ liệu chuẩn bị thêm:", cleanData);
     const docRef = await addDoc(collection(db, collectionName), {
       ...data,
       createdAt: serverTimestamp(),

@@ -4,23 +4,39 @@ import styled from 'styled-components';
 import { formatRelative } from 'date-fns';
 
 const WrapperStyled = styled.div`
-  margin-bottom: 10px;
+  display: flex;
+  margin-bottom: 12px;
+
+  .avatar {
+    margin-right: 10px;
+  }
+
+  .message {
+    background-color: #f1f1f1;
+    padding: 8px 12px;
+    border-radius: 16px;
+    max-width: 70%;
+    word-break: break-word;
+  }
 
   .author {
-    margin-left: 5px;
-    font-weight: bold;
+    font-weight: 500;
+    margin-right: 8px;
+    color: #333;
   }
 
   .date {
-    margin-left: 10px;
     font-size: 11px;
-    color: #a7a7a7;
+    color: #888;
   }
 
-  .content {
-    margin-left: 30px;
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
   }
 `;
+
 
 function formatDate(createdAt) {
   if (!createdAt) return ''; // Tránh lỗi nếu createdAt là null hoặc undefined
@@ -33,18 +49,19 @@ function formatDate(createdAt) {
 export default function Message({ text, displayName, createdAt, photoURL }) {
   return (
     <WrapperStyled>
+      <Avatar className="avatar" size="large" src={photoURL}>
+        {photoURL ? '' : displayName?.charAt(0)?.toUpperCase()}
+      </Avatar>
       <div>
-        <Avatar size="small" src={photoURL}>
-          {photoURL ? '' : displayName?.charAt(0)?.toUpperCase()}
-        </Avatar>
-        <Typography.Text className="author">{displayName}</Typography.Text>
-        <Typography.Text className="date">
-          {formatDate(createdAt)}
-        </Typography.Text>
-      </div>
-      <div>
-        <Typography.Text className="content">{text}</Typography.Text>
+        <div className="header">
+          <Typography.Text className="author">{displayName}</Typography.Text>
+          <Typography.Text className="date">{formatDate(createdAt)}</Typography.Text>
+        </div>
+        <div className="message">
+          <Typography.Text>{text}</Typography.Text>
+        </div>
       </div>
     </WrapperStyled>
   );
 }
+

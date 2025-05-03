@@ -1,103 +1,108 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
-const MessageCard = ({ avatar, name, date, message }) => {
+const MessageCard = ({ thumbnail, courseName, lastMessage, lastActive, roomId }) => {
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    // navigate(`/chat-rooms/${roomId}`);
+    navigate(`/chat-rooms`);
+  };
+
   return (
-    <CardContainer>
-      <CardHeader>
-        <UserInfo>
-          <UserAvatar src={avatar} alt={`${name}'s avatar`} />
-          <UserName>{name}</UserName>
-        </UserInfo>
-        <MessageDate>{date}</MessageDate>
-      </CardHeader>
-      <MessageText>{message}</MessageText>
-    </CardContainer>
+    <Card onClick={handleNavigate}>
+      <Thumbnail src={thumbnail} alt={courseName} />
+      <Content>
+        <TopRow>
+          <CourseTitle>{courseName}</CourseTitle>
+          <LastActive>{lastActive}</LastActive>
+        </TopRow>
+        <LastMessage>{lastMessage}</LastMessage>
+        <EnterButton onClick={(e) => {
+          e.stopPropagation(); // tránh bị click card
+          handleNavigate();
+        }}>
+          Vào phòng chat
+        </EnterButton>
+      </Content>
+    </Card>
   );
 };
 
-const CardContainer = styled.article`
+const Card = styled.div`
+  display: flex;
+  background: #f9fafb;
   border-radius: 16px;
-  border: 1px solid var(--grey-border, #e2e8f0);
-  background-color: #fff;
-  display: flex;
-  width: 100%;
   padding: 16px;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+  }
+`;
+
+const Thumbnail = styled.img`
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  display: flex;
   flex-direction: column;
-  overflow: hidden;
-  align-items: stretch;
-  margin-bottom: 16px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  @media (max-width: 991px) {
-    max-width: 100%;
-  }
+  justify-content: center;
 `;
 
-const CardHeader = styled.header`
+const TopRow = styled.div`
   display: flex;
-  width: 100%;
-  align-items: stretch;
-  gap: 20px;
-  flex-wrap: wrap;
   justify-content: space-between;
-
-  @media (max-width: 991px) {
-    max-width: 100%;
-  }
+  align-items: center;
 `;
 
-const UserInfo = styled.div`
-  display: flex;
-  align-items: end;
-  gap: 8px;
-  font-size: 18px;
-  color: #0f172a;
-  font-weight: 600;
-  line-height: 1.6;
-  justify-content: start;
-`;
-
-const UserAvatar = styled.img`
-  aspect-ratio: 1;
-  object-fit: contain;
-  object-position: center;
-  width: 40px;
-  border-radius: 50%;
-  flex-shrink: 0;
-`;
-
-const UserName = styled.h3`
+const CourseTitle = styled.h4`
   margin: 0;
   font-size: 18px;
-  color: #0f172a;
+  color: #1e293b;
   font-weight: 600;
-  line-height: 1.6;
 `;
 
-const MessageDate = styled.time`
-  color: #334155;
-  text-align: right;
+const LastActive = styled.span`
   font-size: 14px;
-  font-weight: 400;
-  margin-top: auto;
-  margin-bottom: auto;
+  color: #64748b;
 `;
 
-const MessageText = styled.p`
-  color: #0f172a;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.6;
-  align-self: start;
-  margin-top: 16px;
-  margin-bottom: 0;
+const LastMessage = styled.p`
+  margin: 4px 0;
+  color: #334155;
+  font-size: 15px;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
-  @media (max-width: 991px) {
-    max-width: 100%;
+const EnterButton = styled.button`
+  margin-top: 12px;
+  width: fit-content;
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #2563eb;
   }
 `;
 

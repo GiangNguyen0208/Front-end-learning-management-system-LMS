@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Typography, Tag, Avatar, Space, Tooltip, Divider } from 'antd';
+import { Card, Table, Typography, Tag, Avatar, Space, Tooltip, Divider, Button, Modal } from 'antd';
 import courseApi from '../../../../api/courseApi';
 import moment from 'moment';
 import { URL } from '../../../../api/constant';
+import { EyeOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
@@ -17,6 +18,21 @@ const OrderHistory = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const user = JSON.parse(localStorage.getItem('user')) || {};
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  console.log('Bookings:', bookings);
+  
+
+  const showModal = (order) => {
+    setSelectedOrder(order);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedOrder(null);
+    setIsModalVisible(false);
+  };
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -136,6 +152,19 @@ const OrderHistory = () => {
           {status}
         </Tag>
       )
+    },
+    {
+      title: 'Chi tiết',
+      key: 'action',
+      render: (_, record) => (
+        <Button
+          icon={<EyeOutlined />}
+          type="link"
+          onClick={() => showModal(record)}
+        >
+          Xem chi tiết
+        </Button>
+      )
     }
   ];
 
@@ -154,6 +183,121 @@ const OrderHistory = () => {
           size="middle"
         />
       </Card>
+
+      <Modal
+        title="Chi tiết đơn hàng"
+        open={isModalVisible}
+        onCancel={handleCloseModal}
+        footer={null}
+        width={700}
+      >
+        {selectedOrder && (
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <Avatar
+                shape="square"
+                size={80}
+                src={`${URL.BASE_URL}/course/${selectedOrder.course?.thumbnail}`}
+              />
+              <div>
+                <Text strong style={{ fontSize: 18 }}>{selectedOrder.course?.name}</Text>
+                <div className="text-gray-500">
+                  Giảng viên: <strong>{selectedOrder.course?.mentor?.firstName} {selectedOrder.course?.mentor?.lastName}</strong>
+                </div>
+                <div className="text-gray-400">Cấp độ: {selectedOrder.course?.level || 'Mọi cấp độ'}</div>
+              </div>
+            </div>
+
+            <Divider />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Text type="secondary">Ngày đặt:</Text><br />
+                <Text>{moment(Number(selectedOrder.bookingTime)).format('DD/MM/YYYY HH:mm')}</Text>
+              </div>
+
+              <div>
+                <Text type="secondary">Trạng thái:</Text><br />
+                <Tag color={statusColors[selectedOrder.status?.toLowerCase()] || 'default'}>
+                  {selectedOrder.status}
+                </Tag>
+              </div>
+
+              <div>
+                <Text type="secondary">Giá gốc:</Text><br />
+                <Text delete>{Number(selectedOrder.amount).toLocaleString()}₫</Text>
+              </div>
+
+              <div>
+                <Text type="secondary">Giá sau giảm:</Text><br />
+                <Text strong style={{ color: '#16a34a' }}>
+                  {(selectedOrder.amount * (1 - selectedOrder.discountInPercent / 100)).toLocaleString()}₫
+                </Text>
+              </div>
+
+              <div>
+                <Text type="secondary">Tên chủ thẻ:</Text><br />
+                <Text>{selectedOrder.payment?.nameOnCard || '---'}</Text>
+              </div>
+
+              <div>
+                <Text type="secondary">Số thẻ:</Text><br />
+                <Text>
+                  {selectedOrder.payment?.cardNo ? `**** **** **** ${selectedOrder.payment?.cardNo?.slice(-4)}` : '---'}
+                </Text>
+              </div>
+
+              <div className="col-span-2">
+                <Text type="secondary">Email người mua:</Text><br />
+                <Text>{selectedOrder.customer?.emailId}</Text>
+              </div>
+
+              <div className="col-span-2">
+                <Text type="secondary">Username người mua:</Text><br />
+                <Text>{selectedOrder.customer?.username}</Text>
+              </div>
+            </div>
+
+            <Divider />
+
+            <div>
+              <Text type="secondary">Mô tả khóa học:</Text>
+              <p>{selectedOrder.course?.description}</p>
+            </div>
+
+            <div>
+              <Text type="secondary">Ghi chú của giảng viên:</Text>
+              <p>{selectedOrder.course?.authorCourseNote}</p>
+            </div>
+
+            <div>
+              <Text type="secondary">Ghi chú đặc biệt:</Text>
+              <p>{selectedOrder.course?.specialNote}</p>
+            </div>
+
+            <div>
+              <Text type="secondary">Yêu cầu đầu vào:</Text>
+              <p>{selectedOrder.course?.prerequisite}</p>
+            </div>
+
+            <div>
+              <Text type="secondary">Tài liệu giảng dạy đính kèm:</Text><br />
+              {selectedOrder.course?.notesFileName ? (
+                <a
+                  href={`${URL.BASE_URL}/course/notes/${selectedOrder.course?.notesFileName}/download`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline"
+                >
+                  {selectedOrder.course?.notesFileName}
+                </a>
+              ) : 'Không có'}
+            </div>
+          </div>
+        )}
+      </Modal>
+
+
     </div>
   );
 };

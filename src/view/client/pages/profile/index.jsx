@@ -4,9 +4,7 @@ import ProfileSidebar from "./SideBar/ProfileSidebar";
 import ProfileForm from "./Profile/Form/ProfileForm";
 import ImageUpload from "./Profile/ImageUpload/ImageUpload";
 import SocialLinks from "./Profile/SocialLinks/SocialLinks";
-import SearchFilter from "./SearchFilter/CourseSearch";
 import "./styles.css";
-import CourseGrid from "../categories/CourseGrid";
 import ReviewList from "./Reviews/ReviewList";
 import InstructorCardGrid from "./Instructor/InstructorCardGrid";
 import MessageList from "./Message/MessageList";
@@ -20,119 +18,52 @@ function Infomation() {
   const [loading, setLoading] = useState(true);
 
   const formData = new FormData();
-    // const courses = [
-    //     {
-    //       id: 1,
-    //       imageUrl:
-    //         "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-    //       title: "Beginner's Guide to Design",
-    //       instructor: "Ronald Richards",
-    //       rating: 4.9,
-    //       ratingCount: 1200,
-    //       details: "22 Total Hours. 155 Lectures. Beginner",
-    //       price: 149.9,
-    //     },
-    //     {
-    //       id: 1,
-    //       imageUrl:
-    //         "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-    //       title: "Beginner's Guide to Design",
-    //       instructor: "Ronald Richards",
-    //       rating: 4.9,
-    //       ratingCount: 1200,
-    //       details: "22 Total Hours. 155 Lectures. Beginner",
-    //       price: 149.9,
-    //     },{
-    //       id: 1,
-    //       imageUrl:
-    //         "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-    //       title: "Beginner's Guide to Design",
-    //       instructor: "Ronald Richards",
-    //       rating: 4.9,
-    //       ratingCount: 1200,
-    //       details: "22 Total Hours. 155 Lectures. Beginner",
-    //       price: 149.9,
-    //     },{
-    //       id: 1,
-    //       imageUrl:
-    //         "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-    //       title: "Beginner's Guide to Design",
-    //       instructor: "Ronald Richards",
-    //       rating: 4.9,
-    //       ratingCount: 1200,
-    //       details: "22 Total Hours. 155 Lectures. Beginner",
-    //       price: 149.9,
-    //     },{
-    //       id: 1,
-    //       imageUrl:
-    //         "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-    //       title: "Beginner's Guide to Design",
-    //       instructor: "Ronald Richards",
-    //       rating: 4.9,
-    //       ratingCount: 1200,
-    //       details: "22 Total Hours. 155 Lectures. Beginner",
-    //       price: 149.9,
-    //     },{
-    //       id: 1,
-    //       imageUrl:
-    //         "https://cdn.builder.io/api/v1/image/assets/TEMP/4b8bbe735beffd3cbc04eb82bff6a96bb7063923171d2b2385da596c9aef29cc",
-    //       title: "Beginner's Guide to Design",
-    //       instructor: "Ronald Richards",
-    //       rating: 4.9,
-    //       ratingCount: 1200,
-    //       details: "22 Total Hours. 155 Lectures. Beginner",
-    //       price: 149.9,
-    //     },
-    //   ];
-      
-      const [selectedMenu, setSelectedMenu] = useState("profile");
+  const [selectedMenu, setSelectedMenu] = useState("profile");
 
-      const renderContent = () => {
-        switch (selectedMenu) {
-          case "profile":
-            return (
-                <>
-                  <ProfileForm user={user}  />
-                  <ImageUpload user={user} />
-                  <SocialLinks />
-                </>
-            );
-          case "courses":
-            return (
-                <>
-                  <MyCourses courses={courses}/>
-                </>
-            );
-          case "teachers":
-            return (
-                <>
-                  <SearchFilter title="Instructors" />
-                  <InstructorCardGrid />
-                </>
-            );
-          case "reviews":
-            return (
-                <>
-                  <ReviewList />
-                </>
-            );
-          case "message":
-            return (
-              <>
-                  <SearchFilter title="Message" />
-                  <MessageList />
-              </>
-            )
-          default:
-            return  (
-                <>
-                  <ProfileForm user={user} />
-                  <ImageUpload />
-                  <SocialLinks />
-                </>
-            );
-        }
-      };
+  const renderContent = () => {
+    switch (selectedMenu) {
+      case "profile":
+        return (
+            <>
+              <ProfileForm user={user}  />
+              <ImageUpload user={user} />
+              <SocialLinks />
+            </>
+        );
+      case "courses":
+        return (
+            <>
+              <MyCourses courses={courses}/>
+            </>
+        );
+      case "teachers":
+        return (
+            <>
+              <InstructorCardGrid />
+            </>
+        );
+      case "reviews":
+        return (
+            <>
+              <ReviewList />
+            </>
+        );
+      case "message":
+        return (
+          <>
+              <MessageList />
+          </>
+        )
+      default:
+        return  (
+            <>
+              <ProfileForm user={user} />
+              <ImageUpload />
+              <SocialLinks />
+            </>
+        );
+    }
+  };
   return (
     <Layout className="profile-page">
       <Content className="profile-content">

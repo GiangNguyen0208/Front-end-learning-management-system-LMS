@@ -1,96 +1,83 @@
 import { UserAddOutlined } from '@ant-design/icons';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Tooltip, Avatar, Form, Input, Alert, Typography } from 'antd';
+import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
 import Message from './Message';
-import { AppContext } from '../../../../context/AppProvider';
-import useFirestore from '../../../../hooks/useFirestore';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../../../../firebase/config';
-import { AuthContext } from '../../../../context/AuthProvider';
 
-const WrapperStyled = styled.div`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #f4f6f8;
-`;
+import { AuthContext } from '../../../../../context/AuthProvider';
+import { AppContext } from '../../../../../context/AppProvider';
+
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '../../../../../firebase/config';
+import useFirestore from '../../../../../hooks/useFirestore';
 
 const HeaderStyled = styled.div`
   display: flex;
   justify-content: space-between;
+  height: 56px;
+  padding: 0 16px;
   align-items: center;
-  padding: 14px 24px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgb(230, 230, 230);
 
-  .header__info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+  .header {
+    &__info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
-  .header__title {
-    margin: 0;
-    font-weight: 600;
-    font-size: 16px;
-  }
+    &__title {
+      margin: 0;
+      font-weight: bold;
+    }
 
-  .header__description {
-    font-size: 13px;
-    color: #888;
+    &__description {
+      font-size: 12px;
+    }
   }
 `;
 
 const ButtonGroupStyled = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+`;
+
+const WrapperStyled = styled.div`
+  height: 100vh;
 `;
 
 const ContentStyled = styled.div`
-  flex: 1;
+  height: calc(100% - 56px);
   display: flex;
   flex-direction: column;
-  padding: 16px 24px;
-  background-color: #f9fafb;
-  overflow: hidden;
-`;
-
-const MessageListStyled = styled.div`
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 4px;
-  margin-bottom: 12px;
+  padding: 11px;
+  justify-content: flex-end;
 `;
 
 const FormStyled = styled(Form)`
   display: flex;
-  gap: 12px;
-  background: #fff;
-  padding: 10px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 2px 2px 0;
+  border: 1px solid rgb(230, 230, 230);
+  border-radius: 2px;
 
   .ant-form-item {
     flex: 1;
     margin-bottom: 0;
   }
+`;
 
-  input {
-    border-radius: 6px;
-    padding: 8px 12px;
-  }
-
-  button {
-    border-radius: 6px;
-  }
+const MessageListStyled = styled.div`
+  max-height: 100%;
+  overflow-y: auto;
 `;
 
 export default function ChatWindow() {
-  const { selectedRoom, members, setIsInviteMemberVisible } = useContext(AppContext);
-  const { userFireBase } = useContext(AuthContext) || {};
+  const { selectedRoom, members, setIsInviteMemberVisible } =
+    
+  useContext(AppContext);
+  const { userFireBase } = useContext(AuthContext) || {}; // Tránh lỗi nếu AuthContext chưa có giá trị
   const uid = userFireBase?.uid;
   const photoURL = userFireBase?.photoURL;
   const displayName = userFireBase?.displayName;
@@ -105,21 +92,22 @@ export default function ChatWindow() {
   };
 
   const handleOnSubmit = () => {
-    if (!inputValue.trim()) return;
-
     addDoc(collection(db, 'messages'), {
-      text: inputValue.trim(),
+      text: inputValue,
       uid,
       photoURL,
       roomId: selectedRoom.id,
       displayName,
-      createdAt: new Date()
     });
 
     form.resetFields(['message']);
-    setInputValue('');
 
-    setTimeout(() => inputRef?.current?.focus(), 100);
+    // focus to input again after submit
+    if (inputRef?.current) {
+      setTimeout(() => {
+        inputRef.current.focus();
+      });
+    }
   };
 
   const condition = React.useMemo(
@@ -134,43 +122,45 @@ export default function ChatWindow() {
   const messages = useFirestore('messages', condition);
 
   useEffect(() => {
+    // scroll to bottom after message changed
     if (messageListRef?.current) {
-      messageListRef.current.scrollTop = messageListRef.current.scrollHeight + 50;
+      messageListRef.current.scrollTop =
+        messageListRef.current.scrollHeight + 50;
     }
   }, [messages]);
 
   return (
     <WrapperStyled>
-      {selectedRoom?.id ? (
+      {selectedRoom.id ? (
         <>
           <HeaderStyled>
             <div className='header__info'>
-              <Typography.Title className='header__title' level={5}>
-                {selectedRoom.name}
-              </Typography.Title>
-              <Typography.Text className='header__description'>
+              <p className='header__title'>{selectedRoom.name}</p>
+              <span className='header__description'>
                 {selectedRoom.description}
-              </Typography.Text>
+              </span>
             </div>
             <ButtonGroupStyled>
               <Button
                 icon={<UserAddOutlined />}
+                type='text'
                 onClick={() => setIsInviteMemberVisible(true)}
               >
-                Thành viên
+                Mời
               </Button>
-              <Avatar.Group size="small" maxCount={4}>
+              <Avatar.Group size='small' max={2}>
                 {members.map((member) => (
                   <Tooltip title={member.displayName} key={member.id}>
                     <Avatar src={member.photoURL}>
-                      {member.photoURL ? '' : member.displayName?.charAt(0).toUpperCase()}
+                      {member.photoURL
+                        ? ''
+                        : member.displayName?.charAt(0)?.toUpperCase()}
                     </Avatar>
                   </Tooltip>
                 ))}
               </Avatar.Group>
             </ButtonGroupStyled>
           </HeaderStyled>
-
           <ContentStyled>
             <MessageListStyled ref={messageListRef}>
               {messages.map((mes) => (
@@ -190,6 +180,7 @@ export default function ChatWindow() {
                   onChange={handleInputChange}
                   onPressEnter={handleOnSubmit}
                   placeholder='Nhập tin nhắn...'
+                  variant={false}
                   autoComplete='off'
                 />
               </Form.Item>
@@ -201,10 +192,10 @@ export default function ChatWindow() {
         </>
       ) : (
         <Alert
-          message='Hãy chọn phòng để bắt đầu trò chuyện'
+          message='Chào mừng bạn đến với phòng chat!'
           type='info'
           showIcon
-          style={{ margin: 16 }}
+          style={{ margin: 5 }}
           closable
         />
       )}

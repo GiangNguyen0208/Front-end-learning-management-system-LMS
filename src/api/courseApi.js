@@ -14,6 +14,10 @@ const courseApi = {
     });  
   },
 
+  getStudentsByCourseAndMentor: (courseId, mentorId) => {
+    return axiosClient.get(`/booking/students/${mentorId}/${courseId}`);
+  },
+
   getOrderHistory: (customerId) => {
     return axiosClient.get(`/booking/fetch/customer-wise`, {
       params: { customerId },

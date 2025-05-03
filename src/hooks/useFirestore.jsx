@@ -1,36 +1,38 @@
-import React, { useState } from 'react';
-import { db } from './../firebase/config';
+import { useState, useEffect } from 'react';
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot
+} from 'firebase/firestore';
+import { db } from '../firebase/config';
 
-const useFirestore = (collection, condition) => {
+const useFirestore = (collectionName, condition) => {
   const [documents, setDocuments] = useState([]);
 
-  React.useEffect(() => {
-    let collectionRef = db.collection(collection).orderBy('createdAt');
-    if (condition) {
-      if (!condition.compareValue || !condition.compareValue.length) {
-        // reset documents data
-        setDocuments([]);
-        return;
-      }
+  useEffect(() => {
+    let collectionRef = collection(db, collectionName);
+    let q = query(collectionRef, orderBy('createdAt'));
 
-      collectionRef = collectionRef.where(
-        condition.fieldName,
-        condition.operator,
-        condition.compareValue
+    if (condition && condition.compareValue?.length) {
+      q = query(
+        collectionRef,
+        where(condition.fieldName, condition.operator, condition.compareValue),
+        orderBy('createdAt')
       );
     }
 
-    const unsubscribe = collectionRef.onSnapshot((snapshot) => {
-      const documents = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }));
-
-      setDocuments(documents);
+      setDocuments(docs);
     });
 
-    return unsubscribe;
-  }, [collection, condition]);
+    return () => unsubscribe();
+  }, [collectionName, condition]);
 
   return documents;
 };

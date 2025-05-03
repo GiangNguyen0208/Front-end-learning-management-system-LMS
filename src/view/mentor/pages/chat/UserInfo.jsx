@@ -1,52 +1,31 @@
 import React, { useContext } from 'react';
-import { Button, Avatar, Typography } from 'antd';
+import { AuthContext } from '../../../../context/AuthProvider';
 import styled from 'styled-components';
 
-import { auth } from '../../../../firebase/config';
-import { AuthContext } from '../../../../context/AuthProvider';
-import { AppContext } from '../../../../context/AppProvider';
-import { signOut } from 'firebase/auth';
+const Avatar = styled.img`
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
 
-const WrapperStyled = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(82, 38, 83);
-
-  .username {
-    color: white;
-    margin-left: 5px;
-  }
+const Name = styled.div`
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 16px;
+  color: #0f172a;
 `;
 
 export default function UserInfo() {
-  const { user } = useContext(AuthContext) || {}; // Tránh lỗi nếu AuthContext chưa có giá trị
-  const { clearState } = useContext(AppContext);
+  const { userFireBase } = useContext(AuthContext) || {};
+  if (!userFireBase) return null;
 
-  // Kiểm tra nếu user không tồn tại
-  if (!user) {
-    return null;
-  }
-
-  const { displayName, photoURL } = user;
+  const { displayName, photoURL } = userFireBase;
 
   return (
-    <WrapperStyled>
-      <div>
-        <Avatar src={photoURL}>
-          {photoURL ? '' : displayName?.charAt(0)?.toUpperCase()}
-        </Avatar>
-        <Typography.Text className='username'>{displayName}</Typography.Text>
-      </div>
-      <Button
-        ghost
-        onClick={() => {
-          clearState();
-          signOut(auth);
-        }}
-      >
-        Đăng xuất
-      </Button>
-    </WrapperStyled>
+    <>
+      <Avatar src={photoURL} alt={displayName} />
+      <Name>{displayName}</Name>
+    </>
   );
 }

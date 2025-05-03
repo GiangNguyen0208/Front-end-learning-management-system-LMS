@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import './App.css'
 import AuthProvider from './context/AuthProvider';
+import AppProvider from './context/AppProvider';
+
 import AppRoutes from './routes/index';
+
 import { initializeAdmin } from './api/authApi';
 import { ToastContainer } from 'react-toastify';
 
@@ -13,8 +16,10 @@ function App() {
   return (
     <>
       <AuthProvider>
-        <AppRoutes />
-        <ToastContainer />
+        <AppProvider>
+          <AppRoutes />
+          <ToastContainer />
+        </AppProvider>
       </AuthProvider>
     </>
   )
