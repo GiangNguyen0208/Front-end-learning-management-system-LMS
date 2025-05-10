@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { auth } from "../firebase/config";
+import { first } from "lodash";
 
 export const AuthContext = createContext();
 
@@ -60,8 +61,11 @@ export default function AuthProvider({ children }) {
         setUserFirebase({
           displayName: user.displayName,
           email: user.email,
-          uid: user.uid,
+          firstName: user.firstName,
+          lastName: user.lastName,
           photoURL: user.photoURL,
+          role: user.role,
+          uid: user.uid,
         });
       } else {
         setUserFirebase(null);

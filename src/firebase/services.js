@@ -1,5 +1,5 @@
 import { db } from './config';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, getDocs, where, onSnapshot } from 'firebase/firestore';
 
 
 export const addDocument = async (collectionName, data) => {
@@ -18,6 +18,19 @@ export const addDocument = async (collectionName, data) => {
     console.error("❌ Lỗi khi thêm document:", error);
   }
 };
+
+export async function getRoomsForUser(userId) {
+  const q = query(collection(db, 'rooms'), where('members', 'array-contains', userId));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+export function getMessagesInRoom(roomId, setMessages) {
+  const q = query(collection(db, 'messages'), where('roomId', '==', roomId));
+  return onSnapshot(q, (snapshot) => {
+    setMessages(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+  });
+}
 
 // tao keywords cho displayName, su dung cho search
 export const generateKeywords = (displayName) => {

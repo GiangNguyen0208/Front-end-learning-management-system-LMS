@@ -14,7 +14,7 @@ const courseApi = {
     });  
   },
 
-  getStudentsByCourseAndMentor: (courseId, mentorId) => {
+  getStudentsByCourseAndMentor: (mentorId, courseId) => {
     return axiosClient.get(`/booking/students/${mentorId}/${courseId}`);
   },
 

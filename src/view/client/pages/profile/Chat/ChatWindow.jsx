@@ -1,7 +1,7 @@
 import { UserAddOutlined } from '@ant-design/icons';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
+import { Button, Tooltip, Avatar, Form, Input, Alert, Typography } from 'antd';
 import Message from './Message';
 
 import { AuthContext } from '../../../../../context/AuthProvider';
@@ -11,103 +11,122 @@ import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../../../../../firebase/config';
 import useFirestore from '../../../../../hooks/useFirestore';
 
+const { Title, Text } = Typography;
+
+const WrapperStyled = styled.div`
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #263238; /* Sử dụng màu nền của Sidebar */
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
+  padding: 24px 16px;
+`;
+
 const HeaderStyled = styled.div`
   display: flex;
   justify-content: space-between;
-  height: 56px;
-  padding: 0 16px;
   align-items: center;
-  border-bottom: 1px solid rgb(230, 230, 230);
+  height: 64px;
+  padding: 0 24px;
+  background: #37474f; /* Màu nền của Header đồng bộ với Sidebar */
+  color: white;
+  border-bottom: 1px solid #455a64;
 
-  .header {
-    &__info {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+  .room-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .room-title {
+      font-size: 18px;
+      font-weight: 600;
     }
 
-    &__title {
-      margin: 0;
-      font-weight: bold;
-    }
-
-    &__description {
-      font-size: 12px;
+    .room-description {
+      font-size: 13px;
+      color: #b0bec5;
     }
   }
 `;
 
-const ButtonGroupStyled = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const WrapperStyled = styled.div`
-  height: 100vh;
-`;
-
 const ContentStyled = styled.div`
-  height: calc(100% - 56px);
+  flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 11px;
-  justify-content: flex-end;
+  padding: 16px;
+  overflow: hidden;
+  background-color: #eceff1; /* Màu nền nhẹ cho phần nội dung */
+  border-radius: 16px; /* Bo góc giống Sidebar */
+`;
+
+const MessageListStyled = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+  margin-bottom: 12px;
+  scroll-behavior: smooth;
+  background-color: #ffffff; /* Nền tin nhắn sáng hơn */
+  border-radius: 8px;
+  padding: 10px;
 `;
 
 const FormStyled = styled(Form)`
   display: flex;
-  justify-content: space-between;
+  gap: 12px;
   align-items: center;
-  padding: 2px 2px 2px 0;
-  border: 1px solid rgb(230, 230, 230);
-  border-radius: 2px;
+  padding: 12px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 
   .ant-form-item {
     flex: 1;
     margin-bottom: 0;
   }
-`;
 
-const MessageListStyled = styled.div`
-  max-height: 100%;
-  overflow-y: auto;
+  input {
+    border-radius: 8px;
+    padding: 10px 12px;
+    background-color: #f5f5f5; /* Nền input nhẹ nhàng */
+  }
+
+  button {
+    border-radius: 8px;
+    background-color: #001529;
+    color: #fff;
+    &:hover {
+      background-color: #263238;
+    }
+  }
 `;
 
 export default function ChatWindow() {
-  const { selectedRoom, members, setIsInviteMemberVisible } =
-    
-  useContext(AppContext);
-  const { userFireBase } = useContext(AuthContext) || {}; // Tránh lỗi nếu AuthContext chưa có giá trị
+  const { selectedRoom, setIsInviteMemberVisible } = useContext(AppContext);
+  const { userFireBase, user } = useContext(AuthContext);
   const uid = userFireBase?.uid;
-  const photoURL = userFireBase?.photoURL;
-  const displayName = userFireBase?.displayName;
-
-  const [inputValue, setInputValue] = useState('');
   const [form] = Form.useForm();
   const inputRef = useRef(null);
   const messageListRef = useRef(null);
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
+  const handleOnSubmit = async () => {
+    const inputValue = form.getFieldValue('message')?.trim();
+    if (!inputValue) return;
 
-  const handleOnSubmit = () => {
-    addDoc(collection(db, 'messages'), {
-      text: inputValue,
+    await addDoc(collection(db, 'messages'), {
+      text: inputValue.trim(),
       uid,
-      photoURL,
-      roomId: selectedRoom.id,
-      displayName,
+      roomId: selectedRoom.id || '',
+      displayName: user.firstName + " " +user.lastName  || '',
+      email: user.emailId || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      photoURL: user.avatar || '',
+      role: user.role || '',
+      createdAt: new Date()
     });
 
     form.resetFields(['message']);
-
-    // focus to input again after submit
-    if (inputRef?.current) {
-      setTimeout(() => {
-        inputRef.current.focus();
-      });
-    }
+    inputRef.current?.focus();
   };
 
   const condition = React.useMemo(
@@ -122,50 +141,29 @@ export default function ChatWindow() {
   const messages = useFirestore('messages', condition);
 
   useEffect(() => {
-    // scroll to bottom after message changed
-    if (messageListRef?.current) {
-      messageListRef.current.scrollTop =
-        messageListRef.current.scrollHeight + 50;
-    }
+    messageListRef.current?.scrollTo({
+      top: messageListRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
   }, [messages]);
 
   return (
     <WrapperStyled>
-      {selectedRoom.id ? (
+      {selectedRoom?.id ? (
         <>
           <HeaderStyled>
-            <div className='header__info'>
-              <p className='header__title'>{selectedRoom.name}</p>
-              <span className='header__description'>
-                {selectedRoom.description}
-              </span>
+            <div className="room-info">
+              <span className="room-title">{selectedRoom.name}</span>
+              <span className="room-description">{selectedRoom.description}</span>
             </div>
-            <ButtonGroupStyled>
-              <Button
-                icon={<UserAddOutlined />}
-                type='text'
-                onClick={() => setIsInviteMemberVisible(true)}
-              >
-                Mời
-              </Button>
-              <Avatar.Group size='small' max={2}>
-                {members.map((member) => (
-                  <Tooltip title={member.displayName} key={member.id}>
-                    <Avatar src={member.photoURL}>
-                      {member.photoURL
-                        ? ''
-                        : member.displayName?.charAt(0)?.toUpperCase()}
-                    </Avatar>
-                  </Tooltip>
-                ))}
-              </Avatar.Group>
-            </ButtonGroupStyled>
           </HeaderStyled>
+
           <ContentStyled>
             <MessageListStyled ref={messageListRef}>
               {messages.map((mes) => (
                 <Message
                   key={mes.id}
+                  role={mes.role}
                   text={mes.text}
                   photoURL={mes.photoURL}
                   displayName={mes.displayName}
@@ -173,18 +171,17 @@ export default function ChatWindow() {
                 />
               ))}
             </MessageListStyled>
+
             <FormStyled form={form}>
-              <Form.Item name='message'>
+              <Form.Item name="message">
                 <Input
+                  placeholder="Nhập tin nhắn..."
+                  autoComplete="off"
                   ref={inputRef}
-                  onChange={handleInputChange}
                   onPressEnter={handleOnSubmit}
-                  placeholder='Nhập tin nhắn...'
-                  variant={false}
-                  autoComplete='off'
                 />
               </Form.Item>
-              <Button type='primary' onClick={handleOnSubmit}>
+              <Button type="primary" onClick={handleOnSubmit}>
                 Gửi
               </Button>
             </FormStyled>
@@ -192,11 +189,11 @@ export default function ChatWindow() {
         </>
       ) : (
         <Alert
-          message='Chào mừng bạn đến với phòng chat!'
-          type='info'
+          message="Chào mừng bạn đến với phòng chat!"
+          description="Hãy chọn một phòng để bắt đầu nhắn tin."
+          type="info"
           showIcon
-          style={{ margin: 5 }}
-          closable
+          style={{ margin: 16 }}
         />
       )}
     </WrapperStyled>

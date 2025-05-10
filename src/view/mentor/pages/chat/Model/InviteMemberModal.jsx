@@ -7,7 +7,7 @@ import { db } from "../../../../../firebase/config";
 
 // Modal mời thành viên vào nhóm chat
 export default function InviteMemberModal() {
-  const { isInviteMemberVisible, setIsInviteMemberVisible, selectedRoomId,selectedRoom } = useContext(AppContext);
+  const { isInviteMemberVisible, setIsInviteMemberVisible, selectedRoomId, selectedRoom } = useContext(AppContext);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState([]);
@@ -23,13 +23,7 @@ export default function InviteMemberModal() {
         // Lấy room document từ Firestore
         const roomDoc = await getDoc(doc(db, "rooms", selectedRoomId));
         if (!roomDoc.exists()) throw new Error("Room không tồn tại!");
-
-        // Tách userId (mentorId) và courseId từ roomId
-        const roomId = roomDoc.data().roomId;
-        const [mentorId, courseId] = roomId.split("_");
-        if (!mentorId || !courseId) throw new Error("roomId không hợp lệ!");
-        // Gọi BE để lấy danh sách học viên
-        const response = await courseApi.getStudentsByCourseAndMentor(courseId, mentorId);
+        const response = await courseApi.getStudentsByCourseAndMentor(roomDoc.data().mentorId, roomDoc.data().courseId);
         setMembers(response.data || []);
       } catch (err) {
         console.error("Lỗi khi lấy danh sách thành viên:", err);

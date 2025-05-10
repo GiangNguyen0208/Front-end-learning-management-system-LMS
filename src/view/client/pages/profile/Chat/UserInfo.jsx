@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
-import { AuthContext } from '../../../../context/AuthProvider';
+import { AuthContext } from '../../../../../context/AuthProvider';
 import styled from 'styled-components';
-import { URL } from '../../../../api/constant';
 
 const Avatar = styled.img`
   width: 64px;
@@ -18,14 +17,14 @@ const Name = styled.div`
 `;
 
 export default function UserInfo() {
-  const { userFireBase, user } = useContext(AuthContext) || {};
+  const { userFireBase } = useContext(AuthContext) || {};
   if (!userFireBase) return null;
 
   const { displayName, photoURL } = userFireBase;
 
   return (
     <>
-      <Avatar src={`${URL.BASE_URL}/user/${user.mentorDetail.profilePic}`} alt={displayName} />
+      <Avatar src={photoURL} alt={displayName} />
       <Name>{displayName}</Name>
     </>
   );

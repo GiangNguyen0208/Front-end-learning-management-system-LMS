@@ -8,38 +8,43 @@ import useFirestore from '../../../../hooks/useFirestore';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../../../../firebase/config';
 import { AuthContext } from '../../../../context/AuthProvider';
+import courseApi from '../../../../api/courseApi';
+import { toast } from 'react-toastify';
+import { URL } from '../../../../api/constant';
 
 const WrapperStyled = styled.div`
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
-  background-color: #f4f6f8;
+  background-color: #263238; /* Sử dụng màu nền của Sidebar */
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
+  padding: 24px 16px;
 `;
 
 const HeaderStyled = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 24px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  height: 64px;
+  padding: 0 24px;
+  background: #37474f; /* Màu nền của Header đồng bộ với Sidebar */
+  color: white;
+  border-bottom: 1px solid #455a64;
 
-  .header__info {
+  .room-info {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-  }
+    gap: 4px;
 
-  .header__title {
-    margin: 0;
-    font-weight: 600;
-    font-size: 16px;
-  }
+    .room-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
 
-  .header__description {
-    font-size: 13px;
-    color: #888;
+    .room-description {
+      font-size: 13px;
+      color: #b0bec5;
+    }
   }
 `;
 
@@ -53,25 +58,31 @@ const ContentStyled = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 16px 24px;
-  background-color: #f9fafb;
+  padding: 16px;
   overflow: hidden;
+  background-color: #eceff1; /* Màu nền nhẹ cho phần nội dung */
+  border-radius: 16px; /* Bo góc giống Sidebar */
 `;
 
 const MessageListStyled = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 6px;
   margin-bottom: 12px;
+  scroll-behavior: smooth;
+  background-color: #ffffff; /* Nền tin nhắn sáng hơn */
+  border-radius: 8px;
+  padding: 10px;
 `;
 
 const FormStyled = styled(Form)`
   display: flex;
   gap: 12px;
-  background: #fff;
-  padding: 10px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 
   .ant-form-item {
     flex: 1;
@@ -79,26 +90,52 @@ const FormStyled = styled(Form)`
   }
 
   input {
-    border-radius: 6px;
-    padding: 8px 12px;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background-color: #f5f5f5; /* Nền input nhẹ nhàng */
   }
 
   button {
-    border-radius: 6px;
+    border-radius: 8px;
+    background-color: #001529;
+    color: #fff;
+    &:hover {
+      background-color: #263238;
+    }
   }
 `;
 
+
 export default function ChatWindow() {
-  const { selectedRoom, members, setIsInviteMemberVisible } = useContext(AppContext);
-  const { userFireBase } = useContext(AuthContext) || {};
+  const { user, userFireBase } = useContext(AuthContext);
+  const { selectedRoom, setIsInviteMemberVisible, isInviteMemberVisible, selectedCourseId } = useContext(AppContext);
   const uid = userFireBase?.uid;
   const photoURL = userFireBase?.photoURL;
   const displayName = userFireBase?.displayName;
-
   const [inputValue, setInputValue] = useState('');
   const [form] = Form.useForm();
   const inputRef = useRef(null);
   const messageListRef = useRef(null);
+
+  const [members, setMembers] = React.useState([]); // Thêm state members để lưu danh sách thành viên
+
+  const fetchStudentsByCourseAndMentor = async () => {
+    try {
+      const response = await courseApi.getStudentsByCourseAndMentor(user.id, selectedCourseId);
+      const students = response?.data || [];
+      setMembers(students);
+    } catch (error) {
+      console.error('❌ Lỗi khi lấy danh sách sinh viên:', error);
+      toast.error('Không thể lấy danh sách sinh viên.');
+    }
+  };
+
+  // Kiểm tra khi nào sẽ gọi fetchStudentsByCourseAndMentor
+  useEffect(() => {
+    if (isInviteMemberVisible && selectedCourseId) {
+      fetchStudentsByCourseAndMentor();
+    }
+  }, [isInviteMemberVisible, selectedCourseId, user.id]);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -110,9 +147,13 @@ export default function ChatWindow() {
     addDoc(collection(db, 'messages'), {
       text: inputValue.trim(),
       uid,
-      photoURL,
-      roomId: selectedRoom.id,
-      displayName,
+      roomId: selectedRoom.id || '',
+      displayName: user.firstName + " " +user.lastName  || '',
+      email: user.emailId || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      photoURL: user.mentorDetail.profilePic || '',
+      role: user.role || '',
       createdAt: new Date()
     });
 
@@ -144,13 +185,9 @@ export default function ChatWindow() {
       {selectedRoom?.id ? (
         <>
           <HeaderStyled>
-            <div className='header__info'>
-              <Typography.Title className='header__title' level={5}>
-                {selectedRoom.name}
-              </Typography.Title>
-              <Typography.Text className='header__description'>
-                {selectedRoom.description}
-              </Typography.Text>
+            <div className="room-info">
+              <span className="room-title">{selectedRoom.name}</span>
+              <span className="room-description">{selectedRoom.description}</span>
             </div>
             <ButtonGroupStyled>
               <Button
@@ -161,9 +198,9 @@ export default function ChatWindow() {
               </Button>
               <Avatar.Group size="small" maxCount={4}>
                 {members.map((member) => (
-                  <Tooltip title={member.displayName} key={member.id}>
+                  <Tooltip title={`${member.displayName || member.firstName || member.emailId}`} key={member.id}>
                     <Avatar src={member.photoURL}>
-                      {member.photoURL ? '' : member.displayName?.charAt(0).toUpperCase()}
+                      {(member.displayName || member.firstName || 'U')?.charAt(0).toUpperCase()}
                     </Avatar>
                   </Tooltip>
                 ))}
@@ -176,6 +213,7 @@ export default function ChatWindow() {
               {messages.map((mes) => (
                 <Message
                   key={mes.id}
+                  role={mes.role}
                   text={mes.text}
                   photoURL={mes.photoURL}
                   displayName={mes.displayName}

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from "react";
+import React, { useState, useContext, useMemo, useEffect } from "react";
 import { AuthContext } from "./AuthProvider";
 import useFirestore from "../hooks/useFirestore";
 
@@ -12,24 +12,44 @@ export default function AppProvider({ children }) {
 
   const { user } = useContext(AuthContext);
 
-  const roomsCondition = useMemo(() => ({
-    fieldName: "members",
-    operator: "array-contains",
-    compareValue: user?.uid,
-  }), [user?.uid]);
+  // Kiểm tra nếu có user, sau đó lấy phòng chứa user
+  const roomsCondition = useMemo(() => {
+    return user?.uid ? {
+      fieldName: "members",
+      operator: "array-contains",
+      compareValue: user.uid,
+    } : {};
+  }, [user?.uid]);
 
   const rooms = useFirestore("rooms", roomsCondition);
-
-  const selectedRoom = useMemo(() => rooms.find((room) => room.id === selectedRoomId) || {}, [rooms, selectedRoomId]);
-
-  const usersCondition = useMemo(() => ({
-    fieldName: "uid",
-    operator: "in",
-    compareValue: selectedRoom.members || [],
-  }), [selectedRoom.members]);
+  
+  // Tìm phòng đã chọn từ danh sách phòng
+  const selectedRoom = useMemo(
+    () => rooms.find((room) => room.id === selectedRoomId) || {},
+    [rooms, selectedRoomId]
+  );
+  
+  // Kiểm tra điều kiện lấy thành viên trong phòng
+  const usersCondition = useMemo(() => {
+    return selectedRoom.members && selectedRoom.members.length > 0 ? {
+      fieldName: "uid",
+      operator: "in",
+      compareValue: selectedRoom.members,
+    } : {};
+  }, [selectedRoom.members]);
 
   const members = useFirestore("users", usersCondition);
 
+  // Cập nhật selectedCourseId khi selectedRoom thay đổi
+  useEffect(() => {
+    if (selectedRoom?.courseId) {
+      setSelectedCourseId(selectedRoom.courseId);
+    } else {
+      setSelectedCourseId(null);
+    }
+  }, [selectedRoom]);
+
+  // Hàm clearState đã bị comment, có thể giữ lại hoặc xóa nếu không cần thiết
   // const clearState = () => {
   //   setSelectedRoomId("");
   //   setIsAddRoomVisible(false);
@@ -50,7 +70,7 @@ export default function AppProvider({ children }) {
         setIsInviteMemberVisible,
         selectedCourseId,
         setSelectedCourseId,
-        // clearState,
+        // clearState, // nếu không cần có thể xóa
       }}
     >
       {children}

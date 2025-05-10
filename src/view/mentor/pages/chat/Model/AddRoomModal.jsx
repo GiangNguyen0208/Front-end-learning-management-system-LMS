@@ -1,13 +1,14 @@
-import React, { useContext } from "react";
+import React, { use, useContext, useEffect } from "react";
 import { Form, Modal, Input } from "antd";
 import { addDocument } from "../../../../../firebase/services";
 import { AuthContext } from "../../../../../context/AuthProvider";
 import { AppContext } from "../../../../../context/AppProvider";
+import courseApi from "../../../../../api/courseApi";
+import { toast } from "react-toastify";
 
 export default function AddRoomModal() {
-  const { isAddRoomVisible, setIsAddRoomVisible } = useContext(AppContext);
+  const { isAddRoomVisible, setIsAddRoomVisible, selectedCourseId } = useContext(AppContext);
   const { user } = useContext(AuthContext);
-  const { selectedCourseId } = useContext(AppContext);
   const [form] = Form.useForm();
 
   const handleOk = async () => {
@@ -19,12 +20,12 @@ export default function AddRoomModal() {
       const newRoom = {
         roomId: `${user.id}_${selectedCourseId}`,
         name: values.name,
-        description: values.description ?? '', // fallback nếu không nhập
+        description: values.description ?? "",
         mentorId: user.id,
         courseId: selectedCourseId,
+        // members: [...new Set([...members, user.id])], // thêm vào đây
+        createdAt: new Date(),
       };
-  
-      console.log("🧪 Dữ liệu gửi đi:", newRoom);
   
       await addDocument("rooms", newRoom);
   

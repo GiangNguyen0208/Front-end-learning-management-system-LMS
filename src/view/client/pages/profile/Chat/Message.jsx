@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Avatar, Typography } from 'antd';
 import styled from 'styled-components';
 import { formatRelative } from 'date-fns';
+import { URL } from '../../../../../api/constant';
 
 const WrapperStyled = styled.div`
   margin-bottom: 10px;
@@ -30,17 +31,23 @@ function formatDate(createdAt) {
   return formatRelative(date, new Date());
 }
 
-export default function Message({ text, displayName, createdAt, photoURL }) {
+export default function Message({ text, displayName, createdAt, photoURL, role }) {
+
   return (
     <WrapperStyled>
       <div>
-        <Avatar size="small" src={photoURL}>
-          {photoURL ? '' : displayName?.charAt(0)?.toUpperCase()}
-        </Avatar>
-        <Typography.Text className="author">{displayName}</Typography.Text>
-        <Typography.Text className="date">
-          {formatDate(createdAt)}
+      <Avatar
+        className="avatar"
+        size="large"
+        src={role !== 'Student' ? `${URL.BASE_URL}/user/${photoURL}` : photoURL}
+        alt={displayName}
+      >
+        {photoURL ? '' : displayName?.charAt(0)?.toUpperCase()}
+      </Avatar>
+        <Typography.Text className="author">
+          {displayName} ({role === 'Student' ? 'Học viên' : 'Giảng viên'})
         </Typography.Text>
+        <Typography.Text className="date">{formatDate(createdAt)}</Typography.Text>
       </div>
       <div>
         <Typography.Text className="content">{text}</Typography.Text>
