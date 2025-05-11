@@ -1,24 +1,27 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Form, Input, Select, Button, Upload, Card, message, Spin } from "antd";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import categoryApi from "../../api/categoryApi";
 import courseApi from "../../api/courseApi";
 import { toast } from "react-toastify";
+import { AuthContext } from "../../context/AuthProvider";
 
 const { Option } = Select;
 
-const AddCourseForm = () => {
+const EditCourseForm = () => {
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const mentor = JSON.parse(localStorage.getItem("user"));
-  const navigate = useNavigate();
-
   const [selectedNotesFile, setSelectedNotesFile] = useState(null);
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+
+  const { user } = useContext(AuthContext);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [course, setCourse] = useState({
-    mentorId: mentor.id,
+    mentorId: user?.id || "",
     categoryId: "",
     name: "",
     description: "",
@@ -31,79 +34,90 @@ const AddCourseForm = () => {
   });
 
   useEffect(() => {
-    if (categories.length === 0) {
-      fetchCategories();
-    }
-  }, [categories.length]);
+    const fetchData = async () => {
+      try {
+        const [categoriesRes, courseRes] = await Promise.all([ 
+          categoryApi.fetchAllCategories(),
+          courseApi.getCourseById(id),
+        ]);
 
-  const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const response = await categoryApi.fetchAllCategories();
-      setCategories(Array.isArray(response.data.categories) ? response.data.categories : []);
-    } catch (error) {
-      message.error("Không thể lấy danh mục khóa học.");
-    } finally {
-      setLoading(false);
-    }
-  };
+        const catData = categoriesRes?.data?.categories || [];
+        const courseData = courseRes?.data?.course;
+        console.log("🚨 Course Data Edit:", courseData);
+        setCategories(catData);
+        if (courseData) {
+          setCourse({
+            mentorId: courseData.mentor.id,
+            categoryId: courseData.categoryId,
+            name: courseData.name,
+            description: courseData.description,
+            type: courseData.type,
+            fee: courseData.fee,
+            discountInPercent: courseData.discountInPercent,
+            authorCourseNote: courseData.authorCourseNote,
+            specialNote: courseData.specialNote,
+            prerequisite: courseData.prerequisite,
+          });
+        }
+      } catch (err) {
+        message.error("Lỗi khi tải dữ liệu khóa học hoặc danh mục.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleInput = (name, value) => {
     setCourse((prev) => ({ ...prev, [name]: value }));
   };
 
-  if (!mentor.id) {
-    toast.error("Lỗi: Không tìm thấy thông tin mentor.");
-    return;
-  }
-
-  const saveCourse = async () => {
-    if (!course.name || !course.categoryId || !course.mentorId || !course.type) {
-      toast.error("Vui lòng nhập đầy đủ thông tin.");
-      return;
-    }
-  
-    if (!selectedThumbnail || !selectedNotesFile) {
-      toast.error("Vui lòng tải lên hình thu nhỏ và tài liệu khóa học.");
-      return;
-    }
-  
-    const formData = new FormData();
-    Object.keys(course).forEach((key) => {
-      formData.append(key, course[key]);
-    });
-    formData.append("thumbnail", selectedThumbnail);
-    formData.append("notesFileName", selectedNotesFile);
-  
+  const updateCourse = async () => {
+    setSubmitting(true);
     try {
-      const response = await courseApi.addCourse(formData);
-      if (response.data.success) {
-        setTimeout(() => {
-          navigate(`/mentor/courses/section/${response.data.course.id}`, { state: response.data.course });
-        }, 1500);
+      const formData = new FormData();
+
+      // Append all non-empty course fields to formData
+      Object.keys(course).forEach((key) => {
+        if (course[key] !== undefined && course[key] !== null && course[key] !== "") {
+          formData.append(key, course[key]);
+        }
+      });
+
+      // Append selected files if they exist
+      if (selectedThumbnail) formData.append("thumbnail", selectedThumbnail);
+      if (selectedNotesFile) formData.append("notesFileName", selectedNotesFile);
+
+      const res = await courseApi.updateCourse(id, formData);
+
+      if (res?.data?.success) {
+        toast.success("Cập nhật khóa học thành công!");
+        navigate(`/mentor/courses/section/${id}`);
       } else {
-        toast.error(response.data.responseMessage);
+        toast.error(res?.data?.responseMessage || "Cập nhật thất bại");
       }
-    } catch (error) {
-      console.error("🔥 Lỗi API:", error);
-      toast.error("Lỗi máy chủ, vui lòng thử lại sau.");
+    } catch (err) {
+      toast.error("Đã có lỗi xảy ra khi cập nhật.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <Card 
-      title="Thêm khóa học" 
+    <Card
+      title="Chỉnh sửa khóa học"
       style={{ maxWidth: "800px", margin: "auto" }}
       extra={
-        <Button type="primary" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} style={{ marginBottom: 16, marginLeft: 16 }}>
-            Go Back
+        <Button type="primary" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
+          Trở lại
         </Button>
       }
     >
       {loading ? (
         <Spin size="large" />
       ) : (
-        <Form layout="vertical" onFinish={saveCourse}>
+        <Form layout="vertical" onFinish={updateCourse}>
           <Form.Item label="Tên khóa học" required>
             <Input value={course.name} onChange={(e) => handleInput("name", e.target.value)} />
           </Form.Item>
@@ -113,9 +127,11 @@ const AddCourseForm = () => {
           </Form.Item>
 
           <Form.Item label="Danh mục khóa học" required>
-            <Select onChange={(value) => handleInput("categoryId", value)} placeholder="Chọn danh mục">
-              {categories.map((category) => (
-                <Option key={category.id} value={category.id}>{category.name}</Option>
+            <Select value={course.categoryId} onChange={(value) => handleInput("categoryId", value)} placeholder="Chọn danh mục">
+              {categories.map((cat) => (
+                <Option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </Option>
               ))}
             </Select>
           </Form.Item>
@@ -152,18 +168,18 @@ const AddCourseForm = () => {
 
           <Form.Item label="Tài liệu khóa học">
             <Upload beforeUpload={(file) => { setSelectedNotesFile(file); return false; }}>
-              <Button icon={<UploadOutlined />}>Tải lên tài liệu</Button>
+              <Button icon={<UploadOutlined />}>Tải lại tài liệu (tùy chọn)</Button>
             </Upload>
           </Form.Item>
 
           <Form.Item label="Hình thu nhỏ">
             <Upload beforeUpload={(file) => { setSelectedThumbnail(file); return false; }}>
-              <Button icon={<UploadOutlined />}>Tải lên hình ảnh</Button>
+              <Button icon={<UploadOutlined />}>Tải lại hình ảnh (tùy chọn)</Button>
             </Upload>
           </Form.Item>
 
           <Button type="primary" htmlType="submit" loading={submitting} block>
-            {submitting ? "Đang xử lý..." : "Thêm khóa học"}
+            {submitting ? "Đang xử lý..." : "Cập nhật khóa học"}
           </Button>
         </Form>
       )}
@@ -171,4 +187,4 @@ const AddCourseForm = () => {
   );
 };
 
-export default AddCourseForm;
+export default EditCourseForm;

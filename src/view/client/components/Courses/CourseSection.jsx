@@ -30,7 +30,6 @@ const CourseSection = () => {
     <section className="featured-courses" style={{ marginTop: 60 }}>
       <div className="section-header">
         <Title level={2}>Khóa học</Title>
-        <Button type="link">See All</Button>
       </div>
       
       {Array.isArray(courseSection) && courseSection.length > 0 ? (
@@ -42,7 +41,7 @@ const CourseSection = () => {
           ))}
         </Row>
       ) : (
-        <p>No courses found.</p>
+        <p>Không tìm thấy khóa học nào.</p>
       )}
     </section>
   );

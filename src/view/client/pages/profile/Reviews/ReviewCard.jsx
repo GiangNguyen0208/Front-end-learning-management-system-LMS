@@ -1,60 +1,94 @@
 import React from "react";
-import { Card, Rate, Typography } from "antd";
+import { Avatar, Card, Rate, Typography, Button } from "antd";
 import styled from "styled-components";
+import { UserOutlined } from "@ant-design/icons";
+import { ReviewDate } from "../../course/js/styles";
+import { formatDate } from "../../../../../utils/helper/formatDate";
+import { useNavigate } from "react-router-dom";
+import Pagination from "../../../components/Pagination/Pagination";
 
 const { Text, Title } = Typography;
 
 const ReviewCard = ({ review }) => {
+  const navigate = useNavigate(); // Dùng để điều hướng đến trang chi tiết review
+
+  const handleViewDetails = (courseId) => {
+    navigate(`/course-details/${courseId}`); // Điều hướng đến trang chi tiết
+  };
+
   return (
     <StyledCard>
-      <CardContent>
-        <CourseSection>
-          <Label>Course Name:</Label>
-          <CourseName>{review.courseName}</CourseName>
-        </CourseSection>
+      <CardContent key={review.id}>
+        <ContentSection>
+          <CourseSection>
+            <Label>Khóa học: </Label>
+            <CourseName>{review.course.name}</CourseName>
+          </CourseSection>
 
-        <RatingSection>
-          <Label>Rating:</Label>
-          <StyledRate disabled defaultValue={review.rating} />
-        </RatingSection>
+          <UserInfo>
+            <div>{review.user?.firstName} {review.user?.lastName}</div>
+            <div style={{ fontSize: "12px", color: "#888" }}>
+              {review.user?.role === "Student" ? "Học viên" : "Giảng viên"}
+            </div>
+          </UserInfo>
 
-        <ReviewSection>
-          <Label>Review:</Label>
-          <ReviewText>{review.text}</ReviewText>
-        </ReviewSection>
+          <RatingSection>
+            <Label>Đánh giá:</Label>
+            <Rate disabled value={review.rating} />
+            <ReviewDate>{formatDate(review.createdAt)}</ReviewDate>
+          </RatingSection>
+
+          <ReviewSection>
+            <Label>Nội dung bình luận:</Label>
+            <ReviewText>{review.comment}</ReviewText>
+          </ReviewSection>
+          
+          {/* Nút điều hướng đến trang chi tiết review */}
+          <Button type="link" onClick={() => handleViewDetails(review.course.id)} style={{ padding: "0" }}>
+            Xem chi tiết
+          </Button>
+        </ContentSection>
       </CardContent>
-
-      <DeleteIcon
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/8d63a5fc2c5586a61568dadfd60e7fcc434fcc26de3d8c0acfaf3a36beb5dbc5?placeholderIfAbsent=true&apiKey=91edb325cc2b4ce5940b1638fa283b2c"
-        alt="Delete review"
-      />
     </StyledCard>
+    
   );
 };
 
-const StyledCard = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  background-color: #fff;
-  padding: 18px 16px;
-  margin-top: 16px;
-  gap: 46px;
-  font-family:
-    Inter,
-    -apple-system,
-    Roboto,
-    Helvetica,
-    sans-serif;
-`;
+// Styled Components
 
-const CardContent = styled.div`
-  flex: 1;
+const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  background-color: #fff;
+  padding: 18px;
+  margin-top: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const CardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const AvatarSection = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const ContentSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 `;
 
 const CourseSection = styled.div`
@@ -67,22 +101,19 @@ const CourseSection = styled.div`
 const Label = styled(Text)`
   font-size: 14px;
   color: #0f172a;
+  font-weight: 600;
 `;
 
 const CourseName = styled(Title).attrs({ level: 4 })`
   margin: 0 !important;
-  font-size: 18px !important;
-  line-height: 1.6 !important;
+  font-size: 16px !important;
+  line-height: 1.4 !important;
 `;
 
 const RatingSection = styled.div`
   display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const StyledRate = styled(Rate)`
-  font-size: 16px;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 const ReviewSection = styled.div`
@@ -94,13 +125,13 @@ const ReviewSection = styled.div`
 const ReviewText = styled(Text)`
   color: #334155;
   font-size: 16px;
-  line-height: 26px;
+  line-height: 1.6;
 `;
 
-const DeleteIcon = styled.img`
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+const UserInfo = styled.div`
+  font-size: 14px;
+  color: #555;
+  margin-top: 8px;
 `;
 
 export default ReviewCard;

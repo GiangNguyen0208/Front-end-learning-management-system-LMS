@@ -75,7 +75,7 @@ const CourseCard = ({ course }) => {
             minHeight: 72 // Đảm bảo mô tả chiếm 3 dòng
           }}
         >
-          {course.description}
+          {truncateDescription(course.description)}
         </Paragraph>
       </div>
 
@@ -101,13 +101,14 @@ const CourseCard = ({ course }) => {
 
       <div>
         <Space size={4} style={{ marginBottom: 8 }}>
-          <Rate 
-            disabled 
-            value={course.averageRating || 0} 
-            character={<StarFilled />}
-            style={{ fontSize: 14 }}
-          />
-          <Text type="secondary">({course.ratingCount || 0})</Text>
+        <Rate 
+          disabled 
+          value={course.averageRating || 0} 
+          allowHalf 
+          character={<StarFilled />} 
+          style={{ fontSize: 14 }} 
+        />
+          <Text type="secondary">({course.totalRating || 0}) lượt đánh giá</Text>
         </Space>
         
         <Row justify="space-between" align="middle">
@@ -130,7 +131,7 @@ const CourseCard = ({ course }) => {
               color="purple"
               style={{ margin: 0 }}
             >
-              {course.mentor?.name || "Giảng viên"}
+              {course.mentorName || "Giảng viên"}
             </Tag>
           </Col>
         </Row>

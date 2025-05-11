@@ -19,11 +19,11 @@ export default function Sidebar() {
   const location = useLocation();
 
   const menuItems = [
-    { key: "/home", label: "Trang chủ", icon: <HomeOutlined />, path: "/home" },
-    { key: "/mentor/dashboard", label: "Dashboard", icon: <DashboardOutlined />, path: "/mentor/dashboard" },
-    { key: "/mentor/courses", label: "Courses", icon: <ShoppingCartOutlined />, path: "/mentor/courses" },
-    { key: "/mentor/communication", label: "Giao tiếp", icon: <WechatOutlined />, path: "/mentor/communication" },
-    { key: "/mentor/settings", label: "Cài đặt", icon: <SettingOutlined />, path: "/mentor/settings" },
+    { key: "home", label: "Trang chủ", icon: <HomeOutlined />, path: "/home" },
+    { key: "dashboard", label: "Dashboard", icon: <DashboardOutlined />, path: "/mentor/dashboard" },
+    { key: "courses", label: "Courses", icon: <ShoppingCartOutlined />, path: "/mentor/courses" },
+    { key: "chat-rooms", label: "Giao tiếp", icon: <WechatOutlined />, path: "/mentor/chat-rooms" },
+    { key: "settings", label: "Cài đặt", icon: <SettingOutlined />, path: "/mentor/settings" },
   ];
 
   return (

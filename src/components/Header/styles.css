@@ -1,6 +1,6 @@
 /* Header chung */
 .site-header {
-  background: #ffffff;
+  background: #0f172a;
   padding: 12px 0;
   height: auto;
   line-height: 1.5;
@@ -35,7 +35,7 @@
 .logo-text {
   font-size: 18px;
   font-weight: bold;
-  color: #1e293b;
+  color: #ffffff;
   line-height: 1.2;
 }
 
@@ -52,14 +52,14 @@
 .nav-item {
   font-size: 15px;
   font-weight: 500;
-  color: #1e293b;
+  color: #ffffff;
   cursor: pointer;
   transition: color 0.3s;
   padding: 10px;
 }
 
 .nav-item:hover {
-  color: #1677ff;
+  color: #3b82f6;
 }
 
 /* Ô tìm kiếm */
@@ -88,30 +88,31 @@
 .login-button {
   font-size: 14px;
   font-weight: 500;
-  color: #334155;
+  color: #cbd5e1;
   border: 1px solid #cbd5e1;
   padding: 8px 16px;
   transition: all 0.3s;
+  background: transparent;
 }
 
 .login-button:hover {
-  background: #f1f5f9;
+  background: #1e293b;
   border-color: #94a3b8;
 }
 
 .signup-button {
   font-size: 14px;
   font-weight: 500;
-  background-color: #1677ff;
-  border-color: #1677ff;
+  background-color: #3b82f6;
+  border-color: #3b82f6;
   color: white;
   padding: 8px 16px;
   transition: all 0.3s;
 }
 
 .signup-button:hover {
-  background-color: #155bc7;
-  border-color: #155bc7;
+  background-color: #2563eb;
+  border-color: #2563eb;
 }
 
 /* Đường kẻ dưới header */
@@ -125,14 +126,14 @@
 /* Icon Cart */
 .cart-icon {
   font-size: 22px;
-  color: #1e293b;
+  color: white;
   cursor: pointer;
   padding: 10px;
   transition: color 0.3s;
 }
 
 .cart-icon:hover {
-  color: #1677ff;
+  color: #3b82f6;
 }
 
 @keyframes cartBounce {
@@ -148,6 +149,33 @@
   animation: cartBounce 0.6s ease;
 }
 
+/* Dropdown menu (antd override) */
+.ant-dropdown-menu {
+  background-color: #1e293b !important;
+  border: none !important;
+  padding: 8px 0;
+  min-width: 180px;
+}
+
+.ant-dropdown-menu-item {
+  color: #f1f5f9 !important;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  color: #3b82f6 !important;
+}
+
+.ant-dropdown-menu-item .anticon {
+  color: #3b82f6 !important;
+}
+
+/* Avatar icon */
+.ant-avatar {
+  background-color: #22c55e !important;
+}
 
 /* Responsive cho mobile */
 @media (max-width: 768px) {

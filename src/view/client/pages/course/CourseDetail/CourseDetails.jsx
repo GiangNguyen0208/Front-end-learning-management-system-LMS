@@ -26,7 +26,7 @@ const CourseDetails = ({ course, ratings }) => {
     {
       key: "4",
       label: "Đánh giá",
-      children: <CourseReviews course={course} />,
+      children: <CourseReviews ratings={ratings} />,
     },
   ];
 

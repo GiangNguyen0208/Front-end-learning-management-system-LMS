@@ -15,10 +15,8 @@ import {
 const { Text } = Typography;
 const { TextArea } = Input;
 
-const CourseRatingForm = ({ user }) => {
-  const { id } = useParams();
+const CourseRatingForm = ({ courseId, user, onSubmitSuccess }) => {
   const navigate = useNavigate();
-  const courseId = Number(id);
   const [ratings, setRatings] = useState([]);
   const [ratingText, setRatingText] = useState("");
   const [ratingValue, setRatingValue] = useState(0);
@@ -34,9 +32,6 @@ const CourseRatingForm = ({ user }) => {
     try {
       const response = await ratingApi.getRatingsByCourse(courseId);
       const ratingsData = Array.isArray(response?.data?.ratings) ? response.data.ratings : [];
-      console.log("Ratings Data:", response.data.ratings);
-      setRatings(response.data.ratings);
-      navigate(`/course-details/${courseId}`, { state: { ratings } });
       setRatings(ratingsData);
     } catch (error) {
       console.error("Lỗi khi tải đánh giá:", error);
@@ -109,33 +104,6 @@ const CourseRatingForm = ({ user }) => {
           Gửi đánh giá
         </Button>
       </Card>
-
-      <List
-        dataSource={ratings}
-        locale={{ emptyText: "Chưa có đánh giá nào" }}
-        renderItem={(rating) => (
-          <ReviewItem key={rating.id || Math.random()}>
-            <ReviewerInfo>
-              <Avatar 
-                size={60} 
-                src={rating.avatar || rating.user?.avatar} 
-                icon={!rating.avatar && <UserOutlined />} 
-              />
-              <span>{rating.firstName || rating.user?.firstName} {rating.lastName || rating.user?.lastName}</span>
-              <span>{rating.role || rating.user?.role}</span>
-            </ReviewerInfo>
-            <ReviewContent>
-              <div>
-                <Rate disabled value={rating.rating} />
-                <Text type="secondary" style={{ marginLeft: 8 }}>
-                  Ngày đánh giá {formatDate(rating.createdAt)}
-                </Text>
-              </div>
-              <p>{rating.comment}</p>
-            </ReviewContent>
-          </ReviewItem>
-        )}
-      />
 
       <Modal
         title="Xác nhận đánh giá"

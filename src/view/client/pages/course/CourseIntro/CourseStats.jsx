@@ -27,11 +27,11 @@ const CourseStats = ({ course }) => {
       <Row gutter={[16, 16]} align="middle" style={{ marginBottom: 12 }}>
         <Col flex="auto">
           <Space size="middle" wrap>
-            <Text strong style={{ fontSize: 24, color: "#fadb14" }}>
-              4.6
-            </Text>
-            <Rate disabled defaultValue={4.6} />
-            <Text type="secondary">(651,651 đánh giá)</Text>
+          <Text strong style={{ fontSize: 24, color: "#fadb14" }}>
+            {(course.averageRating || 0).toFixed(1)}
+          </Text>
+            <Rate disabled defaultValue={course.averageRating} />
+            <Text type="secondary">({course.totalRating} đánh giá)</Text>
           </Space>
         </Col>
       </Row>
@@ -87,7 +87,7 @@ const CourseStats = ({ course }) => {
         <Col>
           <Space>
             <GlobalOutlined />
-            <Text>English, Vietnamese</Text>
+            <Text>Nội dung giảng dạy hoàn toàn bằng Tiếng Việt</Text>
           </Space>
         </Col>
       </Row>

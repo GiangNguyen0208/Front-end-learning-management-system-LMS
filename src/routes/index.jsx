@@ -43,20 +43,24 @@ import AdminUserPage from "../view/admin/pages/users/AdminUserPage";
 // Error Pages
 import Error404 from "../view/client/pages/error/Error404";
 import ChatRoomMentor from "../view/mentor/pages/chat";
+import MyCourseRatingsPage from "../view/client/pages/contact/MyCourseRatingsPage";
+import FAQPage from "../view/client/pages/FAQ/FAQPage";
+import PolicyPage from "../view/client/pages/policy/PolicyPage";
+import EditCourseForm from "../components/AddCourse/EditCourseForm";
 
 
 const AppRoutes = () => (
   <Routes>
     {/* Routes cho Client */}
     <Route path="/*" element={<HomeLayout />}>
-      <Route element={<PublicRoute />}>
-        <Route path="login" element={<Login />} />
-        <Route path="sign-up" element={<Signup />} />
-        <Route path="verify-email" element={<VerifyEmail />} />
-        <Route path="resend-confirmation" element={<ResendEmail />} />
-        <Route path="success" element={<Success />} />
-        
-      </Route>
+      <Route path="login" element={<Login />} />
+      <Route path="sign-up" element={<Signup />} />
+      <Route path="verify-email" element={<VerifyEmail />} />
+      <Route path="resend-confirmation" element={<ResendEmail />} />
+      <Route path="success" element={<Success />} />
+      <Route path=":userId/rating" element={<MyCourseRatingsPage />} />
+      <Route path="faq" element={<FAQPage />} />
+      <Route path="policy" element={<PolicyPage />} />
 
       <Route element={<PrivateRouter />}>
         <Route path="info-user" element={<Infomation />} />
@@ -81,9 +85,9 @@ const AppRoutes = () => (
     {/* Routes cho Mentor */}
     <Route path="mentor/*" element={<MentorLayout />}>
       <Route path="dashboard" element={<Dashboard />} />
-      <Route path="communication" element={<Communication />} />
       <Route path="courses" element={<ViewMentorCourses />} />
       <Route path="courses/add" element={<AddCourseForm />} />
+      <Route path="course/:id/edit" element={<EditCourseForm />} />
       <Route path="courses/section/:courseId" element={<AddCourseSectionForm />} />
       <Route path="courses/:id/students" element={<CourseStudentList/>} />
       <Route path="chat-rooms" element={<ChatRoomMentor />} />

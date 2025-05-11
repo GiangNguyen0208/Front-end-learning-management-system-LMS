@@ -1,23 +1,22 @@
 import { Card, Button, Tag, Typography, Row, Col } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import MyCourseCard from './MyCourseCard';
 import courseApi from '../../../../../api/courseApi';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../../../../../context/AuthProvider';
 
 const { Title } = Typography;
 
 export default function MyCourses() {
   const [bookings, setBooking] = useState([]);
   const [loading, setLoading] = useState(true);
-  const user = JSON.parse(localStorage.getItem("user")) || {};
-
-  const customerId = user.id || 0;
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await courseApi.fetchCourseByCustomerId(customerId);
+        const response = await courseApi.fetchCourseByCustomerId(user.id);
         setBooking(response.data.bookings || []);
         toast.success("Đã tải khóa học thành công");
       } catch (error) {
@@ -28,7 +27,7 @@ export default function MyCourses() {
     };
 
     fetchCourses();
-  }, [customerId]);
+  }, [user.id]);
 
 //   console.log("Bookings:", bookings);
   return (

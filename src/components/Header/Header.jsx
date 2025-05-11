@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Layout, Row, Col, Space } from "antd";
 import { useNavigate } from "react-router-dom";
-import { HeaderSearch } from "./HeaderSearch";
 import { UserHeaderAuth } from "./UserHeaderAuth";
 import "./styles.css";
+import { AuthContext } from "../../context/AuthProvider";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("jwtToken"));
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   // Lắng nghe sự thay đổi trong localStorage
   useEffect(() => {
@@ -36,16 +37,21 @@ const Header = () => {
           </Space>
         </Col>
 
+        <Col flex="auto" style={{ padding: '0 24px' }}>
+          <Space size="large">
+            <span onClick={() => navigate("/home")} className="nav-item">Trang chủ</span>
+            <span onClick={() => navigate("/categories")} className="nav-item">Khóa học</span>
+            <span onClick={() => navigate("/faq")} className="nav-item">Hỏi đáp</span>
+            <span onClick={() => navigate("/policy")} className="nav-item">Chính sách</span>
+            <span onClick={() => navigate(`/${user.id}/rating`)} className="nav-item">Đánh giá khóa học</span>
+          </Space>
+        </Col>
+
         <Col className="nav-item" onClick={() => navigate("/categories")}>
           <span>Danh sách khóa học</span>
         </Col>
 
-        <Col flex="none" style={{ width: "800px" }}>
-          <HeaderSearch />
-        </Col>
-
         <Col>
-          {/* {isLoggedIn ? <UserHeaderAuth /> : <HeaderAuth />} */}
           <UserHeaderAuth /> 
         </Col>
       </Row>

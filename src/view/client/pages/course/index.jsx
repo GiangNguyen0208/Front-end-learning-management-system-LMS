@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useParams } from "react-router-dom";
 import { Layout, Row, Col } from "antd";
 // import Breadcrumb from "./CourseIntro/Breadcrumb";
 import CourseInfo from "./CourseIntro/CourseInfo";
@@ -11,31 +11,41 @@ import "./css/styles.css";
 import CheckoutHeader from "../checkout/CheckoutHeader";
 import SimilarCourses from "./SimilarCourses/SimilarCourses";
 import courseApi  from "../../../../api/courseApi";
-import CourseRatingForm from "./CourseRatingForm"
+import { AuthContext } from "../../../../context/AuthProvider";
+import ratingApi from "../../../../api/ratingApi";
 
 const CourseHeader = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
+  const [ratings, setRatings] = useState([]);
   const [loading, setLoading] = useState(true);
   const courseId = Number(id);
-  const user = JSON.parse(localStorage.getItem("user"));
-  const { state } = useLocation();
-  const ratings = state?.ratings || [];
+  const { user } = useContext(AuthContext);
+
+  const fetchCourse = async () => {
+    try {
+      const response = await courseApi.getCourseById(courseId);
+      setCourse(response.data.course); // Lưu dữ liệu vào state
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin khóa học:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRatings = async () => {
+    try {
+      const response = await ratingApi.getRatingsByCourse(courseId);
+      const ratingsData = Array.isArray(response?.data?.ratings) ? response.data.ratings : [];
+      setRatings(ratingsData);
+    } catch (error) {
+      console.error("Lỗi khi tải đánh giá:", error);
+    }
+  }
 
   useEffect(() => {
     if (!id) return;
-
-    const fetchCourse = async () => {
-      try {
-        const response = await courseApi.getCourseById(courseId);
-        setCourse(response.data.course); // Lưu dữ liệu vào state
-      } catch (error) {
-        console.error("Lỗi khi lấy thông tin khóa học:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    fetchRatings();
     fetchCourse();
   }, [id]);
 
@@ -51,7 +61,6 @@ const CourseHeader = () => {
           <CourseInfo course={course} />
           <CourseStats course={course} />
           <CourseDetails course={course} ratings={ratings}/>
-          <CourseRatingForm course={course} user={user} />
         </Col>
         <Col span={24} lg={8} className="add-to-cart-container">
           <AddToCart course={course} />

@@ -55,11 +55,11 @@ export const UserHeaderAuth = () => {
         <>
           <Col className="nav-item">
             {user?.role === "Mentor" ? (
-              <span style={{ color: "blue", cursor: "pointer" }} onClick={() => navigate("/mentor/courses")}>
+              <span onClick={() => navigate("/mentor/courses")}>
                 Khóa học của tôi
               </span>
             ) : (
-              <span style={{ color: "blue", cursor: "pointer" }} onClick={() => navigate("/sign-up-mentor")}>
+              <span onClick={() => navigate("/sign-up-mentor")}>
                 Tham gia giảng dạy
               </span>
             )}

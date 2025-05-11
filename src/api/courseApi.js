@@ -66,8 +66,11 @@ const courseApi = {
     });
   },
 
-  updateCourse: (courseId, updateData) => {
-    return axiosClient.put(`/course/update/${courseId}`, updateData);
+  updateCourse: (courseId, formData) => {
+    console.log("Form Data:", formData);
+    return axiosClient.put(`/course/update/${courseId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   },
 
   /** 📌 Nhóm 3: Quản lý chương học */
@@ -112,7 +115,14 @@ const courseApi = {
 
   getCourseProgress: (userId, courseId) => {
     return axiosClient.get(`/course/course-progress/${userId}/${courseId}`);
-  }
+  },
+
+  getCoursesByName: (courseName) => {
+    return axiosClient.get('/course/fetch/name-wise', {
+      params: { courseName },
+    });
+  },
+
 };
 
 

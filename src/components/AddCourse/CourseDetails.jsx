@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Avatar, Typography, Spin } from "antd";
+import { Card, Avatar, Typography, Spin, Button } from "antd";
 import { Link } from "react-router-dom";
 import courseApi from "../../api/courseApi";
 import { URL } from "../../api/constant";
@@ -10,21 +10,15 @@ const CourseDetails = ({ courseId }) => {
   const [courseDetail, setCourseDetail] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  console.log("Course ID:", courseId);
-  
-
   useEffect(() => {
     if (!courseId) {
-      console.error("🚨 Lỗi: course.id không tồn tại!");
       setLoading(false);
       return;
     }
 
     const fetchCourse = async () => {
       try {
-        console.log("Fetching course ID:", courseId);
         const response = await courseApi.getCourseById(courseId);
-        // Kiểm tra dữ liệu có tồn tại hay không
         if (response?.data?.course) {
           setCourseDetail(response.data.course);
         } else {
@@ -52,7 +46,12 @@ const CourseDetails = ({ courseId }) => {
 
   return (
     <Card className="mb-4">
-      <Title level={2}>{courseDetail?.name}</Title>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Title level={2} style={{ margin: 0 }}>{courseDetail?.name}</Title>
+        <Link to={`/mentor/course/${courseDetail?.id}/edit`}>
+          <Button type="primary">Sửa thông tin</Button>
+        </Link>
+      </div>
       <Paragraph>{courseDetail?.description}</Paragraph>
 
       <Title level={3}>Tác giả</Title>

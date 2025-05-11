@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Layout } from "antd";
+import { Row, Col, Layout, Typography } from "antd";
 import ProfileSidebar from "./SideBar/ProfileSidebar";
 import ProfileForm from "./Profile/Form/ProfileForm";
 import ImageUpload from "./Profile/ImageUpload/ImageUpload";
@@ -7,9 +7,10 @@ import SocialLinks from "./Profile/SocialLinks/SocialLinks";
 import "./styles.css";
 import ReviewList from "./Reviews/ReviewList";
 import InstructorCardGrid from "./Instructor/InstructorCardGrid";
-import MessageList from "./Message/MessageList";
+import ChatWindow from "./Chat/ChatRoom";
 import MyCourses from "./MyCourses/MyCourses";
 
+const { Title } = Typography;
 const { Content } = Layout;
 
 function Infomation() {
@@ -51,7 +52,7 @@ function Infomation() {
       case "message":
         return (
           <>
-              <MessageList />
+            <ChatWindow />
           </>
         )
       default:

@@ -1,5 +1,5 @@
 import React from "react";
-import { Rate, Progress, Avatar, Button, List } from "antd";
+import { Rate, Progress, Avatar, List } from "antd";
 import {
   ReviewsSection,
   ReviewsHeader,
@@ -11,43 +11,54 @@ import {
   ReviewDate,
   ViewMoreButton,
 } from "../js/styles";
+import { formatDate } from "../../../../../utils/helper/formatDate";
+import { useExpandableList } from "../../../../../utils/helper/useExpandableList ";
+import { UserOutlined } from "@ant-design/icons";
 
-const reviewsData = [
-  {
-    name: "Mark Doe",
-    avatar:
-      "https://cdn.builder.io/api/v1/image/assets/TEMP/7f12b0763e214e3aebac2c69b9f47de27f20ca3f09903f92def4aba1e1ff538f",
-    rating: 5,
-    date: "Reviewed on 22nd March, 2024",
-    content:
-      "I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.",
-  },
-  // Add more review data as needed
-];
+const getRatingDistribution = (ratings) => {
+  const total = ratings.length;
+  const distribution = [0, 0, 0, 0, 0]; // Index 0 = 1 star, Index 4 = 5 stars
 
-const ratingStats = [
-  { stars: 5, percentage: 80 },
-  { stars: 4, percentage: 10 },
-  { stars: 3, percentage: 5 },
-  { stars: 2, percentage: 3 },
-  { stars: 1, percentage: 2 },
-];
+  ratings.forEach(({ rating }) => {
+    if (rating >= 1 && rating <= 5) {
+      distribution[rating - 1]++;
+    }
+  });
 
-const CourseReviews = ({course}) => {
+  return distribution
+    .map((count, index) => ({
+      stars: index + 1,
+      percentage: total > 0 ? Math.round((count / total) * 100) : 0,
+    }))
+    .reverse(); // Hiển thị từ 5 → 1 sao
+};
+
+const CourseReviews = ({ ratings = [] }) => {
+  const ratingStats = getRatingDistribution(ratings);
+
+  const averageRating =
+    ratings.length > 0
+      ? (
+          ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+        ).toFixed(1)
+      : 0;
+
+  const { visibleItems, canExpand, handleExpand } = useExpandableList(ratings, 3, 3);
+
   return (
     <ReviewsSection>
       <ReviewsHeader>
         <RatingOverview>
           <div>
-            <Rate disabled defaultValue={4.6} /> 4.6
+            <Rate disabled value={parseFloat(averageRating)} /> {averageRating}
           </div>
-          <span>146,951 đánh giá</span>
+          <span>{ratings.length} đánh giá</span>
         </RatingOverview>
 
         <RatingStats>
           {ratingStats.map((stat) => (
             <div key={stat.stars}>
-              <span>{stat.stars} stars</span>
+              <span>{stat.stars} sao</span>
               <Progress percent={stat.percentage} showInfo={false} />
               <span>{stat.percentage}%</span>
             </div>
@@ -56,25 +67,37 @@ const CourseReviews = ({course}) => {
       </ReviewsHeader>
 
       <List
-        dataSource={reviewsData}
+        dataSource={visibleItems}
+        locale={{ emptyText: "Chưa có đánh giá nào" }}
         renderItem={(review) => (
-          <ReviewItem>
+          <ReviewItem key={review.id}>
             <ReviewerInfo>
-              <Avatar size={60} src={review.avatar} />
-              <span>{review.name}</span>
+              <Avatar
+                size={60}
+                src={review.user?.avatar}
+                icon={!review.user?.avatar && <UserOutlined />}
+              />
+              <div>
+                <div>{review.user?.firstName} {review.user?.lastName}</div>
+                <div style={{ fontSize: "12px", color: "#888" }}>
+                  {review.user?.role === "Student" ? "Học viên" : "Giảng viên"}
+                </div>
+              </div>
             </ReviewerInfo>
             <ReviewContent>
               <div>
-                <Rate disabled defaultValue={review.rating} />
-                <ReviewDate>{review.date}</ReviewDate>
+                <Rate disabled value={review.rating} />
+                <ReviewDate>{formatDate(review.createdAt)}</ReviewDate>
               </div>
-              <p>{review.content}</p>
+              <p>{review.comment}</p>
             </ReviewContent>
           </ReviewItem>
         )}
       />
 
-      <ViewMoreButton>View more Reviews</ViewMoreButton>
+      {canExpand && (
+        <ViewMoreButton onClick={handleExpand}>Xem thêm đánh giá</ViewMoreButton>
+      )}
     </ReviewsSection>
   );
 };
