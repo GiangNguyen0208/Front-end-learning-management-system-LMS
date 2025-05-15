@@ -74,7 +74,7 @@ const MyCourseRatingsPage = () => {
             type="primary"
             icon={<ShoppingCartOutlined />}
             size="large"
-            onClick={() => (window.location.href = "/courses")}
+            onClick={() => (window.location.href = "/categories")}
           >
             Khám phá khóa học
           </Button>

@@ -72,7 +72,11 @@ const ViewMentorCourses = () => {
     new Date(Number(epochTime)).toLocaleString();
 
   const viewStudents = (course) => {
-    navigate(`/mentor/courses/${course.id}/students`);
+    navigate(`/mentor/courses/${course.id}/students`, {
+      state: {
+        courseId: course.id,
+      },
+    });
   };
 
   const columns = [

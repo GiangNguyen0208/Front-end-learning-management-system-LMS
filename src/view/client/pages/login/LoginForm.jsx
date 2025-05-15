@@ -93,12 +93,17 @@ const LoginForm = () => {
               <Text type="secondary">Don’t have an account?</Text>
               <Button
                 type="link"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/sign-up")}
                 className="register-button"
               >
                 Create Account
               </Button>
             </div>
+
+            <div style={{ marginTop: 16, textAlign: "center" }}>
+              <a href="/forgot-password">Quên mật khẩu?</a>
+            </div>
+
           </div>
         </div>
       </div>

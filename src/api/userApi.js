@@ -39,6 +39,23 @@ const userApi = {
       throw new Error("Lấy danh sách người dùng thất bại.");
     }
   },
+  fetchAllUsers: async () => {
+      return await axiosClient.get(`${URL.BASE_URL}/user/fetch-all`);
+  },
+  changePassword: async (userId, oldPassword, newPassword) => {
+    console.log("Old pass, new pass ", oldPassword + newPassword);
+    try {
+      const response = await axiosClient.put(`${URL.BASE_URL}/user/change-password`, {
+        userId,
+        oldPassword,
+        newPassword,
+      });
+      return response.data; // { success: true }
+    } catch (error) {
+      console.error("Change password error:", error.responseMessage);
+      throw new Error("Đổi mật khẩu thất bại.");
+    }
+  }
 };
 
 export default userApi;

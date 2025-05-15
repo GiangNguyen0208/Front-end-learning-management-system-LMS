@@ -1,0 +1,26 @@
+.user-table-container {
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.ant-table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #f7f8fa;
+  font-weight: 600;
+  color: #333;
+}
+
+.custom-row:hover td {
+  background-color: #fafafa !important;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}

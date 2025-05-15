@@ -47,6 +47,10 @@ const courseApi = {
       otpConfirm,
     });
   },
+
+  getStudentsByCourse: (courseId) => {
+    return axiosClient.get(`/booking/fetch/student-by-course/${courseId}`);
+  },
   
   getCourseById: (courseId, videoShow = "Yes") => {
     return axiosClient.get(`/course/fetch/course-id?courseId=${courseId}&videoShow=${videoShow}`);

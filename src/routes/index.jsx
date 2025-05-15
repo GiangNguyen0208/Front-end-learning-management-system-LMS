@@ -47,6 +47,8 @@ import MyCourseRatingsPage from "../view/client/pages/contact/MyCourseRatingsPag
 import FAQPage from "../view/client/pages/FAQ/FAQPage";
 import PolicyPage from "../view/client/pages/policy/PolicyPage";
 import EditCourseForm from "../components/AddCourse/EditCourseForm";
+import ForgotPassword from "../view/client/pages/login/ForgotPassword";
+import ResetPassword from "../view/client/pages/login/ResetPassword";
 
 
 const AppRoutes = () => (
@@ -61,6 +63,8 @@ const AppRoutes = () => (
       <Route path=":userId/rating" element={<MyCourseRatingsPage />} />
       <Route path="faq" element={<FAQPage />} />
       <Route path="policy" element={<PolicyPage />} />
+      <Route path="forgot-password" element={<ForgotPassword />} />
+      <Route path="reset-password" element={<ResetPassword />} />
 
       <Route element={<PrivateRouter />}>
         <Route path="info-user" element={<Infomation />} />

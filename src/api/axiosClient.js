@@ -7,7 +7,6 @@ const axiosClient = axios.create({
   baseURL: URL.BASE_URL,
   headers: {
     "Content-Type": "application/json",
-    "Accept": "application/json"
   },
 });
 

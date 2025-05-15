@@ -116,7 +116,7 @@ const OrderCompleted = () => {
             <Button
               size="large"
               style={{ marginLeft: '10px' }}
-              onClick={() => window.location.href = '/user/orders'}
+              onClick={() => window.location.href = '/order-history'}
             >
               Xem đơn hàng của bạn
             </Button>

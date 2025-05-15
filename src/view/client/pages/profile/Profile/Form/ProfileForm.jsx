@@ -1,21 +1,39 @@
-import React from "react";
-import { Form, Input, Select } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Form, Input, Button, message } from "antd";
 import "./ProfileForm.css";
+import { toast } from "react-toastify";
+import userApi from "../../../../../../api/userApi";
 
 const { TextArea } = Input;
-const { Option } = Select;
 
-function ProfileForm({ user }) {
-  // const formData = new FormData();
-  // formData.append("firstName", selectedProfile);
-  // formData.append("lastName", selectedProfile);
-  // formData.append("headline", selectedProfile);
-  // formData.append("firstName", selectedProfile);
-  // formData.append("firstName", selectedProfile);
+function ProfileForm({ user, onUpdateProfile }) {
+  const [passwordForm] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
-  console.log("User in ProfileForm", user);
-  
+  const handlePasswordChange = async (values) => {
+    const { oldPassword, newPassword, confirmNewPassword } = values;
+
+    console.log("UserID ", user.id);
+    
+
+    if (newPassword !== confirmNewPassword) {
+      toast.error("Mật khẩu mới và xác nhận mật khẩu không khớp.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Gọi API đổi mật khẩu ở đây, ví dụ:
+      await userApi.changePassword(user.id, oldPassword, newPassword);
+      toast.success("Đổi mật khẩu thành công.");
+      passwordForm.resetFields();
+    } catch (error) {
+      message.error(error.message || "Đổi mật khẩu thất bại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="profile-form-container">
       <Form
@@ -29,6 +47,7 @@ function ProfileForm({ user }) {
           description: user?.mentorDetail?.bio,
           language: "vietnamese",
         }}
+        onFinish={onUpdateProfile} // Hàm cập nhật profile truyền từ props
       >
         <div className="name-row">
           <Form.Item
@@ -47,10 +66,6 @@ function ProfileForm({ user }) {
             <Input placeholder="Last Name" className="form-input" />
           </Form.Item>
         </div>
-
-        {/* <Form.Item label="Headline" name="headline">
-          <Input placeholder="Headline" className="form-input" />
-        </Form.Item> */}
 
         <Form.Item
           label="Job Title"
@@ -73,20 +88,61 @@ function ProfileForm({ user }) {
             />
           </Form.Item>
         )}
-
-        {/* <Form.Item label="Language" name="language">
-          <Select
-            placeholder="Select language"
-            className="form-select"
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="vietnamese">Vietnamese</Option>
-            <Option value="english">English</Option>
-            <Option value="spanish">Spanish</Option>
-            <Option value="french">French</Option>
-          </Select>
-        </Form.Item> */}
       </Form>
+
+      {/* Phần đổi mật khẩu */}
+      <div style={{ marginTop: 40, maxWidth: 400, marginLeft: "auto", marginRight: "auto" }}>
+        <h3>Đổi mật khẩu</h3>
+        <Form
+          form={passwordForm}
+          layout="vertical"
+          onFinish={handlePasswordChange}
+        >
+          <Form.Item
+            label="Mật khẩu hiện tại"
+            name="oldPassword"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu hiện tại" }]}
+          >
+            <Input.Password placeholder="Mật khẩu hiện tại" />
+          </Form.Item>
+
+          <Form.Item
+            label="Mật khẩu mới"
+            name="newPassword"
+            rules={[
+              { required: true, message: "Vui lòng nhập mật khẩu mới" },
+              { min: 6, message: "Mật khẩu mới phải ít nhất 6 ký tự" },
+            ]}
+          >
+            <Input.Password placeholder="Mật khẩu mới" />
+          </Form.Item>
+
+          <Form.Item
+            label="Xác nhận mật khẩu mới"
+            name="confirmNewPassword"
+            dependencies={['newPassword']}
+            rules={[
+              { required: true, message: "Vui lòng xác nhận mật khẩu mới" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('newPassword') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Mật khẩu xác nhận không khớp'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="Xác nhận mật khẩu mới" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} block>
+              Đổi mật khẩu
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 }

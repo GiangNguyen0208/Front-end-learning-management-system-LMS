@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Table,
   Card,
@@ -18,60 +18,34 @@ import {
   DeleteOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
+import { formatDate } from "../../../../../utils/helper/formatDate";
+import courseApi from "../../../../../api/courseApi";
 
 const CourseStudentList = () => {
-  const { courseId } = useParams();
+  const location = useLocation();
+  const courseId = location.state?.courseId;
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // useEffect(() => {
-  //   fetchStudents();
-  // }, [courseId]);
+  useEffect(() => {
+    if (courseId) fetchStudents();
+  }, [courseId]);
 
-  // const fetchStudents = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await studentApi.getStudentsByCourse(courseId);
-  //     setStudents(response.data.students || []);
-  //   } catch (error) {
-  //     message.error("Không thể tải danh sách học viên.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const removeStudent = async (studentId) => {
-  //   try {
-  //     await studentApi.removeStudentFromCourse(courseId, studentId);
-  //     message.success("Xóa học viên thành công!");
-  //     setStudents((prev) => prev.filter((s) => s.id !== studentId));
-  //   } catch (error) {
-  //     message.error("Lỗi khi xóa học viên.");
-  //   }
-  // };
-
-  // const inviteAsMentor = async (studentId) => {
-  //   try {
-  //     await mentorApi.inviteAsMentor(studentId);
-  //     message.success("Đã mời học viên làm giảng viên!");
-  //     fetchStudents();
-  //   } catch (error) {
-  //     message.error("Lỗi khi mời học viên.");
-  //   }
-  // };
-
-  // const undoMentor = async (studentId) => {
-  //   try {
-  //     await mentorApi.undoMentorRole(studentId);
-  //     message.success("Đã hoàn tác giảng viên!");
-  //     fetchStudents();
-  //   } catch (error) {
-  //     message.error("Lỗi khi hoàn tác giảng viên.");
-  //   }
-  // };
+  const fetchStudents = async () => {
+    setLoading(true);
+    try {
+      const response = await courseApi.getStudentsByCourse(courseId);
+      // console.log("Students:", response.data);
+      setStudents(response.data || []);
+    } catch (error) {
+      message.error("Không thể tải danh sách học viên.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const showStudentDetails = (student) => {
     setSelectedStudent(student);
@@ -83,11 +57,15 @@ const CourseStudentList = () => {
     setSelectedStudent(null);
   };
 
-  const renderRoleTag = (role) => (
-    <Tag color={role === "MENTOR" ? "green" : "blue"}>
-      {role === "MENTOR" ? "Giảng viên" : "Học viên"}
-    </Tag>
-  );
+  const renderRoleTag = (role) => {
+    if (!role) return <Tag>Chưa xác định</Tag>;
+    const normalizedRole = role.toLowerCase();
+    if (normalizedRole === "mentor")
+      return <Tag color="green">Giảng viên</Tag>;
+    if (normalizedRole === "student")
+      return <Tag color="blue">Học viên</Tag>;
+    return <Tag>{role}</Tag>;
+  };
 
   const renderActions = (record) => (
     <Space>
@@ -95,7 +73,7 @@ const CourseStudentList = () => {
         Xem chi tiết
       </Button>
 
-      {record.role === "STUDENT" ? (
+      {record.role.toLowerCase() === "student" ? (
         <Button
           type="primary"
           icon={<UserAddOutlined />}
@@ -126,15 +104,24 @@ const CourseStudentList = () => {
     </Space>
   );
 
+  // Hàm chuyển mảng [năm, tháng, ngày, giờ, phút, giây] thành Date object
+  const parseDateArray = (arr) => {
+    if (!arr || !Array.isArray(arr) || arr.length < 6) return null;
+    // Tháng trong Date bắt đầu từ 0 nên trừ 1
+    return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5]);
+  };
+
   const columns = [
     {
       title: "Họ và tên",
-      dataIndex: "fullName",
-      render: (text) => <b>{text}</b>,
+      key: "fullName",
+      render: (text, record) => (
+        <b>{`${record.firstName || ""} ${record.lastName || ""}`.trim()}</b>
+      ),
     },
     {
       title: "Email",
-      dataIndex: "email",
+      dataIndex: "emailId",
     },
     {
       title: "Vai trò",
@@ -181,11 +168,15 @@ const CourseStudentList = () => {
       >
         {selectedStudent && (
           <Descriptions bordered column={1}>
-            <Descriptions.Item label="Họ và tên">{selectedStudent.fullName}</Descriptions.Item>
-            <Descriptions.Item label="Email">{selectedStudent.email}</Descriptions.Item>
+            <Descriptions.Item label="Họ và tên">
+              {`${selectedStudent.firstName || ""} ${selectedStudent.lastName || ""}`.trim()}
+            </Descriptions.Item>
+            <Descriptions.Item label="Email">{selectedStudent.emailId || "Chưa có"}</Descriptions.Item>
             <Descriptions.Item label="Vai trò">{renderRoleTag(selectedStudent.role)}</Descriptions.Item>
-            <Descriptions.Item label="Số điện thoại">{selectedStudent.phone || "Chưa có"}</Descriptions.Item>
-            <Descriptions.Item label="Ngày đăng ký">{selectedStudent.registeredDate || "Chưa có"}</Descriptions.Item>
+            <Descriptions.Item label="Số điện thoại">{selectedStudent.phoneNo || "Chưa có"}</Descriptions.Item>
+            <Descriptions.Item label="Ngày đăng ký">
+              {formatDate(selectedStudent.createdAt) || "Chưa có"}
+            </Descriptions.Item>
           </Descriptions>
         )}
       </Modal>

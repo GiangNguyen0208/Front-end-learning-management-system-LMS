@@ -184,6 +184,17 @@ const authApi = {
     }
   },
 
+  verifyResetToken: async (token) => {
+    try {
+      console.log("🔍 Sending token:", token); // Kiểm tra token trước khi gửi
+      const response = await axiosClient.get(`/user/verify-reset-token?token=${token}`);
+      return response.data; // Trả về dữ liệu từ API
+    } catch (error) {
+      console.error("❌ API Error:", error.response ? error.response.data : error.message);
+      return { success: false }; // Tránh lỗi khi API bị lỗi
+    }
+  },
+
   // 🟢 Đăng xuất (Firebase + Xóa localStorage)
   logout: async () => {
     try {
@@ -194,6 +205,37 @@ const authApi = {
       console.error("❌ Lỗi khi đăng xuất:", error);
     }
   },
+
+  forgotPassword: async (email) => {
+    try {
+      const response = await axiosClient.get(`/user/forget-password`, {
+      params: { email },
+    });
+      return response.data; // Trả về dữ liệu từ API
+    } catch (error) {
+      console.error("❌ Lỗi khi gửi email đặt lại mật khẩu:", error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  resetPassword: async (token, newPassword) => {
+    try {
+      const response = await axiosClient.put(`/user/reset-password`, {
+        token,
+        newPassword
+      });
+      return response.data; // Trả về dữ liệu từ API
+    } catch (error) {
+      console.error("❌ Lỗi khi đặt lại mật khẩu:", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // confirmPasswordReset: async (newPassword) => {
+  //   try {
+  //     await axiosClient.put(`/user/forget-password?token=${token}`);
+  //     await auth.confirmPasswordReset(newPassword);
+  //     console.log("✅ Mật khẩu đã được đặt lại thành công!");
 };
 
 
