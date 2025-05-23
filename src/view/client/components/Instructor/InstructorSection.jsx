@@ -4,6 +4,7 @@ import InstructorCard from "../../components/Instructor/InstructorCard";
 import "./styles.css";
 import userApi from "../../../../api/userApi";
 import { URL } from "../../../../api/constant";
+import { toast } from "react-toastify";
 
 const { Title } = Typography;
 
@@ -14,9 +15,11 @@ const InstructorSection = () => {
     const fetchMentors = async () => {
       try {
         const data = await userApi.getAllMentors();
+        console.log("Data mentors: ", data);
+        
         setMentors(data); // hoặc data.mentors nếu backend trả kiểu { mentors: [...] }
       } catch (error) {
-        message.error("Không thể tải danh sách giảng viên.");
+        toast.error("Không thể tải danh sách giảng viên.");
         console.error(error);
       }
     };
@@ -24,12 +27,10 @@ const InstructorSection = () => {
     fetchMentors();
   }, []);
   
-
   return (
     <section className="instructor-section">
       <div className="section-header">
         <Title level={2}>Giảng Viên</Title>
-        <Button type="link">Xem tất cả</Button>
       </div>
 
       <Row gutter={[24, 24]}>
@@ -37,11 +38,10 @@ const InstructorSection = () => {
           <Col xs={24} sm={12} md={8} lg={6} key={mentor.id || index}>
             <InstructorCard
               mentor={mentor}
-              avatar={`${URL.BASE_URL}/user/${mentor.mentorDetail.profilePic}`}
+              avatar={mentor.mentorDetail.profilePic}
               name={`${mentor.firstName} ${mentor.lastName}`}
               role={mentor.mentorDetail?.profession || "Mentor"}
-              rating={4.8} // giả định hoặc sửa theo dữ liệu thật nếu có
-              students={mentor.mentorDetail?.quantityCourse * 100 || 0} // ví dụ minh họa
+              students={mentor.mentorDetail?.quantityStudent} // ví dụ minh họa
             />
           </Col>
         ))}

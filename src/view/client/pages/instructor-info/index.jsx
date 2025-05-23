@@ -45,7 +45,11 @@ function InstructorInfo() {
               <MentorDetails
                 about={mentor.mentorDetail.bio}
                 expertise={expertiseList}
-                experience={`Hơn ${mentor.mentorDetail.experience} năm kinh nghiệm`}
+                experience={
+                <>
+                  Với hơn <strong>{mentor.mentorDetail.experience} năm kinh nghiệm</strong> làm việc trong lĩnh vực phát triển phần mềm, tôi đã trực tiếp tham gia phân tích yêu cầu, thiết kế kiến trúc hệ thống, lập trình và triển khai nhiều dự án thực tế, từ ứng dụng web đến hệ thống quản lý dữ liệu, qua đó tích lũy được nền tảng chuyên môn vững chắc cũng như khả năng làm việc nhóm, giải quyết vấn đề và tối ưu hiệu suất phần mềm. Tôi luôn không ngừng cập nhật công nghệ mới, chủ động học hỏi để nâng cao năng lực chuyên môn, đáp ứng yêu cầu kỹ thuật ngày càng cao trong ngành.
+                </>
+                }
               />
             </div>
           </Col>

@@ -19,20 +19,20 @@ const UpdateCategoryForm = ({ visible, onClose, category, handleUpdate }) => {
 
 
   return (
-    <Modal title="Update Course Category" open={visible} onCancel={onClose} footer={null}>
+    <Modal title="Cập nhật danh mục" open={visible} onCancel={onClose} footer={null}>
       <Form form={form} layout="vertical" onFinish={handleUpdate}>
-        <Form.Item label="Category Title" name="name" rules={[{ required: true, message: "Please enter category title" }]}>
+        <Form.Item label="Tiêu đề danh mục" name="name" rules={[{ required: true, message: "Please enter category title" }]}>
           <Input />
         </Form.Item>
 
-        <Form.Item label="Category Description" name="description" rules={[{ required: true, message: "Please enter description" }]}>
+        <Form.Item label="Mô tả danh m" name="description" rules={[{ required: true, message: "Please enter description" }]}>
           <Input.TextArea rows={3} />
         </Form.Item>
 
         <Form.Item label="Category Status" name="status">
           <Select>
-            <Option value="Active">ACTIVE</Option>
-            <Option value="Deactivated">DEACTIVATED</Option>
+            <Option value="ACTIVE">ACTIVE</Option>
+            <Option value="DEACTIVE">DEACTIVE</Option>
           </Select>
         </Form.Item>
 

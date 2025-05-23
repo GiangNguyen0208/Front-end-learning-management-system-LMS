@@ -13,9 +13,6 @@ function ProfileForm({ user, onUpdateProfile }) {
   const handlePasswordChange = async (values) => {
     const { oldPassword, newPassword, confirmNewPassword } = values;
 
-    console.log("UserID ", user.id);
-    
-
     if (newPassword !== confirmNewPassword) {
       toast.error("Mật khẩu mới và xác nhận mật khẩu không khớp.");
       return;

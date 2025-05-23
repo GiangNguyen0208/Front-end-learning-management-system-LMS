@@ -1,9 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Table, Typography, Tag, Avatar, Space, Tooltip, Divider, Button, Modal } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Card,
+  Table,
+  Typography,
+  Tag,
+  Avatar,
+  Space,
+  Tooltip,
+  Divider,
+  Button,
+  Modal,
+} from 'antd';
 import courseApi from '../../../../api/courseApi';
 import moment from 'moment';
 import { URL } from '../../../../api/constant';
-import { EyeOutlined } from '@ant-design/icons';
+import { EyeOutlined, DownloadOutlined } from '@ant-design/icons';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const { Title, Text } = Typography;
 
@@ -20,9 +33,25 @@ const OrderHistory = () => {
   const user = JSON.parse(localStorage.getItem('user')) || {};
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const printRef = useRef();
 
-  console.log('Bookings:', bookings);
-  
+  const handlePrint = async () => {
+    const element = printRef.current;
+    const canvas = await html2canvas(element, { scale: 2 });
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+    });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgHeight = (canvas.height * pageWidth) / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
+    pdf.save(`ChiTietDonHang_${selectedOrder?.id || 'order'}.pdf`);
+  };
 
   const showModal = (order) => {
     setSelectedOrder(order);
@@ -55,21 +84,28 @@ const OrderHistory = () => {
       title: 'Khóa học',
       key: 'course',
       render: (_, record) => {
-        const course = record.course;
-        const mentor = course.mentor;
-        const level = course.level || 'Chưa xác định';  // Cấp độ khóa học (nếu có)
-    
+        const { course } = record;
         return (
           <Space>
-            <Avatar shape="square" size={64} src={course.thumbnail && `${URL.BASE_URL}/course/${course.thumbnail}`} />
+            <Avatar
+              shape="square"
+              size={64}
+              src={
+                course?.thumbnail
+                  ? `${URL.BASE_URL}/course/${course.thumbnail}`
+                  : undefined
+              }
+            />
             <div>
-              <Text strong>{course.name}</Text>
-              <div className="text-sm text-gray-500">Giảng viên: <strong>{mentor?.firstName} {mentor?.lastName}</strong></div>
-              <div className="text-sm text-gray-400">Cấp độ: {level || "Mọi cấp độ"}</div>
+              <Text strong>{course?.name || '---'}</Text>
+              <div className="text-sm text-gray-500">
+                Giảng viên: <strong>{course?.mentor?.firstName} {course?.mentor?.lastName}</strong>
+              </div>
+              <div className="text-sm text-gray-400">Cấp độ: {course?.level || 'Mọi cấp độ'}</div>
             </div>
           </Space>
         );
-      }
+      },
     },
     {
       title: 'Ngày đặt',
@@ -78,7 +114,6 @@ const OrderHistory = () => {
       render: (value) => {
         const formattedDate = moment(Number(value)).format('DD/MM/YYYY HH:mm');
         const timeAgo = moment(Number(value)).fromNow();
-    
         return (
           <Tooltip title={formattedDate}>
             <div>
@@ -87,21 +122,20 @@ const OrderHistory = () => {
             </div>
           </Tooltip>
         );
-      }
+      },
     },
     {
       title: 'Thanh toán',
       key: 'amount',
       render: (_, record) => {
-        const price = record.amount;
-        const discount = record.discountInPercent;
-        const discountedPrice = price * (1 - (discount / 100));
+        const { amount, discountInPercent } = record;
+        const discountedPrice = amount * (1 - discountInPercent / 100);
         return (
           <div>
-            {discount > 0 ? (
-              <div>
+            {discountInPercent > 0 ? (
+              <>
                 <Text type="secondary" style={{ fontSize: 13 }}>
-                  Giá gốc: <Text delete>{Number(price).toLocaleString()}₫</Text>
+                  Giá gốc: <Text delete>{Number(amount).toLocaleString()}₫</Text>
                 </Text>
                 <br />
                 <Text strong style={{ color: '#16a34a', fontSize: 15 }}>
@@ -109,63 +143,60 @@ const OrderHistory = () => {
                 </Text>
                 <br />
                 <Text type="warning" style={{ fontSize: 12 }}>
-                  Đã giảm {discount}% 
+                  Đã giảm {discountInPercent}%
                 </Text>
-              </div>
+              </>
             ) : (
-              <Text strong style={{ fontSize: 15 }}>
-                {Number(price).toLocaleString()}₫
-              </Text>
+              <Text strong style={{ fontSize: 15 }}>{Number(amount).toLocaleString()}₫</Text>
             )}
           </div>
         );
-      }
+      },
     },
     {
       title: 'Thanh toán bằng',
       key: 'payment',
       render: (_, record) => {
         const payment = record.payment || {};
-        const cardNumber = payment.cardNo || 'Ẩn';
-        const cardType = payment.cardNo?.startsWith('4') ? 'Visa' : payment.cardNo?.startsWith('5') ? 'MasterCard' : 'Khác';
+        const cardNumber = payment.cardNo || '';
+        const cardType = cardNumber.startsWith('4') ? 'Visa' : cardNumber.startsWith('5') ? 'MasterCard' : 'Khác';
         const last4Digits = cardNumber.slice(-4);
-    
+
         return (
-          <div>
-            <Tooltip title={`Số thẻ: ${cardNumber}`}>
-              <Space direction="vertical">
-                <Text>{payment.nameOnCard || '---'}</Text>
-                <Text type="secondary" style={{ fontSize: 12 }}>{cardType}</Text>
-                <Text type="secondary" style={{ fontSize: 12 }}>Số thẻ cuối: **** **** **** {last4Digits}</Text>
-              </Space>
-            </Tooltip>
-          </div>
+          <Tooltip title={`Số thẻ: ${cardNumber || '---'}`}>
+            <Space direction="vertical">
+              <Text>{payment.nameOnCard || '---'}</Text>
+              <Text type="secondary" style={{ fontSize: 12 }}>{cardType}</Text>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                Số thẻ cuối: **** **** **** {last4Digits}
+              </Text>
+            </Space>
+          </Tooltip>
         );
-      }
+      },
     },
     {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Tag color={statusColors[status?.toLowerCase()] || 'default'} style={{ fontSize: 14, padding: '4px 12px' }}>
+        <Tag
+          color={statusColors[status?.toLowerCase()] || 'default'}
+          style={{ fontSize: 14, padding: '4px 12px' }}
+        >
           {status}
         </Tag>
-      )
+      ),
     },
     {
       title: 'Chi tiết',
       key: 'action',
       render: (_, record) => (
-        <Button
-          icon={<EyeOutlined />}
-          type="link"
-          onClick={() => showModal(record)}
-        >
+        <Button icon={<EyeOutlined />} type="link" onClick={() => showModal(record)}>
           Xem chi tiết
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -188,11 +219,15 @@ const OrderHistory = () => {
         title="Chi tiết đơn hàng"
         open={isModalVisible}
         onCancel={handleCloseModal}
-        footer={null}
+        footer={
+          <Button type="primary" icon={<DownloadOutlined />} onClick={handlePrint}>
+            Tải PDF
+          </Button>
+        }
         width={700}
       >
         {selectedOrder && (
-          <div className="space-y-4">
+          <div ref={printRef} className="space-y-4">
             <div className="flex items-center space-x-4">
               <Avatar
                 shape="square"
@@ -243,7 +278,9 @@ const OrderHistory = () => {
               <div>
                 <Text type="secondary">Số thẻ:</Text><br />
                 <Text>
-                  {selectedOrder.payment?.cardNo ? `**** **** **** ${selectedOrder.payment?.cardNo?.slice(-4)}` : '---'}
+                  {selectedOrder.payment?.cardNo
+                    ? `**** **** **** ${selectedOrder.payment.cardNo.slice(-4)}`
+                    : '---'}
                 </Text>
               </div>
 
@@ -262,42 +299,40 @@ const OrderHistory = () => {
 
             <div>
               <Text type="secondary">Mô tả khóa học:</Text>
-              <p>{selectedOrder.course?.description}</p>
+              <p>{selectedOrder.course?.description || 'Không có mô tả'}</p>
             </div>
 
             <div>
               <Text type="secondary">Ghi chú của giảng viên:</Text>
-              <p>{selectedOrder.course?.authorCourseNote}</p>
+              <p>{selectedOrder.course?.authorCourseNote || 'Không có ghi chú'}</p>
             </div>
 
             <div>
               <Text type="secondary">Ghi chú đặc biệt:</Text>
-              <p>{selectedOrder.course?.specialNote}</p>
+              <p>{selectedOrder.course?.specialNote || 'Không có ghi chú đặc biệt'}</p>
             </div>
 
             <div>
               <Text type="secondary">Yêu cầu đầu vào:</Text>
-              <p>{selectedOrder.course?.prerequisite}</p>
+              <p>{selectedOrder.course?.prerequisite || 'Không có yêu cầu'}</p>
             </div>
 
             <div>
               <Text type="secondary">Tài liệu giảng dạy đính kèm:</Text><br />
               {selectedOrder.course?.notesFileName ? (
                 <a
-                  href={`${URL.BASE_URL}/course/notes/${selectedOrder.course?.notesFileName}/download`}
+                  href={`${URL.BASE_URL}/course/notes/${selectedOrder.course.notesFileName}/download`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline"
                 >
-                  {selectedOrder.course?.notesFileName}
+                  {selectedOrder.course.notesFileName}
                 </a>
               ) : 'Không có'}
             </div>
           </div>
         )}
       </Modal>
-
-
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Avatar, Divider, Image } from "antd";
 import PropTypes from "prop-types";
 import {
@@ -10,8 +10,41 @@ import {
 import SocialButtons from "./SocialButtons";
 import { URL } from "../../../../../api/constant";
 import "./MentorSidebar.css"; // Thêm file CSS riêng cho style đẹp
+import { AuthContext } from "../../../../../context/AuthProvider";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../../../firebase/config";
 
 function MentorSidebar({ avatar, degree, age, language, certificate, socialLinks }) {
+  const {userFireBase} = useContext(AuthContext);
+  const [certificateUrl, setCertificateUrl] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!userFireBase?.uid) return;
+
+      try {
+        const userRef = doc(db, "users", userFireBase.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          if (userData.selectedCertificate) {
+            setCertificateUrl(userData.selectedCertificate);
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [userFireBase]);
+
+  console.log("certificateUrl ", certificateUrl);
+  
+
   return (
     <div className="mentor-sidebar-container">
       <div className="mentor-avatar-wrapper">
@@ -35,12 +68,12 @@ function MentorSidebar({ avatar, degree, age, language, certificate, socialLinks
           <FileProtectOutlined /> <strong>Chứng chỉ ngôn ngữ:</strong> {language}
         </div>
 
-        {certificate && (
+        {certificateUrl && (
           <div className="mentor-certificate">
             <Divider />
             <strong><FileProtectOutlined /> Hình ảnh Chứng chỉ:</strong>
             <Image
-              src={`${URL.BASE_URL}/user/${certificate}`}
+              src={certificateUrl}
               alt="certificate"
               className="mentor-certificate-img"
               width="100%"

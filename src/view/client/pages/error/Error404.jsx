@@ -15,7 +15,7 @@ export default function Error404() {
   };
 
   const handleGoHome = () => {
-    window.location.href = "/";
+    window.location.href = "/home";
   };
 
   return (
@@ -33,8 +33,9 @@ export default function Error404() {
             }
             subTitle={
               <Paragraph className="error-description">
-                Sorry, the page you're looking for doesn't exist or has been
-                moved.
+                Xin lỗi, trang bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.
+                <br />
+                Vui lòng kiểm tra lại đường dẫn hoặc quay về trang chủ.
               </Paragraph>
             }
             extra={
@@ -46,7 +47,7 @@ export default function Error404() {
                   onClick={handleGoHome}
                   className="home-button"
                 >
-                  Back to Home
+                  Quay về trang chủ
                 </Button>
                 <Button
                   icon={<ArrowLeftOutlined />}

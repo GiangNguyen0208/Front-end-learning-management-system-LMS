@@ -36,6 +36,9 @@ export function getMessagesInRoom(roomId, setMessages) {
 export const generateKeywords = (displayName) => {
   // liet ke tat cac hoan vi. vd: name = ["David", "Van", "Teo"]
   // => ["David", "Van", "Teo"], ["David", "Teo", "Van"], ["Teo", "David", "Van"],...
+  if (typeof displayName !== "string") {
+    displayName = String(displayName || "");
+  }
   const name = displayName.split(' ').filter((word) => word);
 
   const length = name.length;

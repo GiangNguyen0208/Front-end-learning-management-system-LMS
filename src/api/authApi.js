@@ -51,16 +51,19 @@ const authApi = {
       if (mentorData.profilePic && mentorData.profilePic && mentorData.selectedCertificate instanceof File) {
         try {
           const file = mentorData.profilePic;
+          const file2 = mentorData.selectedCertificate
           profilePicFile = file;
-          selectedCertificatePic = file;
+          selectedCertificatePic = file2;
   
           // 🟢 Tạo đường dẫn lưu ảnh: `/profile_pictures/{user.uid}/profile.jpg`
-          const storageRef = ref(storage, `profile_pictures/${user.uid}/profile.jpg`);
-  
-          // 🟢 Upload ảnh lên Firebase Storage
-          const snapshot = await uploadBytes(storageRef, file);
-          profilePicUrl = await getDownloadURL(snapshot.ref);
-          selectedCertificateUrl = await getDownloadURL(snapshot.ref);
+          const profileRef = ref(storage, `profile_pictures/${user.uid}/profile.jpg`);
+          const certificateRef = ref(storage, `certificates/${user.uid}/language_certificate.jpg`);
+
+          const profileSnapshot = await uploadBytes(profileRef, mentorData.profilePic);
+          profilePicUrl = await getDownloadURL(profileSnapshot.ref);
+
+          const certificateSnapshot = await uploadBytes(certificateRef, mentorData.selectedCertificate);
+          selectedCertificateUrl = await getDownloadURL(certificateSnapshot.ref);
   
           console.log("✅ Ảnh đại diện đã được tải lên Firebase:", profilePicUrl);
           console.log("✅ Ảnh chứng chỉ Ngôn ngữ đã được tải lên Firebase:", selectedCertificateUrl);

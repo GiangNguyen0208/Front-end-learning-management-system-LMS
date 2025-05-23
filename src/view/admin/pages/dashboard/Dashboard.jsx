@@ -1,57 +1,90 @@
-import React from "react";
-import { Layout, Row, Col, Typography } from "antd";
-import DashboardHeader from "./DashboardHeader";
-import StatsCard from "./StatsCard";
-import ChartCard from "./ChartCard";
-import ReviewCard from "./ReviewCard";
-import CourseCard from "./CourseCard";
-import "./Dashboard.css";
+import React from 'react';
+import { Row, Col, Typography } from 'antd';
+import StatCard from './Stat/StatCard';
+import TotalSalesCard from './Stat/TotalSalesCard';
+import {
+  UserOutlined,
+  ShoppingCartOutlined,
+  AppstoreOutlined,
+  StarOutlined,
+} from '@ant-design/icons';
 
 const { Title } = Typography;
 
+const statData = [
+  {
+    title: 'Tổng người dùng',
+    value: 277,
+    change: '+95%',
+    color: '#52c41a',
+    icon: <UserOutlined style={{ fontSize: 24, color: '#fff' }} />,
+    linkTo: '/admin/users',
+  },
+  {
+    title: 'Tổng khóa học đã đăng ký',
+    value: 338,
+    change: '+30%',
+    color: '#eb2f96',
+    icon: <ShoppingCartOutlined style={{ fontSize: 24, color: '#fff' }} />,
+    linkTo: '/admin/orders',
+  },
+  {
+    title: 'Tổng khóa học',
+    value: 557,
+    change: '+25%',
+    color: '#1890ff',
+    icon: <AppstoreOutlined style={{ fontSize: 24, color: '#fff' }} />,
+    linkTo: '/admin/courses',
+  },
+  {
+    title: 'Tổng đánh giá khóa học',
+    value: 166,
+    change: '+45%',
+    color: '#faad14',
+    icon: <StarOutlined style={{ fontSize: 24, color: '#fff' }} />,
+    linkTo: '/admin/ratings',
+  },
+];
+
 const Dashboard = () => {
   return (
-    <div className="dashboard-container">
-      <DashboardHeader title="Dashboard"/>
-
-      {/* Stats Cards */}
+    <>
+      <Title level={1} style={{ color: 'black' }}>
+        Quản lý thông số
+      </Title>
       <Row gutter={[16, 16]}>
-        <Col xs={24} lg={8}>
-          <StatsCard value="$1K" label="Life Time Courses Commission" />
-          <StatsCard value="$800.0" label="Life Time Received Commission" />
-          <StatsCard value="$200.00" label="Life Time Pending Commission" />
+        {/* Cột trái: chứa 4 StatCard chia 2 hàng 2 cột */}
+        <Col xs={24} lg={16}>
+          <Row gutter={[16, 16]}>
+            {statData.map((item, idx) => (
+              <Col xs={24} sm={12} key={idx}>
+                <StatCard
+                  title={item.title}
+                  value={item.value}
+                  color={item.color}
+                  icon={item.icon}
+                  linkTo={item.linkTo}
+                />
+              </Col>
+            ))}
+          </Row>
         </Col>
 
-        <Col xs={24} lg={16}>
-          <ChartCard />
+        {/* Cột phải: TotalSalesCard chiếm chiều cao của 2 hàng StatCard */}
+        <Col xs={24} lg={8}>
+          <div
+            style={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'stretch',
+            }}
+          >
+            <TotalSalesCard style={{ height: '100%' }} />
+          </div>
         </Col>
       </Row>
-
-      {/* Reviews Section */}
-      <div className="section-container">
-        <Title level={4} className="section-title">Reviews</Title>
-        <Row gutter={[8, 8]}>
-          <Col xs={24} sm={8} md={4}><ReviewCard label="Total Reviews" value="1000" /></Col>
-          <Col xs={24} sm={8} md={4}><ReviewCard label="1 star reviews" value="100" color="red-tag" /></Col>
-          <Col xs={24} sm={8} md={4}><ReviewCard label="2 star reviews" value="100" color="yellow-tag" /></Col>
-          <Col xs={24} sm={8} md={4}><ReviewCard label="3 star reviews" value="100" color="gold-tag" /></Col>
-          <Col xs={24} sm={8} md={4}><ReviewCard label="4 star reviews" value="100" color="light-green-tag" /></Col>
-          <Col xs={24} sm={8} md={4}><ReviewCard label="5 star reviews" value="100" color="green-tag" /></Col>
-        </Row>
-      </div>
-
-      {/* Courses Section */}
-      <div className="section-container">
-        <Title level={4} className="section-title">Courses</Title>
-        <Row gutter={[10, 10]}>
-          {[1, 2, 3].map((index) => (
-            <Col xs={24} md={8} key={index}>
-              <CourseCard title="Beginner's Guide to Design" price="50.00" certificates="25" chapters="13" reviews="25" orders="254" shelf="500" />
-            </Col>
-          ))}
-        </Row>
-      </div>
-    </div>
+    </>
   );
 };
 

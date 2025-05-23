@@ -28,7 +28,7 @@ const SignupForm = () => {
       if (response.success) {
         toast.success("Đăng ký thành công !");
         // setTimeout(() => navigate("/login"), 1000);
-        setTimeout(() => toast.success("Đã gửi mã xác nhận đến email, xác nhận Email để đăng nhập !"), 1500)
+        setTimeout(() => toast.success("Đã gửi mã xác nhận đến email, xác nhận Email để đăng nhập !"), 1000)
       } else {
         toast.error(response.responseMessage || "Đăng ký thất bại. Kiểm tra thông tin!");
       }

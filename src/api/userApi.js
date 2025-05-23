@@ -21,6 +21,30 @@ const userApi = {
     }
   },
 
+  updateMentor: async (mentorID, formdata) => {
+    try {
+      const response = await axiosClient.put(`${URL.BASE_URL}/user/mentor/update/${mentorID}`, formdata, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      return response.data; // { success: true, mentors: [...] }
+    } catch (error) {
+      console.error("Update mentor error:", error);
+      throw new Error("Cập nhật thông tin giảng viên thất bại.");
+    }
+  },
+
+  getMentorByID: async (mentorID) => {
+    try {
+      const response = await axiosClient.get(`${URL.BASE_URL}/user/mentor/${mentorID}`);
+      return response.data; // { success: true, mentors: [...] }
+    } catch (error) {
+      console.error("Get all mentors error:", error);
+      throw new Error("Lấy danh sách giảng viên thất bại.");
+    }
+  },
+
   getAllMentors: async () => {
     try {
       const response = await axiosClient.get(`${URL.BASE_URL}/user/mentor/mentors`);
@@ -43,7 +67,6 @@ const userApi = {
       return await axiosClient.get(`${URL.BASE_URL}/user/fetch-all`);
   },
   changePassword: async (userId, oldPassword, newPassword) => {
-    console.log("Old pass, new pass ", oldPassword + newPassword);
     try {
       const response = await axiosClient.put(`${URL.BASE_URL}/user/change-password`, {
         userId,

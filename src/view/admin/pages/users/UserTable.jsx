@@ -1,7 +1,8 @@
-import { Table, Tag, Avatar, Button, Tooltip } from "antd";
-import { EyeOutlined, EditOutlined, StopOutlined } from "@ant-design/icons";
+import { Table, Tag, Avatar, Button, Tooltip, Popconfirm, Space } from "antd";
+import { EyeOutlined, EditOutlined, StopOutlined, DeleteOutlined, TeamOutlined } from "@ant-design/icons";
 import React from "react";
 import { formatDate } from "../../../../utils/helper/formatDate";
+import { URL } from "../../../../api/constant";
 
 
 const UserTable = ({ users, onViewDetail, onUpdateUser, onBanUser }) => {
@@ -13,12 +14,16 @@ const UserTable = ({ users, onViewDetail, onUpdateUser, onBanUser }) => {
     onBanUser?.(user);
   };
 
+  const viewStudents = (user) => {
+    onViewDetail?.(user);
+  }
+
   const columns = [
     {
       title: "Avatar",
       dataIndex: "avatar",
       key: "avatar",
-      render: (avatar) => <Avatar src={avatar} shape="circle" />,
+      render: (_, record) => <Avatar src={`${URL.BASE_URL}/user/${record.avatar}`} shape="circle" />,
     },
     {
       title: "Họ tên",
@@ -61,17 +66,45 @@ const UserTable = ({ users, onViewDetail, onUpdateUser, onBanUser }) => {
       title: "Hành động",
       key: "action",
       render: (_, record) => (
-        <div className="action-buttons">
-          <Tooltip title="Xem chi tiết">
-            <Button type="link" icon={<EyeOutlined />} onClick={() => onViewDetail(record)} />
+        <Space wrap>
+          <Tooltip title="Cập nhật nguoiời dùng">
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => handleUpdate(record)}
+              type="primary"
+            >
+              Cập nhật
+            </Button>
           </Tooltip>
-          <Tooltip title="Cập nhật">
-            <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record)} />
+
+          <Tooltip title="Xem chi tiết học viên">
+            <Button
+              icon={<TeamOutlined />}
+              style={{ backgroundColor: "#722ed1", borderColor: "#722ed1" }}
+              type="primary"
+              onClick={() => viewStudents(record)}
+            >
+              Xem học viên
+            </Button>
           </Tooltip>
-          <Tooltip title="Ban">
-            <Button type="link" icon={<StopOutlined />} danger onClick={() => handleBan(record)} />
-          </Tooltip>
-        </div>
+
+          <Popconfirm
+            title="Bạn có chắc muốn khóa tài khoản này?"
+            onConfirm={() => handleBan(record.id)}
+            okText="Có"
+            cancelText="Không"
+          >
+            <Tooltip title="Khóa tài khoản">
+              <Button
+                icon={<DeleteOutlined />}
+                type="primary"
+                danger
+              >
+                Khóa
+              </Button>
+            </Tooltip>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];

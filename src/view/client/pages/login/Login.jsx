@@ -12,7 +12,7 @@ const Login = () => {
       <Row gutter={20}>
         <Col xs={24} md={12}>
           <div className="login-content">
-            <Title className="login-title">Welcome Back 👋</Title>
+            <Title className="login-title">Chào mừng quay trở lại👋</Title>
             <LoginForm />
             {/* <SocialLogin /> */}
           </div>

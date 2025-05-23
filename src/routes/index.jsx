@@ -33,6 +33,7 @@ import AddCourseForm from "../components/AddCourse/AddCourseForm";
 import AddCourseSectionForm from "../components/AddCourse/AddCourseSectionForm";
 import CourseStudentList from "../view/mentor/pages/courses/CourseStudentList/CourseStudentList";
 import ViewMentorCourses from "../view/mentor/pages/courses/ViewListCourse/ViewMentorCourses";
+import MentorProfilePage from "../view/mentor/pages/profile-mentor/index"
 
 // Admin Pages
 import AdminDashboard from "../view/admin/pages/dashboard/Dashboard";
@@ -49,13 +50,17 @@ import PolicyPage from "../view/client/pages/policy/PolicyPage";
 import EditCourseForm from "../components/AddCourse/EditCourseForm";
 import ForgotPassword from "../view/client/pages/login/ForgotPassword";
 import ResetPassword from "../view/client/pages/login/ResetPassword";
+import OAuth2RedirectHandler from "../view/client/pages/login/OAuth2RedirectHandler";
 
 
 const AppRoutes = () => (
   <Routes>
+    {/* Route 404 */}
+    <Route path="/*" element={<Error404 />} />
     {/* Routes cho Client */}
     <Route path="/*" element={<HomeLayout />}>
       <Route path="login" element={<Login />} />
+      <Route path="oauth2/redirect" element={<OAuth2RedirectHandler />} />
       <Route path="sign-up" element={<Signup />} />
       <Route path="verify-email" element={<VerifyEmail />} />
       <Route path="resend-confirmation" element={<ResendEmail />} />
@@ -65,6 +70,9 @@ const AppRoutes = () => (
       <Route path="policy" element={<PolicyPage />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="reset-password" element={<ResetPassword />} />
+      <Route path="categories" element={<Categories />} />
+      <Route path="home" element={<HomeScreen />} />
+      <Route path="course-details/:id" element={<CourseHeader />} />
 
       <Route element={<PrivateRouter />}>
         <Route path="info-user" element={<Infomation />} />
@@ -78,9 +86,7 @@ const AppRoutes = () => (
         <Route path="chat-rooms" element={<ChatRoom />} />
       </Route>
 
-      <Route path="home" element={<HomeScreen />} />
-      <Route path="categories" element={<Categories />} />
-      <Route path="course-details/:id" element={<CourseHeader />} />
+      
         {/* <Route path="course-detail/:id" element={<CourseDetails />} />
       </Route> */}
       
@@ -95,6 +101,7 @@ const AppRoutes = () => (
       <Route path="courses/section/:courseId" element={<AddCourseSectionForm />} />
       <Route path="courses/:id/students" element={<CourseStudentList/>} />
       <Route path="chat-rooms" element={<ChatRoomMentor />} />
+      <Route path="profile-mentor" element={<MentorProfilePage />} />
     </Route>
 
     {/* Routes cho Admin */}
@@ -105,8 +112,7 @@ const AppRoutes = () => (
       <Route path="users" element={<AdminUserPage />} />
     </Route>
 
-    {/* Route 404 */}
-    <Route path="*" element={<Error404 />} />
+    
   </Routes>
 );
 

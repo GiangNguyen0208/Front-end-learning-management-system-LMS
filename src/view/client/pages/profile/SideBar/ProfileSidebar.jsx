@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import "./ProfileSidebar.css";
 import { AuthContext } from "../../../../../context/AuthProvider";
+import { URL } from "../../../../../api/constant";
 
 function ProfileSidebar({ setSelectedMenu, selectedMenu }) {
   const { user } = useContext(AuthContext);
@@ -19,7 +20,7 @@ function ProfileSidebar({ setSelectedMenu, selectedMenu }) {
       <div className="profile-header">
         <Avatar
           size={100}
-          src={`${URL.BASE_URL}/user/${user.avatar}`}
+          src={`${URL.BASE_URL}/user/avatar/${user.avatar}`}
           className="profile-avatar"
         />
         <h3 className="profile-name">{`${user.firstName || ""} ${user.lastName || ""}`}</h3>

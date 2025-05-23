@@ -10,7 +10,7 @@ const { Option } = Select;
 
 const SignUpMentorForm = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, logout } = useContext(AuthContext);
   const [form] = Form.useForm();
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
@@ -39,8 +39,9 @@ const SignUpMentorForm = () => {
 
       if (response.success) {
         toast.success("Đăng ký Mentor thành công!");
-        setTimeout(() => navigate("/home"), 1000);
-        // setTimeout(() => message.info("Xác nhận Email để đăng nhập"), 1500);
+        logout()
+        setTimeout(() => toast.info("Vui lòng đăng nhập lại"), 1500);
+        // setTimeout(() => navigate("/home"), 1000);
       } else {
         toast.error(response.responseMessage || "Đăng ký thất bại. Kiểm tra thông tin!");
       }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Row, Col, Layout, Typography } from "antd";
 import ProfileSidebar from "./SideBar/ProfileSidebar";
 import ProfileForm from "./Profile/Form/ProfileForm";
@@ -9,12 +9,13 @@ import ReviewList from "./Reviews/ReviewList";
 import InstructorCardGrid from "./Instructor/InstructorCardGrid";
 import ChatWindow from "./Chat/ChatRoom";
 import MyCourses from "./MyCourses/MyCourses";
+import { AuthContext } from "../../../../context/AuthProvider";
 
 const { Title } = Typography;
 const { Content } = Layout;
 
 function Infomation() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user } = useContext(AuthContext);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Tag, Space, message } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined, HomeOutlined } from "@ant-design/icons";
+import { Table, Button, Tag, Space, message, Row, Col, Tooltip, Popconfirm } from "antd";
+import { EditOutlined, DeleteOutlined, PlusOutlined, HomeOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import AddCategoryForm from "../../../../components/AddCategory/AddCategoryForm";
 import UpdateCategoryForm from "../../../../components/AddCategory/UpdateCategoryForm";
 import categoryApi from "../../../../api/categoryApi";
@@ -101,30 +101,53 @@ const CategoryList = () => {
       key: "id",
     },
     {
-      title: "Title",
+      title: "Tiêu đề",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Description",
+      title: "Mô tả",
       dataIndex: "description",
       key: "description",
     },
     {
-      title: "Status",
+      title: "Tình trạng",
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag color={status === "ACTIVE" ? "green" : "volcano"}>{status}</Tag>
-      ),
+      <Tag icon={status === "ACTIVE" ? <CheckCircleOutlined /> : <CloseCircleOutlined />} color={status === "ACTIVE" ? "green" : "red"}>
+        {status === "ACTIVE" ? "Đang hoạt động" : "Ngừng hoạt động"}
+      </Tag>
+    ),
     },
     {
       title: "Actions",
       key: "actions",
       render: (record) => (
         <Space>
-          <Button icon={<EditOutlined />} onClick={() => handleOpenUpdateModal(record)} />
-          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.id)} />
+          <Tooltip title="Chỉnh sửa">
+            <Button 
+              icon={<EditOutlined />} 
+              type="primary"
+              onClick={() => handleOpenUpdateModal(record)} 
+            />
+          </Tooltip>
+          <Popconfirm
+            title="Bạn có chắc muốn xóa danh mục này?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Có"
+            cancelText="Không"
+          >
+            <Tooltip title="Xóa danh mục">
+              <Button
+                icon={<DeleteOutlined />}
+                type="primary"
+                danger
+              >
+                Xóa
+              </Button>
+            </Tooltip>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -132,12 +155,19 @@ const CategoryList = () => {
 
   return (
     <div>
-      <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenAddModal} style={{ marginBottom: 16, marginLeft: 16 }}>
-        Add Category
-      </Button>
-      <Button type="primary" icon={<HomeOutlined />} onClick={() => navigate("/admin/warehouse")} style={{ marginBottom: 16, marginLeft: 16 }}>
-        Warehouse
-      </Button>
+      <Row justify="space-between" style={{ marginBottom: 16 }}>
+        <Col>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenAddModal}>
+            Thêm danh mục
+          </Button>
+        </Col>
+        <Col>
+          <Button type="primary" icon={<HomeOutlined />} onClick={() => navigate("/admin/warehouse")}>
+            Quản lý kho
+          </Button>
+        </Col>
+      </Row>
+
 
 
       <Table columns={columns} dataSource={categories} rowKey="id" loading={loading} />

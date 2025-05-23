@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { auth } from "../firebase/config";
 import { first } from "lodash";
+import { saveAuthData } from "../utils/helper/authUntils";
 
 export const AuthContext = createContext();
 
@@ -19,8 +20,9 @@ export default function AuthProvider({ children }) {
   });
 
   const login = (token, userData) => {
-    localStorage.setItem("jwtToken", token);
-    localStorage.setItem("user", JSON.stringify(userData));
+    saveAuthData(token, userData)
+    // localStorage.setItem("jwtToken", token);
+    // localStorage.setItem("user", JSON.stringify(userData));
     setIsLoggedIn(true);
     setUser(userData); // ✅ Cập nhật state user
     

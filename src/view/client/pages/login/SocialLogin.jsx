@@ -25,11 +25,6 @@ const SocialLogin = () => {
       color: "#EA4335",
       provider: googleProvider,
     },
-    {
-      name: "Microsoft",
-      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/31a6c75cd021e08df347aeec03bacc7ca7d6c2e2e4088e86512512a5253ec922",
-      color: "#000000",
-    },
   ];
 
   const handleLogin = async (provider) => {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, Button, message, Select } from "antd";
 import categoryApi from "../../api/categoryApi"; // Import API
+import { toast } from "react-toastify";
 
 const { Option } = Select;
 
@@ -19,11 +20,8 @@ const AddCategoryForm = ({ visible, onClose }) => {
     setLoading(true);
     try {
       const response = await categoryApi.addCategory({ name, description, status });
-
-      console.log("Infomation Category add success:", response);
-
       if (response.data?.success) {
-        message.success(response.data.responseMessage || "Category added successfully!");
+        toast.success("Thêm danh mục thành công!");
 
         setTimeout(() => {
           setName("");
@@ -32,7 +30,7 @@ const AddCategoryForm = ({ visible, onClose }) => {
           onClose();
         }, 500); // Chờ 500ms trước khi đóng modal
       } else {
-        message.error(response.data?.responseMessage || "Failed to add category.");
+        toast.error("Thêm danh mục thất bại");
       }
     } catch (error) {
       message.error("Error occurred while adding category.");
@@ -42,27 +40,27 @@ const AddCategoryForm = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal title="Add Course Category" open={visible} onCancel={onClose} footer={null}>
+    <Modal title="Thêm danh mục" open={visible} onCancel={onClose} footer={null}>
       <Form layout="vertical" onFinish={saveCategory}>
-        <Form.Item label="Category Title" required>
+        <Form.Item label="Tiêu đề danh mục" required>
           <Input placeholder="Enter title.." value={name} onChange={(e) => setName(e.target.value)} />
         </Form.Item>
         
-        <Form.Item label="Category Description" required>
+        <Form.Item label="Mô tả danh mục" required>
           <Input.TextArea rows={3} placeholder="Enter description.." value={description} onChange={(e) => setDescription(e.target.value)} />
         </Form.Item>
 
         {/* Dropdown chọn trạng thái */}
-        <Form.Item label="Category Status" required>
+        <Form.Item label="Tình trạng" required>
           <Select value={status} onChange={setStatus}>
             <Option value="ACTIVE">ACTIVE</Option>
-            <Option value="DEACTIVE">DEACTIVE</Option>
+            <Option value="DEACTIVATED">DEACTIVATED</Option>
           </Select>
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>
-            {loading ? "Adding..." : "Add Course Category"}
+            {loading ? "Đang thêm..." : "Thêm danh mục của khóa học"}
           </Button>
         </Form.Item>
       </Form>

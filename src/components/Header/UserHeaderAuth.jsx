@@ -3,6 +3,7 @@ import { Space, Dropdown, Button, Avatar, Col, Badge } from "antd";
 import { UserOutlined, LogoutOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthProvider";
+import { URL } from "../../api/constant";
 
 export const UserHeaderAuth = () => {
   const navigate = useNavigate();
@@ -76,6 +77,7 @@ export const UserHeaderAuth = () => {
           <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
             <Avatar
               size="large"
+              src={`${URL.BASE_URL}/user/avatar/${user.avatar}`}
               icon={<UserOutlined />}
               style={{ cursor: "pointer", backgroundColor: "#87d068" }}
             />

@@ -22,9 +22,9 @@ export default function Sidebar() {
     const menuItems = [
         { key: "/home", label: "Trang chủ", icon: <HomeOutlined />, path: "/home" },
         { key: "dashboard", label: "Dashboard", icon: <DashboardOutlined />, path: "/admin/dashboard" },
-        { key: "users", label: "Users", icon: <UserOutlined />, path: "/admin/users" },
-        { key: "categories", label: "Category", icon: <UnorderedListOutlined />, path: "/admin/categories" },
-        { key: "courses", label: "Courses", icon: <BookOutlined />, path: "/admin/courses" },
+        { key: "users", label: "Quản lý người dùng", icon: <UserOutlined />, path: "/admin/users" },
+        { key: "categories", label: "Quản lý danh mục", icon: <UnorderedListOutlined />, path: "/admin/categories" },
+        { key: "courses", label: "Quản lý khóa học", icon: <BookOutlined />, path: "/admin/courses" },
         // { key: "communication", label: "Communication", icon: <WechatOutlined />, path: "/admin/communication" },
     ];
 
