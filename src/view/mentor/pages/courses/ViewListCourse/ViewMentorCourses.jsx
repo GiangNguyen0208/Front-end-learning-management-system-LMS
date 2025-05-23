@@ -16,7 +16,8 @@ import {
   PlusOutlined,
   DeleteOutlined,
   EditOutlined,
-  TeamOutlined
+  TeamOutlined,
+  FileTextOutlined
 } from "@ant-design/icons";
 import courseApi from "../../../../../api/courseApi";
 import { URL } from "../../../../../api/constant";
@@ -46,20 +47,6 @@ const ViewMentorCourses = () => {
     }
   };
 
-  const deleteCourse = async (courseId) => {
-    try {
-      const response = await courseApi.deleteCourse(courseId);
-      if (response.data.success) {
-        toast.success("Xóa khóa học thành công!");
-        setCourses((prev) => prev.filter((c) => c.id !== courseId));
-      } else {
-        toast.error(response.data.responseMessage);
-      }
-    } catch (error) {
-      toast.error("Lỗi khi xóa khóa học.");
-    }
-  };
-
   const addSection = (course) => {
     navigate(`/mentor/courses/section/${course.id}`);
   };
@@ -71,8 +58,14 @@ const ViewMentorCourses = () => {
   const formatDateFromEpoch = (epochTime) =>
     new Date(Number(epochTime)).toLocaleString();
 
-  const viewStudents = (course) => {
-    navigate(`/mentor/courses/${course.id}/students`, {
+    const viewStudents = async (course) => {
+        navigate(`/mentor/courses/assignments/${course.id}`, {
+          state: { courseId: course.id },
+        });
+    };
+
+  const viewAssignments = async (course) => {
+    navigate(`/mentor/courses/assignments/${course.id}`, {
       state: {
         courseId: course.id,
       },
@@ -182,22 +175,17 @@ const ViewMentorCourses = () => {
             </Button>
           </Tooltip>
 
-          <Popconfirm
-            title="Bạn có chắc muốn xóa khóa học này?"
-            onConfirm={() => deleteCourse(record.id)}
-            okText="Có"
-            cancelText="Không"
-          >
-            <Tooltip title="Xóa khóa học">
-              <Button
-                icon={<DeleteOutlined />}
-                type="primary"
-                danger
-              >
-                Xóa
-              </Button>
-            </Tooltip>
-          </Popconfirm>
+          <Tooltip title="Xem danh sách bài tập">
+            <Button
+              icon={<FileTextOutlined />}
+              type="primary"
+              ghost
+              onClick={() => viewAssignments(record)}
+              style={{ backgroundColor: "#52c41a", color: "#fff" }}
+            >
+              Bài tập
+            </Button>
+          </Tooltip>
         </Space>
       ),
     },

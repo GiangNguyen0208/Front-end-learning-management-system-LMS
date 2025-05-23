@@ -20,6 +20,10 @@ const MyCourseCard = ({ courseBooking }) => {
     navigate(`/my-learning/${courseBooking.course.id}/learn`, { state: { courseBooking } });
   };
 
+  const handleGoToAssigment = () => {
+    navigate(`/my-assignment/${courseBooking.course.id}/learn`, { state: { courseBooking } });
+  };
+
   useEffect(() => {
     const fetchProgress = async () => {
       try {
@@ -180,6 +184,16 @@ const MyCourseCard = ({ courseBooking }) => {
               }}
             >
               Tiếp tục học
+            </Button>
+            <Button 
+              type="primary" 
+              size="small"
+              onClick={e => {
+                e.stopPropagation(); // tránh trigger Card hover
+                handleGoToAssigment();
+              }}
+            >
+              làm bài tập
             </Button>
           </Col>
         </Row>

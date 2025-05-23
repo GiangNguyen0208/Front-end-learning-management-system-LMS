@@ -51,6 +51,8 @@ import EditCourseForm from "../components/AddCourse/EditCourseForm";
 import ForgotPassword from "../view/client/pages/login/ForgotPassword";
 import ResetPassword from "../view/client/pages/login/ResetPassword";
 import OAuth2RedirectHandler from "../view/client/pages/login/OAuth2RedirectHandler";
+import CourseAssignments from "../view/mentor/pages/courses/CourseAssignments";
+import MyCourseAssignments from "../view/client/pages/profile/MyCourses/MyCourseAssignments";
 
 
 const AppRoutes = () => (
@@ -84,8 +86,8 @@ const AppRoutes = () => (
         <Route path="my-learning/:id/learn" element={<CourseViewer />} />
         <Route path="order-history" element={<OrderHistory />} />
         <Route path="chat-rooms" element={<ChatRoom />} />
+        <Route path="my-assignment/:id/learn" element={<MyCourseAssignments />} />
       </Route>
-
       
         {/* <Route path="course-detail/:id" element={<CourseDetails />} />
       </Route> */}
@@ -102,6 +104,7 @@ const AppRoutes = () => (
       <Route path="courses/:id/students" element={<CourseStudentList/>} />
       <Route path="chat-rooms" element={<ChatRoomMentor />} />
       <Route path="profile-mentor" element={<MentorProfilePage />} />
+      <Route path="courses/assignments/:id" element={<CourseAssignments />} />
     </Route>
 
     {/* Routes cho Admin */}
