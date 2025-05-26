@@ -1,3 +1,4 @@
+// pages/CourseAssignments.jsx
 import {
   Card,
   Table,
@@ -8,21 +9,30 @@ import {
   message,
   Space,
   Typography,
-  Tooltip
+  Tooltip,
+  Tag
 } from "antd";
 import { useState, useEffect } from "react";
-import { UploadOutlined, PlusOutlined, EditOutlined, TeamOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  UploadOutlined,
+  PlusOutlined,
+  EditOutlined,
+  TeamOutlined,
+  DeleteOutlined
+} from "@ant-design/icons";
 import { useLocation, useParams } from "react-router-dom";
 import assignmentApi from "../../../../../api/assignmentApi";
 import { toast } from "react-toastify";
 import { formatDate } from "../../../../../utils/helper/formatDate";
+import SubmittedAssignments from "./SubmittedAssignments";
 
 const { Text } = Typography;
 
 const CourseAssignments = () => {
   const location = useLocation();
-  const { id } = useParams(); // lấy từ route param
+  const { id } = useParams();
   const courseId = location.state?.courseId || id;
+
   const [assignments, setAssignments] = useState([]);
   const [editingAssignment, setEditingAssignment] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,19 +41,40 @@ const CourseAssignments = () => {
   const [note, setNote] = useState("");
   const [file, setFile] = useState(null);
 
+  const [selectedAssignmentId, setSelectedAssignmentId] = useState(null);
+
   useEffect(() => {
     if (courseId) fetchAssignments();
   }, [courseId]);
 
-  console.log("CourseID ",courseId);
-  
+  // const fetchAssignments = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await assignmentApi.fetchAllAssignments(courseId);
+  //     setAssignments(res.data || []);
+  //   } catch (err) {
+  //     toast.error("Lỗi tải danh sách bài tập.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const fetchAssignments = async () => {
     setLoading(true);
     try {
       const res = await assignmentApi.fetchAllAssignments(courseId);
-      console.log("Assignment: ", res);
-      setAssignments(res.data || []);
+      const assignmentsWithUngraded = await Promise.all(
+        (res.data || []).map(async (assignment) => {
+          try {
+            const submissionRes = await assignmentApi.getSubmissionsByAssignmentId(assignment.id);
+            const ungradedCount = (submissionRes.data || []).filter(s => !s.score && s.status !== "GRADED").length;
+            return { ...assignment, ungradedCount };
+          } catch (err) {
+            return { ...assignment, ungradedCount: 0 };
+          }
+        })
+      );
+      setAssignments(assignmentsWithUngraded);
     } catch (err) {
       toast.error("Lỗi tải danh sách bài tập.");
     } finally {
@@ -55,17 +86,17 @@ const CourseAssignments = () => {
     setEditingAssignment(record);
     setTitle(record.name);
     setNote(record.note || "");
-    setFile(null); // Không tự động gán lại file
+    setFile(null);
     setIsModalOpen(true);
   };
 
   const handleDeleted = async (record) => {
     try {
-        await assignmentApi.deleteAssignment(record.id);
-        toast.success("Đã xóa bài tập.");
-        fetchAssignments();
+      await assignmentApi.deleteAssignment(record.id);
+      toast.success("Đã xóa bài tập.");
+      fetchAssignments();
     } catch (err) {
-        toast.error("Xóa thất bại.");
+      toast.error("Xóa thất bại.");
     }
   };
 
@@ -76,48 +107,41 @@ const CourseAssignments = () => {
     formData.append("name", title);
     formData.append("note", note || "");
     formData.append("courseID", courseId);
-
-    if (file) {
-        formData.append("assignmentFile", file);
-    }
+    if (file) formData.append("assignmentFile", file);
 
     try {
-        let res;
-        if (editingAssignment) {
-            res = await assignmentApi.updateAssignment(editingAssignment.id, formData);
-            toast.success("Cập nhật bài tập thành công.");
-        } else {
-            res = await assignmentApi.addAssignment(formData);
-            toast.success("Thêm bài tập thành công.");
-        }
+      let res;
+      if (editingAssignment) {
+        res = await assignmentApi.updateAssignment(editingAssignment.id, formData);
+      } else {
+        res = await assignmentApi.addAssignment(formData);
+      }
 
-        if (res.data) {
-            toast.success(editingAssignment ? "Cập nhật bài tập thành công." : "Thêm bài tập thành công.");
-            setIsModalOpen(false);
-            setTitle("");
-            setNote("");
-            setFile(null);
-            setEditingAssignment(null);
-            fetchAssignments();
-        }
+      if (res.data) {
+        toast.success(editingAssignment ? "Cập nhật bài tập thành công." : "Thêm bài tập thành công.");
+        setIsModalOpen(false);
+        setTitle("");
+        setNote("");
+        setFile(null);
+        setEditingAssignment(null);
+        fetchAssignments();
+      }
     } catch (err) {
-        toast.error("Lỗi khi thêm/cập nhật bài tập.");
+      toast.error("Lỗi khi thêm/cập nhật bài tập.");
     }
   };
-
 
   const columns = [
     {
       title: "📌 Tiêu đề",
       dataIndex: "name",
-      key: "title",
+      key: "name",
       render: (text) => <strong>{text}</strong>,
     },
     {
       title: "📌 Ghi chú",
       dataIndex: "note",
       key: "note",
-      render: (text) => <strong>{text}</strong>,
     },
     {
       title: "📁 File",
@@ -134,17 +158,12 @@ const CourseAssignments = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (createdAt) => (
-        <span style={{ whiteSpace: "nowrap" }}>
-          {formatDate(createdAt)}
-        </span>
+        <span style={{ whiteSpace: "nowrap" }}>{formatDate(createdAt)}</span>
       ),
     },
     {
-      title: (
-        <div style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
-          ⚙️ Hành động
-        </div>
-      ),
+      title: "⚙️ Hành động",
+      key: "actions",
       render: (_, record) => (
         <Space wrap>
           <Tooltip title="Cập nhật bài tập">
@@ -154,6 +173,17 @@ const CourseAssignments = () => {
               type="primary"
             >
               Cập nhật
+            </Button>
+          </Tooltip>
+
+          <Tooltip title="Xem bài đã nộp">
+            <Button
+              icon={<TeamOutlined />}
+              onClick={() => setSelectedAssignmentId(record.id)}
+              type="dashed"
+              style={{ backgroundColor: "#52c41a", color: "#fff" }}
+            >
+              Chấm bài
             </Button>
           </Tooltip>
 
@@ -170,7 +200,27 @@ const CourseAssignments = () => {
         </Space>
       ),
     },
+    {
+      title: "🛎 Cần chấm",
+      dataIndex: "ungradedCount",
+      key: "ungradedCount",
+      render: (count) =>
+        count > 0 ? (
+          <Tag color="red">{count} bài chưa chấm</Tag>
+        ) : (
+          <Tag color="green"> Chưa có bài nộp mới </Tag>
+        ),
+    },
   ];
+
+  if (selectedAssignmentId) {
+    return (
+      <SubmittedAssignments
+        assignmentId={selectedAssignmentId}
+        onBack={() => setSelectedAssignmentId(null)}
+      />
+    );
+  }
 
   return (
     <Card
@@ -198,11 +248,11 @@ const CourseAssignments = () => {
         title={editingAssignment ? "✏️ Cập nhật bài tập" : "📝 Thêm bài tập mới"}
         open={isModalOpen}
         onCancel={() => {
-            setIsModalOpen(false);
-            setEditingAssignment(null);
-            setTitle("");
-            setNote("");
-            setFile(null);
+          setIsModalOpen(false);
+          setEditingAssignment(null);
+          setTitle("");
+          setNote("");
+          setFile(null);
         }}
         onOk={handleAddAssignment}
         okText={editingAssignment ? "Cập nhật" : "Tạo bài tập"}

@@ -44,6 +44,11 @@ const MyCourseAssignments = () => {
   const [submittingAssignment, setSubmittingAssignment] = useState(null);
   const [submitFile, setSubmitFile] = useState(null);
 
+  // Model xem điểm
+  const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
+  const [selectedScore, setSelectedScore] = useState(null);
+
+
   // Ref phần nội dung modal để tạo PDF
   const contentRef = useRef();
 
@@ -55,14 +60,42 @@ const MyCourseAssignments = () => {
     setLoading(true);
     try {
       const res = await assignmentApi.fetchAllAssignments(courseId);
-      console.log(res.data);
-      setAssignments(res.data || []);
+      const assignments = res.data;
+
+      const enrichedAssignments = await Promise.all(
+        assignments.map(async (assignment) => {
+          try {
+            const submissionRes = await assignmentApi.getSubmissionsGradedByAssignmentId(assignment.id);
+            const submissions = submissionRes.data;
+
+            const scoredSubmission = submissions.find(
+              (s) => s?.score !== undefined && s?.score !== null
+            );
+
+            return {
+              ...assignment,
+              graded: !!scoredSubmission,
+              score: scoredSubmission?.score ?? null,
+            };
+          } catch (error) {
+            return {
+              ...assignment,
+              graded: false,
+              score: null,
+            };
+          }
+        })
+      );
+
+      setAssignments(enrichedAssignments);
     } catch (err) {
       toast.error("Lỗi tải danh sách bài tập.");
     } finally {
       setLoading(false);
     }
   };
+
+  console.log("Assignment Res: ", assignments);
 
   // Mở modal xem chi tiết
   const handleViewDetails = (record) => {
@@ -111,6 +144,23 @@ const MyCourseAssignments = () => {
     }
   };
 
+  const handleViewScore = async (assignment) => {
+    try {
+      const res = await assignmentApi.getSubmissionsGradedByAssignmentId(assignment.id);
+      setSelectedScore({
+        name: assignment.name,
+        feedback: res.data[0]?.feedback ?? "Chưa có lời phê",
+        score: res.data[0]?.score ?? "Chưa có điểm",
+      });
+    } catch (err) {
+      toast.error("Lỗi tải danh sách bài tập.");
+    } finally {
+      setLoading(false);
+    }
+
+   setIsScoreModalOpen(true);
+  };
+
   // Tạo và tải file PDF chứa thông tin chi tiết bài tập
   const handleDownloadPDF = async () => {
     if (!contentRef.current) return;
@@ -134,6 +184,24 @@ const MyCourseAssignments = () => {
       toast.error("Lỗi khi tạo file PDF.");
     }
   };
+
+  const scoredAssignments = assignments.filter((a) => a.graded && a.score !== undefined && a.score !== null);
+  const averageScore =
+    scoredAssignments.length > 0
+      ? (
+          scoredAssignments.reduce((acc, a) => acc + a.score, 0) /
+          scoredAssignments.length
+        ).toFixed(2)
+      : null;
+
+  const getClassification = (score) => {
+    if (score === null) return "Chưa có đủ điểm để đánh giá";
+    if (score < 6.5) return "Trung bình";
+    if (score < 8) return "Khá";
+    if (score < 9) return "Giỏi";
+    return "Xuất sắc";
+  };
+
 
   const columns = [
     {
@@ -160,6 +228,15 @@ const MyCourseAssignments = () => {
           </a>
         );
       },
+    },
+    {
+      title: "📊 Trạng thái chấm điểm",
+      key: "graded",
+      render: (_, record) => (
+        <span style={{ color: record.graded ? "green" : "gray", fontWeight: 600 }}>
+          {record.graded  ? "✅ Đã chấm" : "⏳ Chưa chấm"}
+        </span>
+      ),
     },
     {
       title: "📅 Ngày tạo",
@@ -196,6 +273,17 @@ const MyCourseAssignments = () => {
               Nộp bài
             </Button>
           </Tooltip>
+
+          <Tooltip title="Xem điểm">
+            <Button
+                icon={<EyeOutlined />}
+                onClick={() => handleViewScore(record)}
+                type="primary"
+                style={{ backgroundColor: "#faad14", color: "#fff" }}
+            >
+                Xem điểm
+            </Button>
+          </Tooltip>
         </Space>
       ),
     },
@@ -213,6 +301,31 @@ const MyCourseAssignments = () => {
         loading={loading}
         pagination={{ pageSize: 5 }}
       />
+
+      {averageScore !== null && (
+        <Card
+          style={{
+            marginTop: 24,
+            background: "#f6ffed",
+            borderColor: "#b7eb8f",
+          }}
+        >
+          <Text strong style={{ fontSize: 16 }}>
+            🎯 Điểm trung bình:{" "}
+            <Text type="success" style={{ fontSize: 16 }}>
+              {averageScore}
+            </Text>
+          </Text>
+          <br />
+          <Text strong style={{ fontSize: 16 }}>
+            🏆 Xếp loại:{" "}
+            <Text type="warning" style={{ fontSize: 16 }}>
+              {getClassification(parseFloat(averageScore))}
+            </Text>
+          </Text>
+        </Card>
+      )}
+
 
       {/* Modal xem chi tiết file */}
       <Modal
@@ -254,24 +367,61 @@ const MyCourseAssignments = () => {
         title={`Nộp bài cho: ${submittingAssignment?.name || ""}`}
         open={isSubmitModalOpen}
         onCancel={() => {
-          setIsSubmitModalOpen(false);
-          setSubmittingAssignment(null);
-          setSubmitFile(null);
+            setIsSubmitModalOpen(false);
+            setSubmittingAssignment(null);
+            setSubmitFile(null);
         }}
-        onOk={handleSubmitAssignment}
-        okText="Nộp bài"
-      >
+        footer={[
+            <Button
+            key="cancel"
+            onClick={() => {
+                setIsSubmitModalOpen(false);
+                setSubmittingAssignment(null);
+                setSubmitFile(null);
+            }}
+            >
+            Hủy
+            </Button>,
+            <Button
+            key="submit"
+            type="primary"
+            icon={<FileAddOutlined />}
+            onClick={handleSubmitAssignment}
+            disabled={!submitFile}
+            >
+            Nộp bài
+            </Button>,
+        ]}
+        >
         <Upload
-          beforeUpload={(file) => {
+            beforeUpload={(file) => {
             setSubmitFile(file);
             return false; // không tự động upload
-          }}
-          fileList={submitFile ? [submitFile] : []}
-          onRemove={() => setSubmitFile(null)}
-          maxCount={1}
+            }}
+            fileList={submitFile ? [submitFile] : []}
+            onRemove={() => setSubmitFile(null)}
+            maxCount={1}
         >
-          <Button icon={<UploadOutlined />}>Chọn file nộp bài</Button>
+            <Button icon={<UploadOutlined />}>Chọn file nộp bài</Button>
         </Upload>
+      </Modal>
+
+      <Modal
+        title={`🎓 Điểm bài tập: ${selectedScore?.name}`}
+        open={isScoreModalOpen}
+        onCancel={() => setIsScoreModalOpen(false)}
+        footer={[
+            <Button key="close" onClick={() => setIsScoreModalOpen(false)}>
+            Đóng
+            </Button>,
+        ]}
+        >
+        <Paragraph>
+            <Text strong>Điểm số:</Text> {selectedScore?.score}
+        </Paragraph>
+        <Paragraph>
+            <Text strong>Lời phê:</Text> {selectedScore?.feedback}
+        </Paragraph>
       </Modal>
     </Card>
   );

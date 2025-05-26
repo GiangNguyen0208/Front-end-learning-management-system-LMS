@@ -38,10 +38,10 @@ export const UserHeaderAuth = () => {
   }, []);
 
   const menuItems = [
-    { key: "profile", label: "Trang cá nhân", onClick: () => navigate("/info-user") },
+    { key: "profile", label: "Trang cá nhân", onClick: () => navigate(`/info-user/${user.id}`) },
     { key: "orders", label: "Lịch sử Đơn hàng", onClick: () => navigate("/order-history") },
-    user?.role === "Mentor" && { key: "mentor", label: "Giảng Viên", onClick: () => navigate("/mentor/dashboard") },
-    user?.role === "Admin" && { key: "admin", label: "Quản trị viên", onClick: () => navigate("/admin/dashboard") },
+    user?.role === "Mentor" && { key: "mentor", label: "Giảng Viên", onClick: () => navigate(`/mentor/dashboard/${user.id}`) },
+    user?.role === "Admin" && { key: "admin", label: "Quản trị viên", onClick: () => navigate(`/admin/dashboard/${user.id}`) },
     { key: "logout", label: "Đăng xuất", icon: <LogoutOutlined />, onClick: logout },
   ].filter(Boolean);
 
@@ -56,7 +56,7 @@ export const UserHeaderAuth = () => {
         <>
           <Col className="nav-item">
             {user?.role === "Mentor" ? (
-              <span onClick={() => navigate("/mentor/courses")}>
+              <span onClick={() => navigate(`/mentor/courses/${user.id}`)}>
                 Khóa học của tôi
               </span>
             ) : (

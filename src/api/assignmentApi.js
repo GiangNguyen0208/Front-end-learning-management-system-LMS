@@ -32,7 +32,27 @@ const assignmentApi = {
         "Content-Type": "multipart/form-data",
       },
     })
-  }
+  },
+
+  // Lấy danh sách bài tập đã nộp của học sinh dựa vào courseId
+  getSubmissionsByAssignmentId: (assignmentId) => {
+    return axiosClient.get(`/assignment-submissions/pending?assignmentId=${assignmentId}`);
+  },
+
+  getSubmissionsGradedByAssignmentId: (assignmentId) => {
+    return axiosClient.get(`/assignment-submissions/graded/byAssignment?assignmentId=${assignmentId}`);
+  },
+
+  gradeSubmission: (submissionId, request) => {
+    return axiosClient.put(`/assignment-submissions/grade/${submissionId}`, {
+      score: request.score,
+      feedback: request.feedback,
+    })
+  },
+
+  getSubmissionsGradedByStudentID: (studentId) => {
+    return axiosClient.get(`/assignment-submissions/graded/byStudent?studentId=${studentId}`)
+  },
 
 };
 

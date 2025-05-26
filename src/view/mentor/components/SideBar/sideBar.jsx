@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Layout, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -11,20 +11,21 @@ import {
   MenuFoldOutlined,
   WechatOutlined,
 } from "@ant-design/icons";
+import { AuthContext } from "../../../../context/AuthProvider";
 
 const { Sider } = Layout;
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { user } = useContext(AuthContext);
 
   const menuItems = [
-    { key: "dashboard", label: "Dashboard", icon: <DashboardOutlined />, path: "/mentor/dashboard" },
-    { key: "profile-mentor", label: "Thông tin", icon: <UserOutlined />, path: "/mentor/profile-mentor" },
-    { key: "courses", label: "Courses", icon: <ShoppingCartOutlined />, path: "/mentor/courses" },
+    { key: "dashboard", label: "Thống kê", icon: <DashboardOutlined />, path: `/mentor/dashboard/${user.id}` },
+    { key: "profile-mentor", label: "Thông tin", icon: <UserOutlined />, path: `/mentor/profile-mentor/${user.id}` },
+    { key: "courses", label: "Quản lý khóa học", icon: <ShoppingCartOutlined />, path: `/mentor/courses` },
     { key: "chat-rooms", label: "Giao tiếp", icon: <WechatOutlined />, path: "/mentor/chat-rooms" },
-    { key: "settings", label: "Cài đặt", icon: <SettingOutlined />, path: "/mentor/settings" },
-    { key: "home", label: "Trang chủ", icon: <HomeOutlined />, path: "/home" },
+    { key: "home", label: "Trang chủ", icon: <HomeOutlined />, path: "/" },
   ];
 
   return (

@@ -61,6 +61,7 @@ const AppRoutes = () => (
     <Route path="/*" element={<Error404 />} />
     {/* Routes cho Client */}
     <Route path="/*" element={<HomeLayout />}>
+      <Route index element={<HomeScreen />} />
       <Route path="login" element={<Login />} />
       <Route path="oauth2/redirect" element={<OAuth2RedirectHandler />} />
       <Route path="sign-up" element={<Signup />} />
@@ -73,11 +74,10 @@ const AppRoutes = () => (
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="reset-password" element={<ResetPassword />} />
       <Route path="categories" element={<Categories />} />
-      <Route path="home" element={<HomeScreen />} />
       <Route path="course-details/:id" element={<CourseHeader />} />
 
       <Route element={<PrivateRouter />}>
-        <Route path="info-user" element={<Infomation />} />
+        <Route path="info-user/:id" element={<Infomation />} />
         <Route path="instructor-info/:id" element={<InstructorInfo />} />
         <Route path="shopping-cart" element={<ShoppingCart />} />
         <Route path="check-out" element={<Checkout />} />
@@ -96,23 +96,23 @@ const AppRoutes = () => (
 
     {/* Routes cho Mentor */}
     <Route path="mentor/*" element={<MentorLayout />}>
-      <Route path="dashboard" element={<Dashboard />} />
+      <Route path="dashboard/:id" element={<Dashboard />} />
       <Route path="courses" element={<ViewMentorCourses />} />
       <Route path="courses/add" element={<AddCourseForm />} />
       <Route path="course/:id/edit" element={<EditCourseForm />} />
       <Route path="courses/section/:courseId" element={<AddCourseSectionForm />} />
       <Route path="courses/:id/students" element={<CourseStudentList/>} />
       <Route path="chat-rooms" element={<ChatRoomMentor />} />
-      <Route path="profile-mentor" element={<MentorProfilePage />} />
+      <Route path="profile-mentor/:id" element={<MentorProfilePage />} />
       <Route path="courses/assignments/:id" element={<CourseAssignments />} />
     </Route>
 
     {/* Routes cho Admin */}
     <Route path="admin/*" element={<AdminLayout />}>
-      <Route path="dashboard" element={<AdminDashboard />} />
-      <Route path="categories" element={<CategoryList />} />
-      <Route path="warehouse" element={<CategoryWarehouse />} />
-      <Route path="users" element={<AdminUserPage />} />
+      <Route path="dashboard/:id" element={<AdminDashboard />} />
+      <Route path="categories/:id" element={<CategoryList />} />
+      <Route path="warehouse/:id" element={<CategoryWarehouse />} />
+      <Route path="users/:id" element={<AdminUserPage />} />
     </Route>
 
     

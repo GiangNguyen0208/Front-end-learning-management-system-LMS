@@ -15,7 +15,7 @@ export default function Error404() {
   };
 
   const handleGoHome = () => {
-    window.location.href = "/home";
+    window.location.href = "/";
   };
 
   return (

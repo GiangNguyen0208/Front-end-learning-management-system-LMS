@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Layout, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -12,20 +12,22 @@ import {
     WechatOutlined,
     HomeOutlined,
 } from "@ant-design/icons";
+import { AuthContext } from "../../../../context/AuthProvider";
 
 const { Sider } = Layout;
 
 export default function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
     const location = useLocation();
+    const { user } = useContext(AuthContext);
 
     const menuItems = [
-        { key: "/home", label: "Trang chủ", icon: <HomeOutlined />, path: "/home" },
-        { key: "dashboard", label: "Dashboard", icon: <DashboardOutlined />, path: "/admin/dashboard" },
-        { key: "users", label: "Quản lý người dùng", icon: <UserOutlined />, path: "/admin/users" },
-        { key: "categories", label: "Quản lý danh mục", icon: <UnorderedListOutlined />, path: "/admin/categories" },
-        { key: "courses", label: "Quản lý khóa học", icon: <BookOutlined />, path: "/admin/courses" },
-        // { key: "communication", label: "Communication", icon: <WechatOutlined />, path: "/admin/communication" },
+      { key: "dashboard", label: "Thống kê", icon: <DashboardOutlined />, path: `/admin/dashboard/${user.id}` },
+      { key: "users", label: "Quản lý người dùng", icon: <UserOutlined />, path: `/admin/users${user.id}` },
+      { key: "categories", label: "Quản lý danh mục", icon: <UnorderedListOutlined />, path: `/admin/categories${user.id}` },
+      { key: "courses", label: "Quản lý khóa học", icon: <BookOutlined />, path: `/admin/courses${user.id}` },
+      { key: "orders", label: "Hóa đơn", icon: <DashboardOutlined />, path: `/admin/orders/${user.id}` },
+      { key: "/home", label: "Trang chủ", icon: <HomeOutlined />, path: "/" },
     ];
 
     return (

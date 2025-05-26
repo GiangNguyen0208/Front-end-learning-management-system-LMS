@@ -10,6 +10,7 @@ import {
   Tag,
   Modal,
   Descriptions,
+  Tooltip,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -20,6 +21,8 @@ import {
 } from "@ant-design/icons";
 import { formatDate } from "../../../../../utils/helper/formatDate";
 import courseApi from "../../../../../api/courseApi";
+import assignmentApi from "../../../../../api/assignmentApi";
+import { toast } from "react-toastify";
 
 const CourseStudentList = () => {
   const location = useLocation();
@@ -29,10 +32,23 @@ const CourseStudentList = () => {
   const [loading, setLoading] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [assignments, setAssignments] = useState([]);
+  const [assignmentSubmissionsComplete, setAssignmentSubmissionsComplete] = useState([]);
+  
 
   useEffect(() => {
-    if (courseId) fetchStudents();
+    if (courseId) {
+      fetchStudents();
+      fetchAssignments();
+      fetchSubmissionsByGradedAndStudentID();
+    }
   }, [courseId]);
+
+  useEffect(() => {
+    if (students.length > 0) {
+      fetchSubmissionsByGradedAndStudentID();
+    }
+  }, [students]);
 
   const fetchStudents = async () => {
     setLoading(true);
@@ -46,6 +62,33 @@ const CourseStudentList = () => {
       setLoading(false);
     }
   };
+
+   const fetchAssignments = async () => {
+    setLoading(true);
+    try {
+      const res = await assignmentApi.fetchAllAssignments(courseId);
+      setAssignments(res.data || []);
+    } catch (err) {
+      toast.error("Lỗi tải danh sách bài tập.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSubmissionsByGradedAndStudentID = async () => {
+    try {
+      const allSubmissions = {};
+      for (const student of students) {
+        const res = await assignmentApi.getSubmissionsGradedByStudentID(student.id);
+        console.log(`Submissions for ${student.id}:`, res.data);
+        allSubmissions[student.id] = res.data.submissions || [];
+      }
+      setAssignmentSubmissionsComplete(allSubmissions);
+    } catch (err) {
+      toast.error("Lỗi tải danh sách bài nộp.");
+    }
+  };
+
 
   const showStudentDetails = (student) => {
     setSelectedStudent(student);
@@ -68,27 +111,39 @@ const CourseStudentList = () => {
   };
 
   const renderActions = (record) => (
-    <Space>
-      <Button icon={<EyeOutlined />} onClick={() => showStudentDetails(record)}>
-        Xem chi tiết
-      </Button>
+    <Space wrap>
+      <Tooltip title="Xem chi tiết">
+        <Button 
+          icon={<EyeOutlined />} 
+          onClick={() => showStudentDetails(record)}
+          style={{ backgroundColor: "#1677ff", color: "#fff" }}
+        >
+          Xem chi tiết
+        </Button>
+      </Tooltip>
 
       {record.role.toLowerCase() === "student" ? (
-        <Button
-          type="primary"
-          icon={<UserAddOutlined />}
-          // onClick={() => inviteAsMentor(record.id)}
-        >
-          Mời làm giảng viên
-        </Button>
+        <Tooltip title="Mời làm giảng viên">
+          <Button
+            type="primary"
+            icon={<UserAddOutlined />}
+            // onClick={() => inviteAsMentor(record.id)}
+            style={{ backgroundColor: "#52c41a", color: "#fff" }}
+          >
+            Mời làm giảng viên
+          </Button>
+        </Tooltip>
       ) : (
-        <Button
-          type="dashed"
-          icon={<UndoOutlined />}
-          // onClick={() => undoMentor(record.id)}
-        >
-          Hoàn tác giảng viên
-        </Button>
+        <Tooltip title="Hoàn tác giảng viên">
+          <Button
+            type="dashed"
+            icon={<UndoOutlined />}
+            style={{ color: "#1677ff" }}
+            // onClick={() => undoMentor(record.id)}
+          >
+            Hoàn tác giảng viên
+          </Button>
+        </Tooltip>
       )}
 
       <Popconfirm
@@ -97,19 +152,18 @@ const CourseStudentList = () => {
         okText="Có"
         cancelText="Không"
       >
-        <Button danger icon={<DeleteOutlined />}>
-          Xóa
-        </Button>
+        <Tooltip title="Xóa học viên">
+          <Button 
+            danger 
+            icon={<DeleteOutlined />}
+            style={{ backgroundColor: "#ff4d4f", color: "#fff" }}
+          >
+            Xóa
+          </Button>
+        </Tooltip>
       </Popconfirm>
     </Space>
   );
-
-  // Hàm chuyển mảng [năm, tháng, ngày, giờ, phút, giây] thành Date object
-  const parseDateArray = (arr) => {
-    if (!arr || !Array.isArray(arr) || arr.length < 6) return null;
-    // Tháng trong Date bắt đầu từ 0 nên trừ 1
-    return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5]);
-  };
 
   const columns = [
     {
@@ -127,6 +181,14 @@ const CourseStudentList = () => {
       title: "Vai trò",
       dataIndex: "role",
       render: renderRoleTag,
+    },
+    {
+      title: "Tiến độ bài tập",
+      key: "progress",
+      render: (_, record) => {
+        const submissions = assignmentSubmissionsComplete[record.id] || [];
+        return `${submissions.length} / ${assignments.length}`;
+      },
     },
     {
       title: "Hành động",
