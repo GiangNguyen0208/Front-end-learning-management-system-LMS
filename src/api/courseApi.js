@@ -35,7 +35,6 @@ const courseApi = {
   },
 
   bookingCourse: ({ nameOnCard, cardNo, cvv, expiryDate, courseIds, amount, customerId, otpConfirm }) => {
-    
     return axiosClient.post("/booking/add", {
       nameOnCard,
       cardNo,
@@ -45,6 +44,12 @@ const courseApi = {
       amount,
       customerId,
       otpConfirm,
+    });
+  },
+
+  bookingByVNPay: (courseIds, customerId, amount) => {
+    return axiosClient.get("/booking/VNpay", {
+      params: { courseIds: courseIds.join(","), customerId, amount },
     });
   },
 

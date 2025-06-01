@@ -12,7 +12,7 @@ import {
   Tooltip,
   Tag
 } from "antd";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   UploadOutlined,
   PlusOutlined,
@@ -25,6 +25,7 @@ import assignmentApi from "../../../../../api/assignmentApi";
 import { toast } from "react-toastify";
 import { formatDate } from "../../../../../utils/helper/formatDate";
 import SubmittedAssignments from "./SubmittedAssignments";
+import AuthContext from "../../../../../context/AuthProvider";
 
 const { Text } = Typography;
 
@@ -32,6 +33,7 @@ const CourseAssignments = () => {
   const location = useLocation();
   const { id } = useParams();
   const courseId = location.state?.courseId || id;
+  // const studentId = location.state?.studentId || null;
 
   const [assignments, setAssignments] = useState([]);
   const [editingAssignment, setEditingAssignment] = useState(null);

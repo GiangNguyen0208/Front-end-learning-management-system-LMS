@@ -39,8 +39,8 @@ const assignmentApi = {
     return axiosClient.get(`/assignment-submissions/pending?assignmentId=${assignmentId}`);
   },
 
-  getSubmissionsGradedByAssignmentId: (assignmentId) => {
-    return axiosClient.get(`/assignment-submissions/graded/byAssignment?assignmentId=${assignmentId}`);
+  getSubmissionsGradedByAssignmentId: (assignmentId, studentId) => {
+    return axiosClient.get(`/assignment-submissions/graded/byAssignment?assignmentId=${assignmentId}&studentId=${studentId}`);
   },
 
   gradeSubmission: (submissionId, request) => {

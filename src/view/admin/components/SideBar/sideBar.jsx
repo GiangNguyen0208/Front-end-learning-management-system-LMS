@@ -23,9 +23,9 @@ export default function Sidebar() {
 
     const menuItems = [
       { key: "dashboard", label: "Thống kê", icon: <DashboardOutlined />, path: `/admin/dashboard/${user.id}` },
-      { key: "users", label: "Quản lý người dùng", icon: <UserOutlined />, path: `/admin/users${user.id}` },
-      { key: "categories", label: "Quản lý danh mục", icon: <UnorderedListOutlined />, path: `/admin/categories${user.id}` },
-      { key: "courses", label: "Quản lý khóa học", icon: <BookOutlined />, path: `/admin/courses${user.id}` },
+      { key: "users", label: "Quản lý người dùng", icon: <UserOutlined />, path: `/admin/users/${user.id}` },
+      { key: "categories", label: "Quản lý danh mục", icon: <UnorderedListOutlined />, path: `/admin/categories/${user.id}` },
+      { key: "courses", label: "Quản lý khóa học", icon: <BookOutlined />, path: `/admin/courses/${user.id}` },
       { key: "orders", label: "Hóa đơn", icon: <DashboardOutlined />, path: `/admin/orders/${user.id}` },
       { key: "/home", label: "Trang chủ", icon: <HomeOutlined />, path: "/" },
     ];

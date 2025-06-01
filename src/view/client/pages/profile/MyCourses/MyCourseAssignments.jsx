@@ -65,7 +65,7 @@ const MyCourseAssignments = () => {
       const enrichedAssignments = await Promise.all(
         assignments.map(async (assignment) => {
           try {
-            const submissionRes = await assignmentApi.getSubmissionsGradedByAssignmentId(assignment.id);
+            const submissionRes = await assignmentApi.getSubmissionsGradedByAssignmentId(assignment.id, user.id);
             const submissions = submissionRes.data;
 
             const scoredSubmission = submissions.find(

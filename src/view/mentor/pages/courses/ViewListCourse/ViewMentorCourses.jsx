@@ -68,6 +68,7 @@ const ViewMentorCourses = () => {
     navigate(`/mentor/courses/assignments/${course.id}`, {
       state: {
         courseId: course.id,
+        studentId: mentor.id
       },
     });
   };

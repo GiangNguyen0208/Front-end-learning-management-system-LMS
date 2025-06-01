@@ -86,7 +86,7 @@ const AppRoutes = () => (
         <Route path="my-learning/:id/learn" element={<CourseViewer />} />
         <Route path="order-history" element={<OrderHistory />} />
         <Route path="chat-rooms" element={<ChatRoom />} />
-        <Route path="my-assignment/:id/learn" element={<MyCourseAssignments />} />
+        <Route path="my-assignment/:id/learn/by-user/:userId" element={<MyCourseAssignments />} />
       </Route>
       
         {/* <Route path="course-detail/:id" element={<CourseDetails />} />

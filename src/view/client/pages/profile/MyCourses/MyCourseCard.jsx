@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,12 +20,15 @@ import {
 } from "@ant-design/icons";
 import { URL } from "../../../../../api/constant";
 import courseApi from "../../../../../api/courseApi";
+import { AuthContext } from "../../../../../context/AuthProvider";
 
 const { Title, Text, Paragraph } = Typography;
 
 const MyCourseCard = ({ courseBooking }) => {
   const navigate = useNavigate();
   const [courseProgress, setCourseProgress] = useState(0);
+
+  const { user } = useContext(AuthContext)
 
   useEffect(() => {
     const fetchProgress = async () => {
@@ -47,13 +50,13 @@ const MyCourseCard = ({ courseBooking }) => {
   }, [courseBooking]);
 
   const handleGoToLearning = () => {
-    navigate(`/my-learning/${courseBooking.course.id}/learn`, {
+    navigate(`/my-learning/${courseBooking.course.id}/learn/by-user/${user.id}`, {
       state: { courseBooking },
     });
   };
 
   const handleGoToAssigment = () => {
-    navigate(`/my-assignment/${courseBooking.course.id}/learn`, {
+    navigate(`/my-assignment/${courseBooking.course.id}/learn/by-user/${user.id}`, {
       state: { courseBooking },
     });
   };

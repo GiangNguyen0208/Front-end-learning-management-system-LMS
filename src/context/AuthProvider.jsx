@@ -28,7 +28,7 @@ export default function AuthProvider({ children }) {
     
     // Điều hướng dựa trên role
     if (userData?.role !== null) {
-      navigate("/home");
+      navigate("/");
     }
     // } else if (userData?.role === "Mentor") {
     //   navigate("/home");
@@ -36,7 +36,7 @@ export default function AuthProvider({ children }) {
     //   navigate("/home");
     // } 
     else {
-      navigate("/home");
+      navigate("/");
     }
   };
 
@@ -46,7 +46,7 @@ export default function AuthProvider({ children }) {
     toast.success("Đăng xuất thành công!");
     setIsLoggedIn(false);
     setUser(null); // ✅ Xóa user khi logout
-    navigate("/home");
+    navigate("/");
   };
 
   useEffect(() => {
